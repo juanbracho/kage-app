@@ -165,7 +165,7 @@ export default function HabitCard({ habit, onClick }: HabitCardProps) {
       <div className="flex gap-1 mt-2">
         {progressData.slice(-7).map((day) => {
           let className = 'w-4 h-4 rounded border transition-all duration-200 ';
-          let style: React.CSSProperties = {};
+          const style: React.CSSProperties = {};
 
           if (day.completed) {
             // Completed day - full habit color

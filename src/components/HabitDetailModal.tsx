@@ -276,7 +276,7 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
                 }
 
                 let buttonClass = 'aspect-square rounded-lg text-sm font-medium transition-all ';
-                let buttonStyle: React.CSSProperties = {};
+                const buttonStyle: React.CSSProperties = {};
 
                 if (day.isCompleted) {
                   // Completed day - full habit color

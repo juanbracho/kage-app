@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Download, Smartphone } from 'lucide-react';
+import { useSettingsStore } from '../store/settingsStore';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -7,6 +8,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const PWAInstallPrompt: React.FC = () => {
+  const { settings } = useSettingsStore()
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
@@ -85,8 +87,14 @@ const PWAInstallPrompt: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
-              <Smartphone className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <div 
+              className="w-10 h-10 rounded-lg flex items-center justify-center"
+              style={{
+                backgroundColor: `var(--accent-color-light, #FB923C)`,
+                color: `var(--accent-color, #FF7101)`
+              }}
+            >
+              <Smartphone className="w-5 h-5" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
@@ -117,7 +125,16 @@ const PWAInstallPrompt: React.FC = () => {
               </div>
               <button
                 onClick={handleDismiss}
-                className="w-full px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors"
+                className="w-full px-3 py-2 text-white text-sm font-medium rounded-lg transition-colors"
+                style={{
+                  backgroundColor: `var(--accent-color, #FF7101)`,
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.opacity = '0.9'
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.opacity = '1'
+                }}
               >
                 Got it
               </button>
@@ -133,7 +150,16 @@ const PWAInstallPrompt: React.FC = () => {
               <button
                 onClick={handleInstallClick}
                 disabled={!isInstallable}
-                className="flex-1 px-3 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center space-x-1"
+                className="flex-1 px-3 py-2 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center space-x-1"
+                style={{
+                  backgroundColor: !isInstallable ? undefined : `var(--accent-color, #FF7101)`,
+                }}
+                onMouseOver={(e) => {
+                  if (isInstallable) e.currentTarget.style.opacity = '0.9'
+                }}
+                onMouseOut={(e) => {
+                  if (isInstallable) e.currentTarget.style.opacity = '1'
+                }}
               >
                 <Download className="w-4 h-4" />
                 <span>Install</span>

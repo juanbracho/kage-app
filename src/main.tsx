@@ -35,7 +35,7 @@ import './index.css'
 if ('serviceWorker' in navigator) {
   // Remove existing registrations
   navigator.serviceWorker.getRegistrations().then((registrations) => {
-    for (let registration of registrations) {
+    for (const registration of registrations) {
       console.log('Unregistering service worker:', registration);
       registration.unregister();
     }

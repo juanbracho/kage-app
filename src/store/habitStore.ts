@@ -545,7 +545,7 @@ export const useHabitStore = create<HabitStore>()(
     const selectedDayNumbers = selectedDays.map(day => dayMap[day as keyof typeof dayMap]);
     
     let streak = 0;
-    let currentWeekStart = new Date(today);
+    const currentWeekStart = new Date(today);
     
     // Set to Sunday of current week (week starts on Sunday)
     const dayOfWeek = currentWeekStart.getDay();
@@ -603,7 +603,7 @@ export const useHabitStore = create<HabitStore>()(
     let streak = 0;
     const { times, period } = customFreq;
     
-    let currentPeriodStart = new Date(today);
+    const currentPeriodStart = new Date(today);
     currentPeriodStart.setHours(0, 0, 0, 0); // Normalize to start of day
     
     if (period === 'week') {

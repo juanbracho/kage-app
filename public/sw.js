@@ -7,20 +7,19 @@ const DYNAMIC_CACHE_NAME = 'kage-dynamic-v1.0.0';
 
 // Static assets to cache immediately
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/kage-logo.svg',
-  // Add generated icons when available
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/kage-app/',
+  '/kage-app/index.html',
+  '/kage-app/manifest.json',
+  '/kage-app/icons/kage-logo.svg',
+  '/kage-app/icons/icon-192x192.svg',
+  '/kage-app/icons/icon-512x512.svg'
 ];
 
 // Dynamic assets that will be cached as requested
 const DYNAMIC_ASSETS_PATTERNS = [
-  /^\/src\//,
-  /^\/assets\//,
-  /^\/node_modules\//
+  /^\/kage-app\/src\//,
+  /^\/kage-app\/assets\//,
+  /^\/kage-app\/node_modules\//
 ];
 
 // Install event - cache static assets
@@ -74,7 +73,7 @@ self.addEventListener('fetch', (event) => {
   // Handle navigation requests (HTML pages)
   if (request.mode === 'navigate') {
     event.respondWith(
-      caches.match('/')
+      caches.match('/kage-app/')
         .then((cachedResponse) => {
           if (cachedResponse) {
             return cachedResponse;
@@ -82,7 +81,7 @@ self.addEventListener('fetch', (event) => {
           return fetch(request);
         })
         .catch(() => {
-          return caches.match('/');
+          return caches.match('/kage-app/');
         })
     );
     return;

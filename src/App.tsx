@@ -18,6 +18,56 @@ function App() {
   // Initialize settings on app startup
   useEffect(() => {
     initializeSettings()
+    
+    // Keyboard shortcuts
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle shortcuts when not in an input field
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return
+      }
+      
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case 'k':
+            e.preventDefault()
+            // Focus search if available or open quick actions
+            console.log('Quick search shortcut activated')
+            break
+          case '1':
+            e.preventDefault()
+            setActiveTab('goals')
+            break
+          case '2':
+            e.preventDefault()
+            setActiveTab('tasks')
+            break
+          case '3':
+            e.preventDefault()
+            setActiveTab('dashboard')
+            break
+          case '4':
+            e.preventDefault()
+            setActiveTab('habits')
+            break
+          case '5':
+            e.preventDefault()
+            setActiveTab('journal')
+            break
+          case ',':
+            e.preventDefault()
+            setActiveTab('settings')
+            break
+        }
+      }
+      
+      // ESC to close modals (handled by individual components)
+      if (e.key === 'Escape') {
+        // This is handled by modal components individually
+      }
+    }
+    
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
   }, [])
 
   // PWA routing detection and handling
