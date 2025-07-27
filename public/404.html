@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kage App</title>
+    <script>
+        // GitHub Pages SPA redirect
+        // This script redirects 404s to the main app
+        const path = window.location.pathname.slice(1);
+        if (path && path !== '404.html') {
+            window.location.replace('/kage-app/');
+        } else {
+            window.location.replace('/kage-app/');
+        }
+    </script>
+</head>
+<body>
+    <div id="redirect-notice">
+        <p>Redirecting to Kage App...</p>
+    </div>
+</body>
+</html>

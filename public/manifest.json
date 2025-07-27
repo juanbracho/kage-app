@@ -2,12 +2,12 @@
   "name": "Kage - Goal-Centric Productivity",
   "short_name": "Kage",
   "description": "Revolutionary goal-centric productivity app that connects tasks, habits, and journal entries to meaningful life goals",
-  "start_url": "/",
+  "start_url": "/kage-app/",
   "display": "standalone",
   "theme_color": "#FF7101",
   "background_color": "#FFFFFF",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "/kage-app/",
   "categories": ["productivity", "lifestyle", "utilities"],
   "lang": "en-US",
   "dir": "ltr",
@@ -91,7 +91,7 @@
       "name": "Create Goal",
       "short_name": "New Goal",
       "description": "Quickly create a new goal",
-      "url": "/goals?action=create",
+      "url": "/kage-app/goals?action=create",
       "icons": [
         {
           "src": "/icons/shortcut-goal.svg",
@@ -104,7 +104,7 @@
       "name": "Add Task",
       "short_name": "New Task",
       "description": "Quickly add a new task",
-      "url": "/tasks?action=create",
+      "url": "/kage-app/tasks?action=create",
       "icons": [
         {
           "src": "/icons/shortcut-task.svg",
@@ -117,7 +117,7 @@
       "name": "Track Habit",
       "short_name": "Habit",
       "description": "Mark habit as completed",
-      "url": "/habits?action=complete",
+      "url": "/kage-app/habits?action=complete",
       "icons": [
         {
           "src": "/icons/shortcut-habit.svg",
@@ -130,7 +130,7 @@
       "name": "Write Journal",
       "short_name": "Journal",
       "description": "Create a new journal entry",
-      "url": "/journal?action=create",
+      "url": "/kage-app/journal?action=create",
       "icons": [
         {
           "src": "/icons/shortcut-journal.svg",
