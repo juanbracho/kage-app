@@ -71,12 +71,11 @@ function App() {
   }, [settings.appearance.theme])
 
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'goals', label: 'Goals', icon: Target },
     { id: 'tasks', label: 'Tasks', icon: CheckSquare },
+    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'habits', label: 'Habits', icon: Hash },
     { id: 'journal', label: 'Journal', icon: BookOpen },
-    { id: 'calendar', label: 'Calendar', icon: Calendar },
   ]
 
   const renderContent = () => {
@@ -112,6 +111,20 @@ function App() {
           <div className="flex gap-2">
             <button className="w-9 h-9 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
               <TrendingUp className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            </button>
+            <button 
+              onClick={() => setActiveTab('calendar')}
+              className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${
+                activeTab === 'calendar' 
+                  ? 'accent-bg-100 dark:accent-bg-900 accent-text-600 dark:accent-text-400' 
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+              style={activeTab === 'calendar' ? {
+                backgroundColor: 'var(--accent-color-light, #FB923C)',
+                color: 'var(--accent-color, #FF7101)'
+              } : {}}
+            >
+              <Calendar className="w-5 h-5" />
             </button>
             <button 
               onClick={() => setActiveTab('settings')}
