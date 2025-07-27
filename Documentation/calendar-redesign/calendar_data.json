@@ -1,0 +1,80 @@
+{
+  "calendar_event": {
+    "id": "string",
+    "title": "string",
+    "type": "task | habit | timeblock",
+    "date": "YYYY-MM-DD",
+    "start_time": "HH:MM",
+    "end_time": "HH:MM",
+    "color": "#hex",
+    "completed": "boolean",
+    "linked_id": "string (task/habit ID)",
+    "goal_id": "string | null",
+    "icon": "emoji string"
+  },
+
+  "sample_events": [
+    {
+      "id": "evt_1",
+      "title": "Morning Exercise",
+      "type": "habit",
+      "date": "2025-07-23",
+      "start_time": "07:00",
+      "end_time": "08:00",
+      "color": "#ff6b6b",
+      "completed": false,
+      "linked_id": "habit_123",
+      "goal_id": "goal_fitness",
+      "icon": "🏃"
+    },
+    {
+      "id": "evt_2", 
+      "title": "Finish project proposal",
+      "type": "task",
+      "date": "2025-07-23",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "color": "#4ecdc4",
+      "completed": true,
+      "linked_id": "task_456",
+      "goal_id": "goal_work",
+      "icon": "📋"
+    },
+    {
+      "id": "evt_3",
+      "title": "Deep Work Session",
+      "type": "timeblock",
+      "date": "2025-07-23",
+      "start_time": "09:00",
+      "end_time": "11:00",
+      "color": "#a8e6cf",
+      "completed": false,
+      "linked_id": null,
+      "goal_id": null,
+      "icon": "🎯"
+    }
+  ],
+
+  "calendar_state": {
+    "current_view": "week | day | month",
+    "selected_date": "YYYY-MM-DD",
+    "view_range": {
+      "start": "YYYY-MM-DD",
+      "end": "YYYY-MM-DD"
+    },
+    "filters": {
+      "show_tasks": "boolean",
+      "show_habits": "boolean",
+      "show_timeblocks": "boolean",
+      "goal_filter": "string | null"
+    }
+  },
+
+  "api_endpoints": {
+    "get_events": "GET /api/calendar/events?start_date=X&end_date=Y",
+    "create_event": "POST /api/calendar/events",
+    "update_event": "PUT /api/calendar/events/:id", 
+    "complete_event": "PATCH /api/calendar/events/:id/complete",
+    "delete_event": "DELETE /api/calendar/events/:id"
+  }
+}

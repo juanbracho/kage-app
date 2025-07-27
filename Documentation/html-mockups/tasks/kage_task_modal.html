@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Task Creation Modal - Project Kage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.6);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideUp 0.3s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f8fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .modal-body {
+            padding: 0 24px 24px;
+            max-height: calc(90vh - 160px);
+            overflow-y: auto;
+        }
+
+        /* Task Type Selection */
+        .task-type-section {
+            margin-bottom: 24px;
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .task-types {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .task-type {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            text-align: center;
+        }
+
+        .task-type:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .task-type.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .task-type-icon {
+            font-size: 24px;
+        }
+
+        .task-type-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .task-type-desc {
+            font-size: 10px;
+            color: #6b7280;
+        }
+
+        .task-type.selected .task-type-name {
+            color: #3b82f6;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #2d3748;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Type-Specific Fields */
+        .type-specific-fields {
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .type-specific-fields.active {
+            display: block;
+        }
+
+        .type-specific-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .to-buy-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .type-specific-input {
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .type-specific-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .deadline-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .deadline-warning {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+
+        .deadline-warning-text {
+            font-size: 12px;
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        /* Priority Section */
+        .priority-section {
+            margin-bottom: 20px;
+        }
+
+        .priority-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .priority-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .priority-option:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .priority-option.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .priority-icon {
+            font-size: 18px;
+        }
+
+        .priority-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .priority-option.selected .priority-label {
+            color: #3b82f6;
+        }
+
+        /* Due Date Section */
+        .due-date-section {
+            margin-bottom: 20px;
+        }
+
+        .date-time-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .date-input, .time-input {
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .date-input:focus, .time-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .quick-date-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-date-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            background: white;
+            font-size: 12px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-date-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .quick-date-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        /* Goal Linking */
+        .goal-linking {
+            margin-bottom: 20px;
+        }
+
+        .goal-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 24px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-switch.active {
+            background: #3b82f6;
+        }
+
+        .toggle-knob {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 10px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-knob {
+            left: 26px;
+        }
+
+        .goal-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            color: #2d3748;
+        }
+
+        .goal-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .goal-select option {
+            padding: 8px;
+        }
+
+        /* Sub-tasks Section */
+        .subtasks-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .subtasks-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .subtasks-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .add-subtask-btn {
+            padding: 6px 12px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-subtask-btn:hover {
+            background: #2563eb;
+        }
+
+        .subtasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtask-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .subtask-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #cbd5e1;
+            border-radius: 4px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .subtask-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .subtask-input:focus {
+            outline: none;
+        }
+
+        .subtask-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .remove-subtask {
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        /* Shopping List Items */
+        .shopping-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+        }
+
+        .shopping-item-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .shopping-qty-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 60px;
+            flex-shrink: 0;
+        }
+
+        .shopping-qty-input {
+            width: 40px;
+            padding: 4px 6px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: center;
+            background: white;
+        }
+
+        .shopping-qty-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .shopping-qty-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .shopping-item-name {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #f8fafc;
+            min-width: 0; /* Allows text to truncate */
+        }
+
+        .shopping-item-name:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+        }
+
+        .shopping-detail-input {
+            padding: 6px 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+        }
+
+        .shopping-detail-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .shopping-detail-input::placeholder {
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        /* Advanced Options */
+        .advanced-options {
+            margin-bottom: 24px;
+        }
+
+        .advanced-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            margin-bottom: 16px;
+            padding: 8px 0;
+        }
+
+        .advanced-toggle-icon {
+            font-size: 12px;
+            color: #64748b;
+            transition: transform 0.2s;
+        }
+
+        .advanced-toggle.expanded .advanced-toggle-icon {
+            transform: rotate(90deg);
+        }
+
+        .advanced-toggle-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .advanced-content {
+            display: none;
+            animation: slideDown 0.2s ease-out;
+        }
+
+        .advanced-content.expanded {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .advanced-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .advanced-input {
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .advanced-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .advanced-textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        /* Modal Footer */
+        .modal-footer {
+            padding: 16px 24px 24px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Auto-save indicator */
+        .auto-save {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .auto-save.saving {
+            color: #3b82f6;
+        }
+
+        .auto-save-dot {
+            width: 6px;
+            height: 6px;
+            background: #64748b;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .auto-save.saving .auto-save-dot {
+            background: #3b82f6;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 540px) {
+            .modal {
+                margin: 16px;
+                max-width: none;
+                border-radius: 16px;
+            }
+
+            .modal-header {
+                padding: 16px 20px 12px;
+            }
+
+            .modal-body {
+                padding: 0 20px 20px;
+            }
+
+            .modal-footer {
+                padding: 12px 20px 20px;
+                flex-direction: column-reverse;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .task-types {
+                grid-template-columns: 1fr;
+            }
+
+            .priority-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+
+            .date-time-container {
+                grid-template-columns: 1fr;
+            }
+
+            .to-buy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-overlay">
+        <div class="modal">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h2 class="modal-title">New Task</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Task Type Selection -->
+                <div class="task-type-section">
+                    <label class="section-label">Task Type</label>
+                    <div class="task-types">
+                        <div class="task-type selected" onclick="selectTaskType(this, 'standard')">
+                            <div class="task-type-icon">✅</div>
+                            <div class="task-type-name">Standard</div>
+                            <div class="task-type-desc">Regular task</div>
+                        </div>
+                        <div class="task-type" onclick="selectTaskType(this, 'to-buy')">
+                            <div class="task-type-icon">🛒</div>
+                            <div class="task-type-name">To-Buy</div>
+                            <div class="task-type-desc">Shopping list</div>
+                        </div>
+                        <div class="task-type" onclick="selectTaskType(this, 'deadline')">
+                            <div class="task-type-icon">⏰</div>
+                            <div class="task-type-name">Deadline</div>
+                            <div class="task-type-desc">Time-sensitive</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core Fields -->
+                <div class="form-section">
+                    <label class="section-label">Task Name *</label>
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        placeholder="What needs to be done?"
+                        maxlength="100"
+                        oninput="handleAutoSave()"
+                        required
+                    >
+                </div>
+
+                <div class="form-section">
+                    <label class="section-label">Description (Optional)</label>
+                    <textarea 
+                        class="form-input form-textarea" 
+                        placeholder="Add more details about this task..."
+                        maxlength="500"
+                        oninput="handleAutoSave()"
+                    ></textarea>
+                </div>
+
+                <!-- Type-Specific Fields -->
+                <div class="type-specific-fields" id="toBuyFields">
+                    <!-- Shopping Details removed - will be handled in shopping list items -->
+                </div>
+
+                <div class="type-specific-fields" id="deadlineFields">
+                    <label class="section-label">Deadline Details</label>
+                    <div class="type-specific-grid deadline-grid">
+                        <input type="text" class="type-specific-input" placeholder="Consequence if missed (optional)">
+                        <select class="type-specific-input">
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="legal">Legal</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="deadline-warning">
+                        <div class="deadline-warning-text">⚠️ Deadline tasks require a due date and automatically get high priority</div>
+                    </div>
+                </div>
+
+                <!-- Priority Selection -->
+                <div class="priority-section">
+                    <label class="section-label">Priority</label>
+                    <div class="priority-grid">
+                        <div class="priority-option" onclick="selectPriority(this, 1)">
+                            <div class="priority-icon">🔴</div>
+                            <div class="priority-label">Urgent</div>
+                        </div>
+                        <div class="priority-option" onclick="selectPriority(this, 2)">
+                            <div class="priority-icon">🟠</div>
+                            <div class="priority-label">High</div>
+                        </div>
+                        <div class="priority-option selected" onclick="selectPriority(this, 3)">
+                            <div class="priority-icon">🟡</div>
+                            <div class="priority-label">Medium</div>
+                        </div>
+                        <div class="priority-option" onclick="selectPriority(this, 4)">
+                            <div class="priority-icon">🟢</div>
+                            <div class="priority-label">Low</div>
+                        </div>
+                        <div class="priority-option" onclick="selectPriority(this, 5)">
+                            <div class="priority-icon">⚪</div>
+                            <div class="priority-label">None</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Due Date & Time -->
+                <div class="due-date-section">
+                    <label class="section-label">Due Date & Time (Optional)</label>
+                    <div class="date-time-container">
+                        <input type="date" class="date-input" id="dueDateInput">
+                        <input type="time" class="time-input" id="dueTimeInput">
+                    </div>
+                    <div class="quick-date-options">
+                        <button class="quick-date-btn" onclick="setQuickDate('today')">Today</button>
+                        <button class="quick-date-btn" onclick="setQuickDate('tomorrow')">Tomorrow</button>
+                        <button class="quick-date-btn" onclick="setQuickDate('thisWeek')">This Week</button>
+                        <button class="quick-date-btn" onclick="setQuickDate('nextWeek')">Next Week</button>
+                    </div>
+                </div>
+
+                <!-- Goal Linking (hidden for To-Buy tasks) -->
+                <div class="goal-linking" id="goalLinkingSection">
+                    <div class="goal-toggle-container">
+                        <label class="section-label" style="margin: 0;">Link to Goal?</label>
+                        <div class="toggle-switch active" onclick="toggleGoalLink(this)" id="goalToggle">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <select class="goal-select" id="goalSelect">
+                        <option value="">Select a goal...</option>
+                        <option value="1">🏃 Get Fit & Healthy</option>
+                        <option value="2">🚀 Launch Side Project</option>
+                        <option value="3">📚 Learn Spanish</option>
+                        <option value="4">🧘 Mindfulness Practice</option>
+                        <option value="new">+ Create New Goal</option>
+                    </select>
+                </div>
+
+                <!-- Sub-tasks -->
+                <div class="subtasks-section">
+                    <div class="subtasks-header">
+                        <span class="subtasks-title" id="subtasksTitle">Sub-tasks (Optional)</span>
+                        <button class="add-subtask-btn" onclick="addSubtask()" id="addSubtaskBtn">+ Add</button>
+                    </div>
+                    <div class="subtasks-list" id="subtasksList">
+                        <div class="subtask-item" id="defaultSubtask">
+                            <div class="subtask-checkbox"></div>
+                            <input type="text" class="subtask-input" placeholder="Break this task into smaller steps..." id="defaultSubtaskInput">
+                            <span class="remove-subtask" onclick="removeSubtask(this)">✕</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="advanced-options">
+                    <div class="advanced-toggle" onclick="toggleAdvanced(this)">
+                        <span class="advanced-toggle-icon">▶</span>
+                        <span class="advanced-toggle-text">Advanced Options</span>
+                    </div>
+                    <div class="advanced-content" id="advancedContent">
+                        <div class="advanced-grid">
+                            <div>
+                                <label class="section-label">Tags</label>
+                                <input type="text" class="advanced-input" placeholder="Add tags separated by commas...">
+                            </div>
+                            <div>
+                                <label class="section-label">Notes</label>
+                                <textarea class="advanced-input advanced-textarea" placeholder="Additional notes..."></textarea>
+                            </div>
+                            <div>
+                                <label class="section-label">Reminder</label>
+                                <select class="advanced-input">
+                                    <option value="">No reminder</option>
+                                    <option value="15">15 minutes before</option>
+                                    <option value="30">30 minutes before</option>
+                                    <option value="60">1 hour before</option>
+                                    <option value="1440">1 day before</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="section-label">Repeat</label>
+                                <select class="advanced-input">
+                                    <option value="">Never</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <div class="auto-save" id="autoSaveStatus">
+                    <div class="auto-save-dot"></div>
+                    <span>Auto-saving...</span>
+                </div>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveTask()" id="saveBtn">Create Task</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedTaskType = 'standard';
+        let selectedPriority = 3;
+        let goalLinkEnabled = true;
+        let autoSaveTimeout = null;
+
+        function selectTaskType(element, type) {
+            // Remove previous selection
+            document.querySelectorAll('.task-type').forEach(taskType => {
+                taskType.classList.remove('selected');
+            });
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            selectedTaskType = type;
+            
+            // Show/hide type-specific fields
+            document.querySelectorAll('.type-specific-fields').forEach(field => {
+                field.classList.remove('active');
+            });
+            
+            // Update sub-tasks section based on task type
+            updateSubtasksSection(type);
+            
+            if (type === 'to-buy') {
+                // To-Buy tasks don't need the type-specific fields section
+                // Reset priority to Low for shopping tasks
+                selectPriorityByValue(4);
+            } else if (type === 'deadline') {
+                const deadlineFields = document.getElementById('deadlineFields');
+                if (deadlineFields) {
+                    deadlineFields.classList.add('active');
+                }
+                // Set priority to High for deadline tasks
+                selectPriorityByValue(2);
+                // Make due date required for deadline tasks
+                const dueDateInput = document.getElementById('dueDateInput');
+                if (dueDateInput) {
+                    dueDateInput.required = true;
+                }
+            } else {
+                // Standard task
+                const dueDateInput = document.getElementById('dueDateInput');
+                if (dueDateInput) {
+                    dueDateInput.required = false;
+                }
+            }
+        }
+
+        function updateSubtasksSection(taskType) {
+            const subtasksTitle = document.getElementById('subtasksTitle');
+            const addSubtaskBtn = document.getElementById('addSubtaskBtn');
+            const subtasksList = document.getElementById('subtasksList');
+            const defaultSubtaskInput = document.getElementById('defaultSubtaskInput');
+            const goalLinkingSection = document.getElementById('goalLinkingSection');
+            
+            if (taskType === 'to-buy') {
+                // Update UI for shopping list
+                subtasksTitle.textContent = 'Shopping List';
+                addSubtaskBtn.textContent = '+ Add Item';
+                defaultSubtaskInput.placeholder = 'Item name (e.g., Milk, Bread, etc.)';
+                
+                // Hide goal linking for shopping tasks
+                goalLinkingSection.style.display = 'none';
+                
+                // Convert existing sub-tasks to shopping items
+                convertToShoppingItems();
+            } else {
+                // Update UI for regular sub-tasks
+                subtasksTitle.textContent = 'Sub-tasks (Optional)';
+                addSubtaskBtn.textContent = '+ Add';
+                defaultSubtaskInput.placeholder = 'Break this task into smaller steps...';
+                
+                // Show goal linking for other task types
+                goalLinkingSection.style.display = 'block';
+                
+                // Convert existing shopping items back to sub-tasks
+                convertToRegularSubtasks();
+            }
+        }
+
+        function convertToShoppingItems() {
+            const subtasksList = document.getElementById('subtasksList');
+            const existingItems = subtasksList.querySelectorAll('.subtask-item');
+            
+            existingItems.forEach(item => {
+                const input = item.querySelector('.subtask-input');
+                const currentValue = input.value;
+                
+                // Replace with shopping item structure
+                item.className = 'subtask-item shopping-item';
+                item.innerHTML = `
+                    <div class="shopping-item-header">
+                        <div class="subtask-checkbox"></div>
+                        <div class="shopping-qty-container">
+                            <input type="number" class="shopping-qty-input" min="1" value="1">
+                            <span class="shopping-qty-label">×</span>
+                        </div>
+                        <input type="text" class="subtask-input shopping-item-name" placeholder="Item name (e.g., Milk, Bread, etc.)" value="${currentValue}">
+                        <span class="remove-subtask" onclick="removeSubtask(this)">✕</span>
+                    </div>
+                `;
+            });
+        }
+
+        function convertToRegularSubtasks() {
+            const subtasksList = document.getElementById('subtasksList');
+            const existingItems = subtasksList.querySelectorAll('.subtask-item');
+            
+            existingItems.forEach(item => {
+                const nameInput = item.querySelector('.shopping-item-name') || item.querySelector('.subtask-input');
+                const currentValue = nameInput ? nameInput.value : '';
+                
+                // Replace with regular subtask structure
+                item.className = 'subtask-item';
+                item.innerHTML = `
+                    <div class="subtask-checkbox"></div>
+                    <input type="text" class="subtask-input" placeholder="Break this task into smaller steps..." value="${currentValue}">
+                    <span class="remove-subtask" onclick="removeSubtask(this)">✕</span>
+                `;
+            });
+        }
+
+        function selectPriority(element, priority) {
+            // Remove previous selection
+            document.querySelectorAll('.priority-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            selectedPriority = priority;
+        }
+
+        function selectPriorityByValue(priority) {
+            const priorityOptions = document.querySelectorAll('.priority-option');
+            priorityOptions.forEach((option, index) => {
+                option.classList.remove('selected');
+                if (index + 1 === priority) {
+                    option.classList.add('selected');
+                }
+            });
+            selectedPriority = priority;
+        }
+
+        function setQuickDate(period) {
+            const dateInput = document.getElementById('dueDateInput');
+            const timeInput = document.getElementById('dueTimeInput');
+            const today = new Date();
+            let targetDate = new Date();
+
+            // Remove active class from all quick date buttons
+            document.querySelectorAll('.quick-date-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            switch (period) {
+                case 'today':
+                    targetDate = today;
+                    timeInput.value = '18:00'; // Default to 6 PM
+                    break;
+                case 'tomorrow':
+                    targetDate.setDate(today.getDate() + 1);
+                    timeInput.value = '09:00'; // Default to 9 AM
+                    break;
+                case 'thisWeek':
+                    // Set to Friday of current week
+                    const daysUntilFriday = (5 - today.getDay() + 7) % 7;
+                    targetDate.setDate(today.getDate() + (daysUntilFriday || 7));
+                    timeInput.value = '17:00'; // Default to 5 PM
+                    break;
+                case 'nextWeek':
+                    // Set to Monday of next week
+                    const daysUntilNextMonday = (8 - today.getDay()) % 7 || 7;
+                    targetDate.setDate(today.getDate() + daysUntilNextMonday);
+                    timeInput.value = '09:00'; // Default to 9 AM
+                    break;
+            }
+
+            // Format date for input (YYYY-MM-DD)
+            const formattedDate = targetDate.getFullYear() + '-' + 
+                                String(targetDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                                String(targetDate.getDate()).padStart(2, '0');
+            
+            dateInput.value = formattedDate;
+        }
+
+        function toggleGoalLink(element) {
+            element.classList.toggle('active');
+            goalLinkEnabled = element.classList.contains('active');
+            
+            const goalSelect = document.getElementById('goalSelect');
+            goalSelect.disabled = !goalLinkEnabled;
+            goalSelect.style.opacity = goalLinkEnabled ? '1' : '0.5';
+        }
+
+        function addSubtask() {
+            const subtasksList = document.getElementById('subtasksList');
+            const newSubtask = document.createElement('div');
+            
+            if (selectedTaskType === 'to-buy') {
+                // Add shopping item
+                newSubtask.className = 'subtask-item shopping-item';
+                newSubtask.innerHTML = `
+                    <div class="shopping-item-header">
+                        <div class="subtask-checkbox"></div>
+                        <div class="shopping-qty-container">
+                            <input type="number" class="shopping-qty-input" min="1" value="1">
+                            <span class="shopping-qty-label">×</span>
+                        </div>
+                        <input type="text" class="subtask-input shopping-item-name" placeholder="Item name (e.g., Milk, Bread, etc.)">
+                        <span class="remove-subtask" onclick="removeSubtask(this)">✕</span>
+                    </div>
+                `;
+                
+                // Focus on the new item name input
+                subtasksList.appendChild(newSubtask);
+                const newInput = newSubtask.querySelector('.shopping-item-name');
+                newInput.focus();
+            } else {
+                // Add regular subtask
+                newSubtask.className = 'subtask-item';
+                newSubtask.innerHTML = `
+                    <div class="subtask-checkbox"></div>
+                    <input type="text" class="subtask-input" placeholder="Add another sub-task...">
+                    <span class="remove-subtask" onclick="removeSubtask(this)">✕</span>
+                `;
+                
+                subtasksList.appendChild(newSubtask);
+                
+                // Focus on the new input
+                const newInput = newSubtask.querySelector('.subtask-input');
+                newInput.focus();
+            }
+        }
+
+        function removeSubtask(element) {
+            const subtaskItem = element.parentElement;
+            subtaskItem.remove();
+        }
+
+        function toggleAdvanced(element) {
+            element.classList.toggle('expanded');
+            const content = document.getElementById('advancedContent');
+            content.classList.toggle('expanded');
+        }
+
+        function handleAutoSave() {
+            const autoSaveStatus = document.getElementById('autoSaveStatus');
+            autoSaveStatus.classList.add('saving');
+            autoSaveStatus.querySelector('span').textContent = 'Saving...';
+            
+            // Clear existing timeout
+            if (autoSaveTimeout) {
+                clearTimeout(autoSaveTimeout);
+            }
+            
+            // Set new timeout
+            autoSaveTimeout = setTimeout(() => {
+                autoSaveStatus.classList.remove('saving');
+                autoSaveStatus.querySelector('span').textContent = 'Saved';
+                
+                // Hide the saved message after 2 seconds
+                setTimeout(() => {
+                    autoSaveStatus.querySelector('span').textContent = 'Auto-saving...';
+                }, 2000);
+            }, 1500);
+        }
+
+        function validateTask() {
+            const taskNameInput = document.querySelector('input[placeholder="What needs to be done?"]');
+            const saveBtn = document.getElementById('saveBtn');
+            
+            if (!taskNameInput) {
+                saveBtn.disabled = true;
+                return false;
+            }
+            
+            const taskName = taskNameInput.value.trim();
+            
+            if (taskName.length === 0) {
+                saveBtn.disabled = true;
+                return false;
+            }
+
+            // Special validation for deadline tasks
+            if (selectedTaskType === 'deadline') {
+                const dueDate = document.getElementById('dueDateInput').value;
+                if (!dueDate) {
+                    saveBtn.disabled = true;
+                    return false;
+                }
+            }
+
+            saveBtn.disabled = false;
+            return true;
+        }
+
+        function collectSubtasks() {
+            const subtaskItems = document.querySelectorAll('.subtask-item');
+            const subtasks = [];
+            
+            subtaskItems.forEach((item, index) => {
+                if (selectedTaskType === 'to-buy') {
+                    // Collect shopping item data
+                    const nameInput = item.querySelector('.shopping-item-name');
+                    const qtyInput = item.querySelector('.shopping-qty-input');
+                    
+                    const name = nameInput ? nameInput.value.trim() : '';
+                    
+                    if (name) {
+                        subtasks.push({
+                            name: name,
+                            isCompleted: false,
+                            order: index,
+                            type: 'shopping-item',
+                            shoppingDetails: {
+                                quantity: qtyInput ? parseInt(qtyInput.value) || 1 : 1
+                            }
+                        });
+                    }
+                } else {
+                    // Collect regular subtask data
+                    const input = item.querySelector('.subtask-input');
+                    const value = input ? input.value.trim() : '';
+                    
+                    if (value) {
+                        subtasks.push({
+                            name: value,
+                            isCompleted: false,
+                            order: index,
+                            type: 'regular'
+                        });
+                    }
+                }
+            });
+            
+            return subtasks;
+        }
+
+        function collectTypeSpecificData() {
+            const typeData = {};
+            
+            if (selectedTaskType === 'to-buy') {
+                // No additional type-specific data needed for to-buy tasks
+                // Shopping details are handled in individual shopping items
+            } else if (selectedTaskType === 'deadline') {
+                const consequenceInput = document.querySelector('#deadlineFields input[placeholder="Consequence if missed (optional)"]');
+                const typeSelect = document.querySelector('#deadlineFields select');
+                
+                const consequence = consequenceInput ? consequenceInput.value : '';
+                const type = typeSelect ? typeSelect.value : 'work';
+                
+                typeData.isHardDeadline = true;
+                typeData.consequence = consequence || null;
+                typeData.deadlineType = type;
+                typeData.reminderIntervals = [1440, 60, 15]; // 1 day, 1 hour, 15 minutes
+            }
+            
+            return typeData;
+        }
+
+        function collectAdvancedData() {
+            const advancedData = {};
+            
+            const tagsInput = document.querySelector('.advanced-grid input[placeholder*="tags"]');
+            const notesTextarea = document.querySelector('.advanced-grid textarea');
+            const reminderSelect = document.querySelector('.advanced-grid select');
+            const repeatSelects = document.querySelectorAll('.advanced-grid select');
+            
+            const tags = tagsInput ? tagsInput.value : '';
+            const notes = notesTextarea ? notesTextarea.value : '';
+            const reminder = reminderSelect ? reminderSelect.value : '';
+            const repeat = repeatSelects.length > 1 ? repeatSelects[1].value : '';
+            
+            if (tags.trim()) {
+                advancedData.tags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            }
+            
+            if (notes.trim()) {
+                advancedData.notes = notes.trim();
+            }
+            
+            if (reminder) {
+                advancedData.reminderMinutes = parseInt(reminder);
+            }
+            
+            if (repeat && repeat !== '') {
+                advancedData.recurrence = {
+                    pattern: repeat,
+                    interval: 1
+                };
+            }
+            
+            return advancedData;
+        }
+
+        function saveTask() {
+            if (!validateTask()) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            const taskNameInput = document.querySelector('input[placeholder="What needs to be done?"]');
+            const descriptionTextarea = document.querySelector('textarea[placeholder*="details"]');
+            const goalSelect = document.getElementById('goalSelect');
+            
+            const taskName = taskNameInput ? taskNameInput.value.trim() : '';
+            const description = descriptionTextarea ? descriptionTextarea.value.trim() : '';
+            const dueDate = document.getElementById('dueDateInput').value;
+            const dueTime = document.getElementById('dueTimeInput').value;
+            const goalId = (goalLinkEnabled && goalSelect && !goalSelect.disabled) ? goalSelect.value : null;
+            
+            // Combine date and time
+            let dueDateTime = null;
+            if (dueDate) {
+                dueDateTime = dueDate;
+                if (dueTime) {
+                    dueDateTime += 'T' + dueTime;
+                }
+            }
+            
+            const taskData = {
+                name: taskName,
+                description: description || null,
+                type: selectedTaskType,
+                priority: selectedPriority,
+                status: 'pending',
+                dueDate: dueDateTime,
+                goalId: goalId || null,
+                subTasks: collectSubtasks(),
+                typeData: collectTypeSpecificData(),
+                ...collectAdvancedData(),
+                createdAt: new Date().toISOString()
+            };
+            
+            console.log('Saving task:', taskData);
+            
+            // Simulate save success
+            alert('Task created successfully!');
+            closeModal();
+        }
+
+        function closeModal() {
+            document.querySelector('.modal-overlay').style.display = 'none';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add input validation listeners
+            const taskNameInput = document.querySelector('input[placeholder="What needs to be done?"]');
+            taskNameInput.addEventListener('input', validateTask);
+            
+            // Add date input listener for deadline validation
+            document.getElementById('dueDateInput').addEventListener('change', validateTask);
+            
+            // Initialize save button as disabled
+            document.getElementById('saveBtn').disabled = true;
+            
+            // Set today's date as minimum for due date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dueDateInput').min = today;
+        });
+
+        // Prevent modal close when clicking inside modal
+        document.querySelector('.modal').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Close modal when clicking overlay
+        document.querySelector('.modal-overlay').addEventListener('click', closeModal);
+
+        // Handle escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
+                

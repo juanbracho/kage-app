@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1000" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">3:30 PM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1050" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="400" y="195" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Calendar Sync</text>
+  
+  <!-- Main Container -->
+  <rect x="170" y="230" width="460" height="810" fill="#F6F7FB" rx="15" ry="15" />
+  
+  <!-- Connection Status Card -->
+  <rect x="190" y="250" width="420" height="100" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="280" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Connected Calendars</text>
+  
+  <!-- Connected Calendar 1 -->
+  <rect x="210" y="295" width="380" height="45" rx="10" ry="10" fill="#F6F7FB" />
+  <circle cx="230" cy="317" r="15" fill="#4285F4" />
+  <text x="230" y="322" font-family="Arial" font-size="12" text-anchor="middle" fill="#FFFFFF">G</text>
+  <text x="255" y="322" font-family="Arial" font-size="14" fill="#333333">Work (Google Calendar)</text>
+  
+  <rect x="520" y="305" width="50" height="24" rx="12" ry="12" fill="#2A3990" />
+  <circle cx="557" cy="317" r="9" fill="#FFFFFF" />
+  
+  <!-- Calendar Integration Options -->
+  <rect x="190" y="360" width="420" height="180" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="390" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Sync Settings</text>
+  
+  <!-- Setting 1 -->
+  <text x="210" y="420" font-family="Arial" font-size="14" fill="#333333">Import Calendar Events</text>
+  <rect x="520" y="405" width="50" height="24" rx="12" ry="12" fill="#2A3990" />
+  <circle cx="557" cy="417" r="9" fill="#FFFFFF" />
+  
+  <!-- Setting 2 -->
+  <text x="210" y="455" font-family="Arial" font-size="14" fill="#333333">Export Habits & Tasks</text>
+  <rect x="520" y="440" width="50" height="24" rx="12" ry="12" fill="#2A3990" />
+  <circle cx="557" cy="452" r="9" fill="#FFFFFF" />
+  
+  <!-- Setting 3 -->
+  <text x="210" y="490" font-family="Arial" font-size="14" fill="#333333">Detect Conflicts</text>
+  <rect x="520" y="475" width="50" height="24" rx="12" ry="12" fill="#2A3990" />
+  <circle cx="557" cy="487" r="9" fill="#FFFFFF" />
+  
+  <!-- Setting 4 -->
+  <text x="210" y="525" font-family="Arial" font-size="14" fill="#333333">Show Busy/Free Status</text>
+  <rect x="520" y="510" width="50" height="24" rx="12" ry="12" fill="#F6F7FB" />
+  <circle cx="533" cy="522" r="9" fill="#FFFFFF" />
+  
+  <!-- Calendar Display Settings -->
+  <rect x="190" y="550" width="420" height="200" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="580" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Display Settings</text>
+  
+  <!-- Event Types -->
+  <text x="210" y="610" font-family="Arial" font-size="14" fill="#333333">Show in Calendar View:</text>
+  
+  <!-- Type 1 -->
+  <rect x="210" y="625" width="120" height="30" rx="5" ry="5" fill="#F6F7FB" />
+  <circle cx="225" cy="640" r="8" fill="#4285F4" />
+  <text x="240" y="645" font-family="Arial" font-size="12" fill="#333333">Meetings</text>
+  <rect x="290" y="632" width="20" height="16" rx="8" ry="8" fill="#2A3990" />
+  <circle cx="297" cy="640" r="5" fill="#FFFFFF" />
+  
+  <!-- Type 2 -->
+  <rect x="345" y="625" width="120" height="30" rx="5" ry="5" fill="#F6F7FB" />
+  <circle cx="360" cy="640" r="8" fill="#0F9D58" />
+  <text x="375" y="645" font-family="Arial" font-size="12" fill="#333333">Appointments</text>
+  <rect x="425" y="632" width="20" height="16" rx="8" ry="8" fill="#2A3990" />
+  <circle cx="432" cy="640" r="5" fill="#FFFFFF" />
+  
+  <!-- Type 3 -->
+  <rect x="210" y="665" width="120" height="30" rx="5" ry="5" fill="#F6F7FB" />
+  <circle cx="225" cy="680" r="8" fill="#83CE8B" />
+  <text x="240" y="685" font-family="Arial" font-size="12" fill="#333333">Habits</text>
+  <rect x="290" y="672" width="20" height="16" rx="8" ry="8" fill="#2A3990" />
+  <circle cx="297" cy="680" r="5" fill="#FFFFFF" />
+  
+  <!-- Type 4 -->
+  <rect x="345" y="665" width="120" height="30" rx="5" ry="5" fill="#F6F7FB" />
+  <circle cx="360" cy="680" r="8" fill="#F5A623" />
+  <text x="375" y="685" font-family="Arial" font-size="12" fill="#333333">Reminders</text>
+  <rect x="425" y="672" width="20" height="16" rx="8" ry="8" fill="#2A3990" />
+  <circle cx="432" cy="680" r="5" fill="#FFFFFF" />
+  
+  <!-- Type 5 -->
+  <rect x="210" y="705" width="120" height="30" rx="5" ry="5" fill="#F6F7FB" />
+  <circle cx="225" cy="720" r="8" fill="#9F85FF" />
+  <text x="240" y="725" font-family="Arial" font-size="12" fill="#333333">Goals</text>
+  <rect x="290" y="712" width="20" height="16" rx="8" ry="8" fill="#2A3990" />
+  <circle cx="297" cy="720" r="5" fill="#FFFFFF" />
+  
+  <!-- Type 6 -->
+  <rect x="345" y="705" width="120" height="30" rx="5" ry="5" fill="#F6F7FB" />
+  <circle cx="360" cy="720" r="8" fill="#E54D42" />
+  <text x="375" y="725" font-family="Arial" font-size="12" fill="#333333">Focus Time</text>
+  <rect x="425" y="712" width="20" height="16" rx="8" ry="8" fill="#2A3990" />
+  <circle cx="432" cy="720" r="5" fill="#FFFFFF" />
+  
+  <!-- Calendar Preview Header -->
+  <rect x="190" y="760" width="420" height="40" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  <text x="210" y="785" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Unified Calendar Preview</text>
+  
+  <!-- Week View -->
+  <rect x="190" y="810" width="420" height="200" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Calendar Days -->
+  <rect x="210" y="830" width="60" height="30" fill="#F6F7FB" />
+  <text x="240" y="850" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Mon</text>
+  
+  <rect x="270" y="830" width="60" height="30" fill="#F6F7FB" />
+  <text x="300" y="850" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Tue</text>
+  
+  <rect x="330" y="830" width="60" height="30" fill="#2A399022" />
+  <text x="360" y="850" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">Wed</text>
+  <text x="360" y="865" font-family="Arial" font-size="10" text-anchor="middle" fill="#2A3990">Today</text>
+  
+  <rect x="390" y="830" width="60" height="30" fill="#F6F7FB" />
+  <text x="420" y="850" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Thu</text>
+  
+  <rect x="450" y="830" width="60" height="30" fill="#F6F7FB" />
+  <text x="480" y="850" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Fri</text>
+  
+  <line x1="210" y1="865" x2="510" y2="865" stroke="#E0E2E8" stroke-width="1" />
+  
+  <!-- Calendar Events -->
+  <!-- Monday -->
+  <rect x="210" y="875" width="60" height="25" rx="3" ry="3" fill="#4285F4" opacity="0.7" />
+  <text x="240" y="890" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Team Mtg</text>
+  
+  <rect x="210" y="905" width="60" height="25" rx="3" ry="3" fill="#83CE8B" opacity="0.7" />
+  <text x="240" y="920" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Meditation</text>
+  
+  <rect x="210" y="935" width="60" height="25" rx="3" ry="3" fill="#E54D42" opacity="0.7" />
+  <text x="240" y="950" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Focus Time</text>
+  
+  <!-- Tuesday -->
+  <rect x="270" y="875" width="60" height="25" rx="3" ry="3" fill="#0F9D58" opacity="0.7" />
+  <text x="300" y="890" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Dentist</text>
+  
+  <rect x="270" y="935" width="60" height="25" rx="3" ry="3" fill="#83CE8B" opacity="0.7" />
+  <text x="300" y="950" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Reading</text>
+  
+  <!-- Wednesday -->
+  <rect x="330" y="875" width="60" height="25" rx="3" ry="3" fill="#4285F4" opacity="0.7" />
+  <text x="360" y="890" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Client Call</text>
+  
+  <rect x="330" y="905" width="60" height="25" rx="3" ry="3" fill="#83CE8B" opacity="0.7" />
+  <text x="360" y="920" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Workout</text>
+  
+  <rect x="330" y="935" width="60" height="40" rx="3" ry="3" fill="#9F85FF" opacity="0.7" />
+  <text x="360" y="955" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Project X</text>
+  <text x="360" y="965" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Deadline</text>
+  
+  <!-- Thursday -->
+  <rect x="390" y="875" width="60" height="40" rx="3" ry="3" fill="#4285F4" opacity="0.7" />
+  <text x="420" y="895" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Planning</text>
+  <text x="420" y="905" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Session</text>
+  
+  <rect x="390" y="935" width="60" height="25" rx="3" ry="3" fill="#83CE8B" opacity="0.7" />
+  <text x="420" y="950" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Meditation</text>
+  
+  <!-- Friday -->
+  <rect x="450" y="905" width="60" height="25" rx="3" ry="3" fill="#F5A623" opacity="0.7" />
+  <text x="480" y="920" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Reminder</text>
+  
+  <rect x="450" y="935" width="60" height="25" rx="3" ry="3" fill="#E54D42" opacity="0.7" />
+  <text x="480" y="950" font-family="Arial" font-size="8" text-anchor="middle" fill="#FFFFFF">Focus Time</text>
+  
+  <!-- Connect Another Button -->
+  <rect x="190" y="1020" width="420" height="50" rx="25" ry="25" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="400" y="1050" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2A3990">+ Connect Another Calendar</text>
+  
+  <!-- Side Card: Calendar Sources -->
+  <g>
+    <rect x="580" y="250" width="200" height="220" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="280" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Available Calendar Sources</text>
+    
+    <line x1="600" y1="290" x2="760" y2="290" stroke="#E0E2E8" stroke-width="1" />
+    
+    <!-- Source 1 -->
+    <rect x="600" y="305" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="620" cy="325" r="12" fill="#4285F4" />
+    <text x="620" y="329" font-family="Arial" font-size="10" text-anchor="middle" fill="#FFFFFF">G</text>
+    <text x="640" y="325" font-family="Arial" font-size="12" fill="#333333">Google Calendar</text>
+    <circle cx="740" cy="325" r="10" fill="#2A3990" />
+    <text x="740" y="329" font-family="Arial" font-size="12" text-anchor="middle" fill="#FFFFFF">✓</text>
+    
+    <!-- Source 2 -->
+    <rect x="600" y="355" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="620" cy="375" r="12" fill="#0078D7" />
+    <text x="620" y="379" font-family="Arial" font-size="10" text-anchor="middle" fill="#FFFFFF">O</text>
+    <text x="640" y="375" font-family="Arial" font-size="12" fill="#333333">Outlook</text>
+    <circle cx="740" cy="375" r="10" fill="#F6F7FB" stroke="#E0E2E8" stroke-width="1" />
+    
+    <!-- Source 3 -->
+    <rect x="600" y="405" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="620" cy="425" r="12" fill="#FF2D55" />
+    <text x="620" y="429" font-family="Arial" font-size="10" text-anchor="middle" fill="#FFFFFF">A</text>
+    <text x="640" y="425" font-family="Arial" font-size="12" fill="#333333">Apple Calendar</text>
+    <circle cx="740" cy="425" r="10" fill="#F6F7FB" stroke="#E0E2E8" stroke-width="1" />
+    
+    <!-- Add Button -->
+    <rect x="600" y="455" width="160" height="15" />
+    <circle cx="680" cy="455" r="10" fill="#FFFFFF" stroke="#2A3990" stroke-width="1" />
+    <text x="680" y="459" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">+</text>
+  </g>
+  
+  <!-- Side Card: Conflict Management -->
+  <g>
+    <rect x="580" y="480" width="200" height="200" rx="15" ry="15" fill="#FFFFFF" stroke="#E54D42" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="510" font-family="Arial" font-size="14" font-weight="bold" fill="#E54D42">Conflict Management</text>
+    
+    <line x1="600" y1="520" x2="760" y2="520" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="540" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="540">When a conflict is detected:</tspan>
+    </text>
+    
+    <!-- Option 1 -->
+    <rect x="600" y="555" width="160" height="30" rx="15" ry="15" fill="#2A3990" />
+    <text x="610" y="575" font-family="Arial" font-size="12" fill="#FFFFFF">Auto-adjust habit time</text>
+    
+    <!-- Option 2 -->
+    <rect x="600" y="595" width="160" height="30" rx="15" ry="15" fill="#F6F7FB" />
+    <text x="610" y="615" font-family="Arial" font-size="12" fill="#9A9A9A">Ask me to resolve</text>
+    
+    <!-- Option 3 -->
+    <rect x="600" y="635" width="160" height="30" rx="15" ry="15" fill="#F6F7FB" />
+    <text x="610" y="655" font-family="Arial" font-size="12" fill="#9A9A9A">Keep original schedule</text>
+  </g>
+  
+  <!-- Side Card: Privacy Settings -->
+  <g>
+    <rect x="580" y="690" width="200" height="180" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="720" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Privacy Settings</text>
+    
+    <line x1="600" y1="730" x2="760" y2="730" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="750" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="750">What to show in external</tspan>
+      <tspan x="600" y="770">calendars:</tspan>
+    </text>
+    
+    <!-- Setting 1 -->
+    <text x="600" y="795" font-family="Arial" font-size="12" fill="#333333">Habit Names</text>
+    <rect x="730" y="782" width="30" height="18" rx="9" ry="9" fill="#2A3990" />
+    <circle cx="748" cy="791" r="7" fill="#FFFFFF" />
+    
+    <!-- Setting 2 -->
+    <text x="600" y="825" font-family="Arial" font-size="12" fill="#333333">Habit Details</text>
+    <rect x="730" y="812" width="30" height="18" rx="9" ry="9" fill="#F6F7FB" />
+    <circle cx="739" cy="821" r="7" fill="#FFFFFF" />
+    
+    <!-- Setting 3 -->
+    <text x="600" y="855" font-family="Arial" font-size="12" fill="#333333">Goal Information</text>
+    <rect x="730" y="842" width="30" height="18" rx="9" ry="9" fill="#F6F7FB" />
+    <circle cx="739" cy="851" r="7" fill="#FFFFFF" />
+  </g>
+  
+  <!-- Calendar Sync Animation -->
+  <g>
+    <circle cx="400" cy="650" r="30" fill="none" stroke="#2A3990" stroke-width="2" stroke-dasharray="20,5" stroke-dashoffset="25">
+      <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 400 650" to="360 400 650" dur="10s" repeatCount="indefinite" />
+    </circle>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="1150" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1150">Project Kage - Calendar Integration</tspan>
+    <tspan x="400" y="1175">Feature: Unified Calendar Management</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>

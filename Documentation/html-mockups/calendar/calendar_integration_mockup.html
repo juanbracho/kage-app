@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Kage - Calendar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            color: #2d3748;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .icon-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 24px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Calendar Header */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 16px;
+            color: #4a5568;
+        }
+        
+        .nav-btn:hover {
+            background: #edf2f7;
+        }
+        
+        .current-date {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3748;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .view-toggle {
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            padding: 2px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .view-btn {
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            color: #718096;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .view-btn.active {
+            background: #FF7101;
+            color: white;
+        }
+        
+        /* Calendar Views */
+        .calendar-view {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        /* Week View */
+        .week-header {
+            display: grid;
+            grid-template-columns: 60px repeat(7, 1fr);
+            gap: 1px;
+            margin-bottom: 16px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .time-label {
+            background: #f8fafc;
+            padding: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-align: center;
+        }
+        
+        .day-header {
+            background: white;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .day-header.today {
+            background: #FF7101;
+            color: white;
+        }
+        
+        .day-number {
+            display: block;
+            font-size: 16px;
+            margin-top: 2px;
+        }
+        
+        /* Calendar Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(7, 1fr);
+            gap: 1px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .time-slot {
+            background: #f8fafc;
+            padding: 8px 4px;
+            font-size: 11px;
+            color: #6b7280;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .day-column {
+            background: white;
+            position: relative;
+            border-bottom: 1px solid #f3f4f6;
+            height: 60px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .day-column:hover {
+            background: #f9fafb;
+        }
+        
+        .day-column.current-hour {
+            background: #fef3c7;
+        }
+        
+        /* Event Items */
+        .event-item {
+            position: absolute;
+            left: 2px;
+            right: 2px;
+            border-radius: 6px;
+            padding: 4px 6px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .event-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .event-item.task {
+            background: linear-gradient(135deg, #3B82F6, #60A5FA);
+            color: white;
+        }
+        
+        .event-item.habit {
+            background: linear-gradient(135deg, #10B981, #22C55E);
+            color: white;
+        }
+        
+        .event-item.time-block {
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            color: white;
+        }
+        
+        .event-item.goal-deadline {
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+            color: white;
+        }
+        
+        .event-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+        
+        .event-time {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-bottom: 2px;
+        }
+        
+        .event-title {
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        
+        /* Day View */
+        .day-view {
+            display: none;
+        }
+        
+        .day-view.active {
+            display: block;
+        }
+        
+        .day-schedule {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .hour-slot {
+            display: flex;
+            background: white;
+            min-height: 80px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .hour-label {
+            width: 60px;
+            background: #f8fafc;
+            padding: 8px;
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        
+        .hour-content {
+            flex: 1;
+            padding: 8px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .hour-content:hover {
+            background: #f9fafb;
+        }
+        
+        .hour-content.current-hour {
+            background: #fef3c7;
+        }
+        
+        /* Month View */
+        .month-view {
+            display: none;
+        }
+        
+        .month-view.active {
+            display: block;
+        }
+        
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .month-day {
+            background: white;
+            aspect-ratio: 1;
+            padding: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .month-day:hover {
+            background: #f9fafb;
+        }
+        
+        .month-day.today {
+            background: #fef3c7;
+        }
+        
+        .month-day.other-month {
+            color: #a0aec0;
+            background: #f8fafc;
+        }
+        
+        .month-day-number {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .month-events {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+        
+        .month-event {
+            background: #3B82F6;
+            color: white;
+            font-size: 9px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .month-event.habit {
+            background: #10B981;
+        }
+        
+        .month-event.time-block {
+            background: #8B5CF6;
+        }
+        
+        .month-event.goal {
+            background: #F59E0B;
+        }
+        
+        /* Quick Add Panel */
+        .quick-add {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .quick-add-header {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 12px;
+        }
+        
+        .quick-add-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        
+        .quick-add-btn {
+            padding: 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .quick-add-btn:hover {
+            border-color: #FF7101;
+            background: #fef7f0;
+            color: #FF7101;
+        }
+        
+        /* Legend */
+        .calendar-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: relative;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            color: #718096;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .nav-item.active {
+            color: #FF7101;
+        }
+        
+        .nav-item:hover {
+            color: #FF7101;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+        }
+        
+        /* AI Button */
+        .ai-button {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 28px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ai-button:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 20px 16px;
+            }
+            
+            .calendar-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: stretch;
+            }
+            
+            .calendar-nav {
+                justify-content: center;
+            }
+            
+            .current-date {
+                min-width: auto;
+            }
+            
+            .quick-add-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar-legend {
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            🏮 <span>Kage</span>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn">📊</button>
+            <button class="icon-btn">⚙️</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Calendar Header -->
+        <div class="calendar-header">
+            <div class="calendar-nav">
+                <button class="nav-btn" onclick="previousPeriod()">‹</button>
+                <div class="current-date">July 2025</div>
+                <button class="nav-btn" onclick="nextPeriod()">›</button>
+            </div>
+            
+            <div class="view-toggle">
+                <button class="view-btn" onclick="switchView('day')">Day</button>
+                <button class="view-btn active" onclick="switchView('week')">Week</button>
+                <button class="view-btn" onclick="switchView('month')">Month</button>
+            </div>
+        </div>
+
+        <!-- Week View -->
+        <div class="calendar-view week-view active" id="week-view">
+            <div class="week-header">
+                <div class="time-label"></div>
+                <div class="day-header">
+                    <span>Sun</span>
+                    <span class="day-number">29</span>
+                </div>
+                <div class="day-header">
+                    <span>Mon</span>
+                    <span class="day-number">30</span>
+                </div>
+                <div class="day-header">
+                    <span>Tue</span>
+                    <span class="day-number">1</span>
+                </div>
+                <div class="day-header">
+                    <span>Wed</span>
+                    <span class="day-number">2</span>
+                </div>
+                <div class="day-header">
+                    <span>Thu</span>
+                    <span class="day-number">3</span>
+                </div>
+                <div class="day-header today">
+                    <span>Fri</span>
+                    <span class="day-number">4</span>
+                </div>
+                <div class="day-header">
+                    <span>Sat</span>
+                    <span class="day-number">5</span>
+                </div>
+            </div>
+            
+            <div class="calendar-grid">
+                <!-- 6 AM -->
+                <div class="time-slot">6 AM</div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column">
+                    <div class="event-item habit" style="top: 5px; height: 35px;">
+                        <div class="event-time">6:30 AM</div>
+                        <div class="event-title">Morning Run</div>
+                    </div>
+                </div>
+                <div class="day-column"></div>
+                
+                <!-- 7 AM -->
+                <div class="time-slot">7 AM</div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                
+                <!-- 8 AM -->
+                <div class="time-slot">8 AM</div>
+                <div class="day-column"></div>
+                <div class="day-column">
+                    <div class="event-item time-block" style="top: 5px; height: 50px;">
+                        <div class="event-time">8:00 AM</div>
+                        <div class="event-title">Deep Work</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="event-item time-block" style="top: 5px; height: 50px;">
+                        <div class="event-time">8:00 AM</div>
+                        <div class="event-title">Deep Work</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="event-item time-block" style="top: 5px; height: 50px;">
+                        <div class="event-time">8:00 AM</div>
+                        <div class="event-title">Deep Work</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="event-item time-block" style="top: 5px; height: 50px;">
+                        <div class="event-time">8:00 AM</div>
+                        <div class="event-title">Deep Work</div>
+                    </div>
+                </div>
+                <div class="day-column current-hour">
+                    <div class="event-item time-block" style="top: 5px; height: 50px;">
+                        <div class="event-time">8:00 AM</div>
+                        <div class="event-title">Deep Work</div>
+                    </div>
+                </div>
+                <div class="day-column"></div>
+                
+                <!-- 9 AM -->
+                <div class="time-slot">9 AM</div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                
+                <!-- 10 AM -->
+                <div class="time-slot">10 AM</div>
+                <div class="day-column"></div>
+                <div class="day-column">
+                    <div class="event-item task" style="top: 10px; height: 40px;">
+                        <div class="event-time">10:30 AM</div>
+                        <div class="event-title">Team Meeting</div>
+                    </div>
+                </div>
+                <div class="day-column"></div>
+                <div class="day-column">
+                    <div class="event-item task" style="top: 10px; height: 40px;">
+                        <div class="event-time">10:30 AM</div>
+                        <div class="event-title">Client Call</div>
+                    </div>
+                </div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                
+                <!-- 11 AM -->
+                <div class="time-slot">11 AM</div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                
+                <!-- 12 PM -->
+                <div class="time-slot">12 PM</div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                
+                <!-- 1 PM -->
+                <div class="time-slot">1 PM</div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                
+                <!-- 2 PM -->
+                <div class="time-slot">2 PM</div>
+                <div class="day-column"></div>
+                <div class="day-column">
+                    <div class="event-item task" style="top: 5px; height: 50px;">
+                        <div class="event-time">2:00 PM</div>
+                        <div class="event-title">Project Review</div>
+                    </div>
+                </div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column">
+                    <div class="event-item task" style="top: 5px; height: 50px;">
+                        <div class="event-time">2:00 PM</div>
+                        <div class="event-title">Code Review</div>
+                    </div>
+                </div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                
+                <!-- 3 PM -->
+                <div class="time-slot">3 PM</div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                
+                <!-- 8 PM -->
+                <div class="time-slot">8 PM</div>
+                <div class="day-column">
+                    <div class="event-item habit" style="top: 5px; height: 35px;">
+                        <div class="event-time">8:00 PM</div>
+                        <div class="event-title">Journal</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="event-item habit" style="top: 5px; height: 35px;">
+                        <div class="event-time">8:00 PM</div>
+                        <div class="event-title">Journal</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="event-item habit" style="top: 5px; height: 35px;">
+                        <div class="event-time">8:00 PM</div>
+                        <div class="event-title">Journal</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="event-item habit" style="top: 5px; height: 35px;">
+                        <div class="event-time">8:00 PM</div>
+                        <div class="event-title">Journal</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="event-item habit" style="top: 5px; height: 35px;">
+                        <div class="event-time">8:00 PM</div>
+                        <div class="event-title">Journal</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="event-item habit" style="top: 5px; height: 35px;">
+                        <div class="event-time">8:00 PM</div>
+                        <div class="event-title">Journal</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="event-item habit" style="top: 5px; height: 35px;">
+                        <div class="event-time">8:00 PM</div>
+                        <div class="event-title">Journal</div>
+                    </div>
+                </div>
+                
+                <!-- 9 PM -->
+                <div class="time-slot">9 PM</div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+                <div class="day-column"></div>
+            </div>
+        </div>
+
+        <!-- Day View -->
+        <div class="calendar-view day-view" id="day-view">
+            <div class="day-schedule">
+                <div class="hour-slot">
+                    <div class="hour-label">6 AM</div>
+                    <div class="hour-content">
+                        <div class="event-item habit" style="top: 20px; height: 35px;">
+                            <div class="event-time">6:30 AM</div>
+                            <div class="event-title">Morning Run - 30 minutes</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hour-slot">
+                    <div class="hour-label">7 AM</div>
+                    <div class="hour-content"></div>
+                </div>
+                
+                <div class="hour-slot">
+                    <div class="hour-label">8 AM</div>
+                    <div class="hour-content current-hour">
+                        <div class="event-item time-block" style="top: 5px; height: 60px;">
+                            <div class="event-time">8:00 - 9:00 AM</div>
+                            <div class="event-title">Deep Work Session</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hour-slot">
+                    <div class="hour-label">9 AM</div>
+                    <div class="hour-content"></div>
+                </div>
+                
+                <div class="hour-slot">
+                    <div class="hour-label">10 AM</div>
+                    <div class="hour-content">
+                        <div class="event-item task" style="top: 20px; height: 35px;">
+                            <div class="event-time">10:30 AM</div>
+                            <div class="event-title">Team Meeting</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hour-slot">
+                    <div class="hour-label">11 AM</div>
+                    <div class="hour-content"></div>
+                </div>
+                
+                <div class="hour-slot">
+                    <div class="hour-label">12 PM</div>
+                    <div class="hour-content"></div>
+                </div>
+                
+                <div class="hour-slot">
+                    <div class="hour-label">1 PM</div>
+                    <div class="hour-content"></div>
+                </div>
+                
+                <div class="hour-slot">
+                    <div class="hour-label">2 PM</div>
+                    <div class="hour-content">
+                        <div class="event-item task" style="top:

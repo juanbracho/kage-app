@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Kage - Journal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            color: #2d3748;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .icon-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 24px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .add-btn {
+            width: 48px;
+            height: 48px;
+            border: none;
+            background: linear-gradient(135deg, #FF7101, #FF8534);
+            border-radius: 16px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(255, 113, 1, 0.3);
+        }
+        
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 113, 1, 0.4);
+        }
+        
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e9ecef;
+            overflow-x: auto;
+        }
+        
+        .filter-tab {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: #718096;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+        
+        .filter-tab.active {
+            background: #FF7101;
+            color: white;
+            box-shadow: 0 2px 8px rgba(255, 113, 1, 0.3);
+        }
+        
+        .filter-tab:not(.active):hover {
+            color: #4a5568;
+            background: #f7fafc;
+        }
+        
+        /* Quick Capture */
+        .quick-capture {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .quick-capture-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .quick-capture-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #FF7101, #FF8534);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .quick-capture-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .quick-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #2d3748;
+            background: #f8fafc;
+            transition: all 0.2s;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .quick-input:focus {
+            outline: none;
+            border-color: #FF7101;
+            background: white;
+        }
+        
+        .quick-input::placeholder {
+            color: #a0aec0;
+        }
+        
+        .quick-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+        
+        .link-options {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .link-btn {
+            padding: 6px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            font-size: 12px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .link-btn:hover {
+            border-color: #FF7101;
+            color: #FF7101;
+        }
+        
+        .link-btn.active {
+            background: #FF7101;
+            border-color: #FF7101;
+            color: white;
+        }
+        
+        .save-btn {
+            padding: 8px 16px;
+            background: #FF7101;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .save-btn:hover {
+            background: #e55a00;
+        }
+        
+        /* Journal Entries */
+        .journal-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .journal-entry {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .journal-entry:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .entry-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .entry-date {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .entry-time {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+        
+        .entry-type {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .entry-type.manual {
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+        
+        .entry-type.auto-habit {
+            background: #f0fdf4;
+            color: #166534;
+        }
+        
+        .entry-type.auto-task {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .entry-type.auto-goal {
+            background: #fdf2f8;
+            color: #be185d;
+        }
+        
+        .entry-content {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .entry-preview {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .entry-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .entry-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .entry-link.goal {
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+        
+        .entry-link.task {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .entry-link.habit {
+            background: #f0fdf4;
+            color: #166534;
+        }
+        
+        .entry-link:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Auto-prompt Entries */
+        .auto-prompt {
+            border-left: 4px solid #FF7101;
+            background: linear-gradient(135deg, #fef7f0, #ffffff);
+        }
+        
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .prompt-icon {
+            width: 20px;
+            height: 20px;
+            background: #FF7101;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+        }
+        
+        .prompt-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #FF7101;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .prompt-question {
+            font-style: italic;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        
+        /* Mood Tracker */
+        .mood-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+        }
+        
+        .mood-header {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        
+        .mood-rating {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .mood-emoji {
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.3;
+        }
+        
+        .mood-emoji.selected {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        
+        .mood-emoji:hover {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+        
+        /* Statistics Summary */
+        .journal-stats {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .stats-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF7101;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #6b7280;
+        }
+        
+        .empty-description {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-bottom: 24px;
+        }
+        
+        .empty-cta {
+            padding: 12px 24px;
+            background: #FF7101;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .empty-cta:hover {
+            background: #e55a00;
+            transform: translateY(-1px);
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: relative;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            color: #718096;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .nav-item.active {
+            color: #FF7101;
+        }
+        
+        .nav-item:hover {
+            color: #FF7101;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+        }
+        
+        /* AI Button */
+        .ai-button {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 28px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ai-button:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 20px 16px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            
+            .link-options {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            🏮 <span>Kage</span>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn">📊</button>
+            <button class="icon-btn">⚙️</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Journal</h1>
+            <button class="add-btn">+</button>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="switchFilter('all')">
+                All
+            </button>
+            <button class="filter-tab" onclick="switchFilter('manual')">
+                Personal
+            </button>
+            <button class="filter-tab" onclick="switchFilter('goals')">
+                Goals
+            </button>
+            <button class="filter-tab" onclick="switchFilter('habits')">
+                Habits
+            </button>
+            <button class="filter-tab" onclick="switchFilter('tasks')">
+                Tasks
+            </button>
+        </div>
+
+        <!-- Quick Capture -->
+        <div class="quick-capture">
+            <div class="quick-capture-header">
+                <div class="quick-capture-icon">✍️</div>
+                <div class="quick-capture-title">Quick Reflection</div>
+            </div>
+            <textarea class="quick-input" placeholder="How are you feeling? What's on your mind? Any insights from today?"></textarea>
+            <div class="quick-actions">
+                <div class="link-options">
+                    <button class="link-btn" onclick="toggleLink(this)">🎯 Goal</button>
+                    <button class="link-btn" onclick="toggleLink(this)">✅ Task</button>
+                    <button class="link-btn" onclick="toggleLink(this)">🔄 Habit</button>
+                </div>
+                <button class="save-btn">Save Entry</button>
+            </div>
+        </div>
+
+        <!-- Journal Statistics -->
+        <div class="journal-stats">
+            <div class="stats-header">
+                📈 This Week's Insights
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Entries</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">😊</div>
+                    <div class="stat-label">Avg Mood</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journal Entries -->
+        <div class="journal-entries">
+            <!-- Today's Entry -->
+            <div class="journal-entry">
+                <div class="entry-header">
+                    <div class="entry-meta">
+                        <div class="entry-date">Today</div>
+                        <div class="entry-time">6:30 PM</div>
+                    </div>
+                    <div class="entry-type manual">Personal</div>
+                </div>
+                <div class="entry-content">
+                    <div class="entry-preview">
+                        Had a really productive day! Completed my morning workout and felt energized throughout. The new project is challenging but exciting. Looking forward to tomorrow's team meeting to share our progress.
+                    </div>
+                </div>
+                <div class="entry-links">
+                    <a href="#" class="entry-link habit">🏃 Morning Workout</a>
+                    <a href="#" class="entry-link goal">🚀 Launch Side Project</a>
+                </div>
+                <div class="mood-section">
+                    <div class="mood-header">How was your day?</div>
+                    <div class="mood-rating">
+                        <span class="mood-emoji">😢</span>
+                        <span class="mood-emoji">😕</span>
+                        <span class="mood-emoji">😐</span>
+                        <span class="mood-emoji selected">😊</span>
+                        <span class="mood-emoji">😍</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auto-prompted Entry -->
+            <div class="journal-entry auto-prompt">
+                <div class="entry-header">
+                    <div class="entry-meta">
+                        <div class="entry-date">Yesterday</div>
+                        <div class="entry-time">8:15 PM</div>
+                    </div>
+                    <div class="entry-type auto-habit">Habit Reflection</div>
+                </div>
+                <div class="prompt-header">
+                    <div class="prompt-icon">🤖</div>
+                    <div class="prompt-label">Auto-Prompt</div>
+                </div>
+                <div class="prompt-question">"You completed your 25th day of daily reading! How has this habit impacted your routine?"</div>
+                <div class="entry-content">
+                    <div class="entry-preview">
+                        The daily reading habit has been transformative! I'm finishing books much faster and my focus has improved significantly. Reading before bed helps me wind down and sleep better. Definitely want to keep this going.
+                    </div>
+                </div>
+                <div class="entry-links">
+                    <a href="#" class="entry-link habit">📚 Daily Reading</a>
+                    <a href="#" class="entry-link goal">📚 Learn Spanish</a>
+                </div>
+            </div>
+
+            <!-- Task Completion Entry -->
+            <div class="journal-entry">
+                <div class="entry-header">
+                    <div class="entry-meta">
+                        <div class="entry-date">July 2</div>
+                        <div class="entry-time">3:45 PM</div>
+                    </div>
+                    <div class="entry-type auto-task">Task Complete</div>
+                </div>
+                <div class="prompt-header">
+                    <div class="prompt-icon">✅</div>
+                    <div class="prompt-label">Completion Reflection</div>
+                </div>
+                <div class="prompt-question">"You just completed 'Submit project proposal'. How did it go?"</div>
+                <div class="entry-content">
+                    <div class="entry-preview">
+                        Finally submitted the Q4 proposal! It took longer than expected but I'm happy with the result. The budget analysis was challenging but I learned a lot about project costing. Team feedback was very positive.
+                    </div>
+                </div>
+                <div class="entry-links">
+                    <a href="#" class="entry-link task">📋 Submit project proposal</a>
+                    <a href="#" class="entry-link goal">🚀 Launch Side Project</a>
+                </div>
+            </div>
+
+            <!-- Goal Progress Entry -->
+            <div class="journal-entry">
+                <div class="entry-header">
+                    <div class="entry-meta">
+                        <div class="entry-date">July 1</div>
+                        <div class="entry-time">9:20 AM</div>
+                    </div>
+                    <div class="entry-type auto-goal">Goal Review</div>
+                </div>
+                <div class="prompt-header">
+                    <div class="prompt-icon">🎯</div>
+                    <div class="prompt-label">Weekly Review</div>
+                </div>
+                <div class="prompt-question">"Your 'Get Fit & Healthy' goal reached 72% progress. What's working well?"</div>
+                <div class="entry-content">
+                    <div class="entry-preview">
+                        The morning workout routine is really clicking! Having a consistent 6:30 AM schedule makes it feel automatic. The gym membership was worth it - much better equipment than home workouts. Water intake could still improve.
+                    </div>
+                </div>
+                <div class="entry-links">
+                    <a href="#" class="entry-link goal">🏃 Get Fit & Healthy</a>
+                    <a href="#" class="entry-link habit">🏃 Morning Workout</a>
+                    <a href="#" class="entry-link habit">💧 Drink Water</a>
+                </div>
+            </div>
+
+            <!-- Personal Reflection -->
+            <div class="journal-entry">
+                <div class="entry-header">
+                    <div class="entry-meta">
+                        <div class="entry-date">June 30</div>
+                        <div class="entry-time">10:30 PM</div>
+                    </div>
+                    <div class="entry-type manual">Personal</div>
+                </div>
+                <div class="entry-content">
+                    <div class="entry-preview">
+                        Reflecting on the month - so much growth! The habit tracking is really working. I feel more intentional about my days and goals don't feel as overwhelming when broken down into daily actions. Excited for July!
+                    </div>
+                </div>
+                <div class="mood-section">
+                    <div class="mood-header">How was your day?</div>
+                    <div class="mood-rating">
+                        <span class="mood-emoji">😢</span>
+                        <span class="mood-emoji">😕</span>
+                        <span class="mood-emoji">😐</span>
+                        <span class="mood-emoji">😊</span>
+                        <span class="mood-emoji selected">😍</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📊</span>
+            Dashboard
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🎯</span>
+            Goals
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">✅</span>
+            Tasks
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🔄</span>
+            Habits
+        </a>
+        <a href="#" class="nav-item active">
+            <span class="nav-icon">📝</span>
+            Journal
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📅</span>
+            Calendar
+        </a>
+        
+        <!-- AI Button (Premium) -->
+        <button class="ai-button">🤖</button>
+    </nav>
+
+    <script>
+        function switchFilter(filter) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            console.log('Switched to filter:', filter);
+        }
+        
+        function toggleLink(button) {
+            button.classList.toggle('active');
+        }
+        
+        // Mood selection
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('mood-emoji')) {
+                const moodContainer = e.target.parentNode;
+                moodContainer.querySelectorAll('.mood-emoji').forEach(emoji => {
+                    emoji.classList.remove('selected');
+                });
+                e.target.classList.add('selected');
+            }
+        });
+    </script>
+</body>
+</html>

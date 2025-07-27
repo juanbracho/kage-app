@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1000" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">3:45 PM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1050" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="400" y="195" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Challenges</text>
+  
+  <!-- Main Container -->
+  <rect x="170" y="230" width="460" height="810" fill="#F6F7FB" rx="15" ry="15" />
+  
+  <!-- Your Challenges Card -->
+  <rect x="190" y="250" width="420" height="100" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="280" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Your Active Challenges</text>
+  
+  <!-- Stats -->
+  <rect x="210" y="295" width="125" height="40" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="272.5" y="320" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2A3990">3</text>
+  <text x="272.5" y="335" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">Current Challenges</text>
+  
+  <rect x="342.5" y="295" width="125" height="40" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="405" y="320" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#83CE8B">92%</text>
+  <text x="405" y="335" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">Completion Rate</text>
+  
+  <rect x="475" y="295" width="125" height="40" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="537.5" y="320" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#F5A623">🏆5</text>
+  <text x="537.5" y="335" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">Achievements</text>
+  
+  <!-- Active Challenge 1 -->
+  <rect x="190" y="360" width="420" height="160" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Challenge Header -->
+  <rect x="190" y="360" width="420" height="60" rx="15" ry="15" fill="#FFFFFF" />
+  
+  <circle cx="230" cy="390" r="25" fill="#FFFFFF" stroke="#F5A623" stroke-width="2" />
+  <text x="230" y="395" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#F5A623">🧘</text>
+  
+  <text x="265" y="383" font-family="Arial" font-size="16" font-weight="bold" fill="#333333">May Meditation Challenge</text>
+  <text x="265" y="403" font-family="Arial" font-size="12" fill="#9A9A9A">Day 16 of 30 • 25 participants</text>
+  
+  <!-- Progress Bar -->
+  <rect x="210" y="430" width="380" height="10" rx="5" ry="5" fill="#F6F7FB" />
+  <rect x="210" y="430" width="203" height="10" rx="5" ry="5" fill="#F5A623" />
+  <text x="210" y="455" font-family="Arial" font-size="12" fill="#333333">53% Complete</text>
+  <text x="590" y="455" font-family="Arial" font-size="12" text-anchor="end" fill="#333333">14 days remaining</text>
+  
+  <!-- Challenge Stats -->
+  <rect x="210" y="470" width="120" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="270" y="490" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#2A3990">16</text>
+  <text x="270" y="505" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">Day Streak</text>
+  
+  <rect x="340" y="470" width="120" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="400" y="490" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#2A3990">3rd</text>
+  <text x="400" y="505" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">Rank</text>
+  
+  <rect x="470" y="470" width="120" height="40" rx="5" ry="5" fill="#2A3990" />
+  <text x="530" y="495" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">View Details</text>
+  
+  <!-- Active Challenge 2 -->
+  <rect x="190" y="530" width="420" height="160" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Challenge Header -->
+  <rect x="190" y="530" width="420" height="60" rx="15" ry="15" fill="#FFFFFF" />
+  
+  <circle cx="230" cy="560" r="25" fill="#FFFFFF" stroke="#83CE8B" stroke-width="2" />
+  <text x="230" y="565" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#83CE8B">📱</text>
+  
+  <text x="265" y="553" font-family="Arial" font-size="16" font-weight="bold" fill="#333333">Digital Detox Weekend</text>
+  <text x="265" y="573" font-family="Arial" font-size="12" fill="#9A9A9A">Day 2 of 3 • 42 participants</text>
+  
+  <!-- Progress Bar -->
+  <rect x="210" y="600" width="380" height="10" rx="5" ry="5" fill="#F6F7FB" />
+  <rect x="210" y="600" width="253" height="10" rx="5" ry="5" fill="#83CE8B" />
+  <text x="210" y="625" font-family="Arial" font-size="12" fill="#333333">67% Complete</text>
+  <text x="590" y="625" font-family="Arial" font-size="12" text-anchor="end" fill="#333333">1 day remaining</text>
+  
+  <!-- Challenge Stats -->
+  <rect x="210" y="640" width="120" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="270" y="660" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#2A3990">2</text>
+  <text x="270" y="675" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">Day Streak</text>
+  
+  <rect x="340" y="640" width="120" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="400" y="660" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#2A3990">1st</text>
+  <text x="400" y="675" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">Rank</text>
+  
+  <rect x="470" y="640" width="120" height="40" rx="5" ry="5" fill="#2A3990" />
+  <text x="530" y="665" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">View Details</text>
+  
+  <!-- Discover New Challenges -->
+  <rect x="190" y="700" width="420" height="320" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="730" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Discover New Challenges</text>
+  
+  <!-- Filter Tabs -->
+  <rect x="210" y="745" width="110" height="30" rx="15" ry="15" fill="#2A3990" />
+  <text x="265" y="765" font-family="Arial" font-size="12" text-anchor="middle" fill="#FFFFFF">For You</text>
+  
+  <rect x="330" y="745" width="110" height="30" rx="15" ry="15" fill="#F6F7FB" />
+  <text x="385" y="765" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Popular</text>
+  
+  <rect x="450" y="745" width="110" height="30" rx="15" ry="15" fill="#F6F7FB" />
+  <text x="505" y="765" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">New</text>
+  
+  <!-- Challenge suggestion 1 -->
+  <rect x="210" y="785" width="380" height="100" rx="10" ry="10" fill="#F6F7FB" />
+  <circle cx="245" cy="835" r="25" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="245" y="840" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2A3990">🏃</text>
+  
+  <text x="280" y="810" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">June Running Challenge</text>
+  <text x="280" y="830" font-family="Arial" font-size="12" fill="#9A9A9A">Starts in 12 days • 3 of your connections</text>
+  <text x="280" y="850" font-family="Arial" font-size="12" fill="#9A9A9A">Beginner friendly • 30-day goal</text>
+  
+  <rect x="540" y="820" width="30" height="30" rx="15" ry="15" fill="#2A3990" />
+  <text x="555" y="838" font-family="Arial" font-size="20" text-anchor="middle" fill="#FFFFFF">+</text>
+  
+  <!-- Challenge suggestion 2 -->
+  <rect x="210" y="895" width="380" height="100" rx="10" ry="10" fill="#F6F7FB" />
+  <circle cx="245" cy="945" r="25" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="245" y="950" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2A3990">✍️</text>
+  
+  <text x="280" y="920" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Daily Journaling Sprint</text>
+  <text x="280" y="940" font-family="Arial" font-size="12" fill="#9A9A9A">Starts tomorrow • 78 participants</text>
+  <text x="280" y="960" font-family="Arial" font-size="12" fill="#9A9A9A">Moderate • 14-day goal</text>
+  
+  <rect x="540" y="930" width="30" height="30" rx="15" ry="15" fill="#2A3990" />
+  <text x="555" y="948" font-family="Arial" font-size="20" text-anchor="middle" fill="#FFFFFF">+</text>
+  
+  <!-- Create Challenge Button -->
+  <rect x="190" y="1030" width="420" height="50" rx="25" ry="25" fill="#2A3990" />
+  <text x="400" y="1060" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Create Your Own Challenge</text>
+  
+  <!-- Side Card: Challenge Leaderboard -->
+  <g>
+    <rect x="580" y="250" width="200" height="280" rx="15" ry="15" fill="#FFFFFF" stroke="#F5A623" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="280" font-family="Arial" font-size="14" font-weight="bold" fill="#F5A623">May Meditation Leaders</text>
+    
+    <line x1="600" y1="290" x2="760" y2="290" stroke="#E0E2E8" stroke-width="1" />
+    
+    <!-- First Place -->
+    <rect x="600" y="305" width="160" height="45" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="620" cy="327.5" r="15" fill="#F5A623" />
+    <text x="620" y="332.5" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFFFFF">1</text>
+    <text x="645" y="322.5" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Sarah K.</text>
+    <text x="645" y="340.5" font-family="Arial" font-size="12" fill="#9A9A9A">21-day streak</text>
+    
+    <!-- Second Place -->
+    <rect x="600" y="360" width="160" height="45" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="620" cy="382.5" r="15" fill="#C0C0C0" />
+    <text x="620" y="387.5" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFFFFF">2</text>
+    <text x="645" y="377.5" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Michael T.</text>
+    <text x="645" y="395.5" font-family="Arial" font-size="12" fill="#9A9A9A">18-day streak</text>
+    
+    <!-- Third Place (You) -->
+    <rect x="600" y="415" width="160" height="45" rx="5" ry="5" fill="#2A399022" />
+    <circle cx="620" cy="437.5" r="15" fill="#CD7F32" />
+    <text x="620" y="442.5" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFFFFF">3</text>
+    <text x="645" y="432.5" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">You</text>
+    <text x="645" y="450.5" font-family="Arial" font-size="12" fill="#9A9A9A">16-day streak</text>
+    
+    <!-- Fourth Place -->
+    <rect x="600" y="470" width="160" height="45" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="620" cy="492.5" r="15" fill="#F6F7FB" stroke="#333333" stroke-width="1" />
+    <text x="620" y="497.5" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">4</text>
+    <text x="645" y="487.5" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Jamie B.</text>
+    <text x="645" y="505.5" font-family="Arial" font-size="12" fill="#9A9A9A">14-day streak</text>
+  </g>
+  
+  <!-- Side Card: Challenge Details -->
+  <g>
+    <rect x="580" y="540" width="200" height="220" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="570" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Challenge Details</text>
+    
+    <line x1="600" y1="580" x2="760" y2="580" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="600" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="600">May Meditation Challenge</tspan>
+    </text>
+    
+    <!-- Details -->
+    <rect x="600" y="615" width="160" height="30" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="610" y="635" font-family="Arial" font-size="12" fill="#333333">Goal: </text>
+    <text x="645" y="635" font-family="Arial" font-size="12" fill="#2A3990">10+ min daily meditation</text>
+    
+    <rect x="600" y="655" width="160" height="30" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="610" y="675" font-family="Arial" font-size="12" fill="#333333">Duration: </text>
+    <text x="665" y="675" font-family="Arial" font-size="12" fill="#2A3990">30 days</text>
+    
+    <rect x="600" y="695" width="160" height="30" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="610" y="715" font-family="Arial" font-size="12" fill="#333333">Difficulty: </text>
+    <text x="665" y="715" font-family="Arial" font-size="12" fill="#2A3990">Moderate</text>
+    
+    <rect x="600" y="735" width="160" height="30" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="610" y="755" font-family="Arial" font-size="12" fill="#333333">Badge: </text>
+    <text x="665" y="755" font-family="Arial" font-size="12" fill="#2A3990">Zen Master 🧘</text>
+  </g>
+  
+  <!-- Side Card: Achievement Progress -->
+  <g>
+    <rect x="580" y="770" width="200" height="250" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="800" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Your Achievements</text>
+    
+    <line x1="600" y1="810" x2="760" y2="810" stroke="#E0E2E8" stroke-width="1" />
+    
+    <!-- Achievement 1 -->
+    <rect x="600" y="825" width="160" height="45" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="620" cy="847.5" r="15" fill="#F5A623" />
+    <text x="620" y="852.5" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">🏆</text>
+    <text x="645" y="842.5" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Streak Master</text>
+    <text x="645" y="857.5" font-family="Arial" font-size="10" fill="#9A9A9A">Complete 14-day streak</text>
+    
+    <!-- Achievement 2 -->
+    <rect x="600" y="880" width="160" height="45" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="620" cy="902.5" r="15" fill="#F5A623" />
+    <text x="620" y="907.5" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">🏆</text>
+    <text x="645" y="897.5" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Community Leader</text>
+    <text x="645" y="912.5" font-family="Arial" font-size="10" fill="#9A9A9A">Rank in top 3 positions</text>
+    
+    <!-- Achievement 3 (In Progress) -->
+    <rect x="600" y="935" width="160" height="45" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="620" cy="957.5" r="15" fill="#F6F7FB" stroke="#F5A623" stroke-width="1" stroke-dasharray="3,2" />
+    <text x="620" y="962.5" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#F5A623">🧘</text>
+    <text x="645" y="952.5" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Zen Master</text>
+    <text x="645" y="967.5" font-family="Arial" font-size="10" fill="#9A9A9A">53% complete</text>
+  </g>
+  
+  <!-- Today's Challenge Alert -->
+  <g>
+    <rect x="270" y="170" width="260" height="80" rx="10" ry="10" fill="#FFFFFF" filter="url(#shadow)" />
+    <rect x="270" y="170" width="260" height="25" rx="10" ry="10" fill="#83CE8B" />
+    <text x="290" y="188" font-family="Arial" font-size="12" fill="#FFFFFF">Today's Challenge</text>
+    <text x="510" y="188" font-family="Arial" font-size="12" text-anchor="end" fill="#FFFFFF">now</text>
+    <text x="290" y="215" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Complete 10 minutes of meditation</text>
+    <text x="290" y="235" font-family="Arial" font-size="12" fill="#9A9A9A">Tap to record completion →</text>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="1150" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1150">Project Kage - Challenge Participation</tspan>
+    <tspan x="400" y="1175">Feature: Structured Goal-Based Activities</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>

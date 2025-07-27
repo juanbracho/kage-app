@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Kage - Goal Detail</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #4a5568;
+            transition: all 0.2s;
+        }
+        
+        .back-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            color: #2d3748;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 16px;
+            color: #4a5568;
+        }
+        
+        .icon-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        
+        .icon-btn.edit {
+            background: #FF7101;
+            color: white;
+        }
+        
+        .icon-btn.edit:hover {
+            background: #e55a00;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 24px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Goal Header */
+        .goal-header {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e9ecef;
+        }
+        
+        .goal-title-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .goal-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #10B981, #22C55E);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .goal-title-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .goal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .goal-description {
+            font-size: 16px;
+            color: #718096;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .goal-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #718096;
+        }
+        
+        .meta-icon {
+            font-size: 16px;
+        }
+        
+        .meta-value {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        /* Progress Section */
+        .progress-section {
+            background: linear-gradient(135deg, #10B981, #22C55E);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .progress-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .progress-percentage {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 72%;
+        }
+        
+        .progress-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            text-align: center;
+        }
+        
+        .progress-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .progress-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .progress-stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        /* Section Headers */
+        .section {
+            margin-bottom: 24px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-count {
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .add-item-btn {
+            padding: 8px 16px;
+            background: #FF7101;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .add-item-btn:hover {
+            background: #e55a00;
+            transform: translateY(-1px);
+        }
+        
+        /* Item Cards */
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .item-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .item-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .item-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .item-status {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .item-status.completed {
+            background: #10B981;
+            border-color: #10B981;
+            color: white;
+        }
+        
+        .item-name {
+            flex: 1;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .item-meta {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+        
+        .item-description {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.4;
+        }
+        
+        /* Habit specific styles */
+        .habit-item .item-status {
+            border-color: #3B82F6;
+        }
+        
+        .habit-item .item-status.completed {
+            background: #3B82F6;
+            border-color: #3B82F6;
+        }
+        
+        .habit-streak {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #FF7101;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        /* Journal Section */
+        .journal-section {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .journal-entry {
+            padding: 16px;
+            border: 1px solid #f1f5f9;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .journal-entry:last-child {
+            margin-bottom: 0;
+        }
+        
+        .journal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .journal-date {
+            font-size: 12px;
+            color: #a0aec0;
+            font-weight: 600;
+        }
+        
+        .journal-content {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: relative;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            color: #718096;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .nav-item.active {
+            color: #FF7101;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+        }
+        
+        /* AI Button */
+        .ai-button {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 28px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 20px 16px;
+            }
+            
+            .goal-header {
+                padding: 20px;
+            }
+            
+            .goal-title-section {
+                gap: 12px;
+            }
+            
+            .goal-icon {
+                width: 56px;
+                height: 56px;
+                font-size: 28px;
+            }
+            
+            .progress-stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="back-btn">←</button>
+            <div class="logo">
+                🏮 <span>Kage</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn">📊</button>
+            <button class="icon-btn edit">✏️</button>
+            <button class="icon-btn">⋯</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Goal Header -->
+        <div class="goal-header">
+            <div class="goal-title-section">
+                <div class="goal-icon">🏃</div>
+                <div class="goal-title-info">
+                    <h1 class="goal-title">Get Fit & Healthy</h1>
+                    <p class="goal-description">Build sustainable exercise habits and improve overall wellness through daily activities and mindful nutrition choices.</p>
+                    <div class="goal-meta">
+                        <div class="meta-item">
+                            <span class="meta-icon">📅</span>
+                            <span class="meta-value">Dec 31, 2025</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">⏱️</span>
+                            <span class="meta-value">178 days left</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">📈</span>
+                            <span class="meta-value">Created Jun 26</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Section -->
+            <div class="progress-section">
+                <div class="progress-header">
+                    <span class="progress-title">Overall Progress</span>
+                    <span class="progress-percentage">72%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-stats">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value">4/6</div>
+                        <div class="progress-stat-label">Tasks Done</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value">85%</div>
+                        <div class="progress-stat-label">Habit Rate</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value">12</div>
+                        <div class="progress-stat-label">Day Streak</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    ✅ Linked Tasks
+                    <span class="section-count">6</span>
+                </h2>
+                <button class="add-item-btn">+ Add Task</button>
+            </div>
+            
+            <div class="item-list">
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-status completed">✓</div>
+                        <div class="item-name">Join a gym</div>
+                        <div class="item-meta">Completed 2 days ago</div>
+                    </div>
+                    <div class="item-description">Research and sign up for a local gym with good equipment and convenient hours</div>
+                </div>
+                
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-status completed">✓</div>
+                        <div class="item-name">Buy workout clothes</div>
+                        <div class="item-meta">Completed 5 days ago</div>
+                    </div>
+                </div>
+                
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-status completed">✓</div>
+                        <div class="item-name">Download fitness app</div>
+                        <div class="item-meta">Completed 1 week ago</div>
+                    </div>
+                </div>
+                
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-status completed">✓</div>
+                        <div class="item-name">Set up meal planning</div>
+                        <div class="item-meta">Completed 1 week ago</div>
+                    </div>
+                    <div class="item-description">Create a weekly meal planning system with healthy recipes</div>
+                </div>
+                
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-status"></div>
+                        <div class="item-name">Get fitness assessment</div>
+                        <div class="item-meta">Due tomorrow</div>
+                    </div>
+                    <div class="item-description">Book appointment with trainer for baseline fitness assessment</div>
+                </div>
+                
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-status"></div>
+                        <div class="item-name">Buy supplements</div>
+                        <div class="item-meta">Due next week</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Habits Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    🔄 Supporting Habits
+                    <span class="section-count">3</span>
+                </h2>
+                <button class="add-item-btn">+ Add Habit</button>
+            </div>
+            
+            <div class="item-list">
+                <div class="item-card habit-item">
+                    <div class="item-header">
+                        <div class="item-status completed">✓</div>
+                        <div class="item-name">Morning workout</div>
+                        <div class="habit-streak">🔥 12 day streak</div>
+                    </div>
+                    <div class="item-description">30 minutes of exercise every morning</div>
+                </div>
+                
+                <div class="item-card habit-item">
+                    <div class="item-header">
+                        <div class="item-status completed">✓</div>
+                        <div class="item-name">Drink 8 glasses of water</div>
+                        <div class="habit-streak">🔥 8 day streak</div>
+                    </div>
+                </div>
+                
+                <div class="item-card habit-item">
+                    <div class="item-header">
+                        <div class="item-status"></div>
+                        <div class="item-name">Evening walk</div>
+                        <div class="habit-streak">🔥 3 day streak</div>
+                    </div>
+                    <div class="item-description">15 minute walk after dinner</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journal Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    📝 Journal Notes
+                    <span class="section-count">3</span>
+                </h2>
+                <button class="add-item-btn">+ Add Note</button>
+            </div>
+            
+            <div class="journal-section">
+                <div class="journal-entry">
+                    <div class="journal-header">
+                        <div class="journal-date">Today, 6:30 PM</div>
+                    </div>
+                    <div class="journal-content">Had a great workout this morning! Feeling more energetic throughout the day. The consistency is really starting to pay off.</div>
+                </div>
+                
+                <div class="journal-entry">
+                    <div class="journal-header">
+                        <div class="journal-date">Yesterday, 8:15 PM</div>
+                    </div>
+                    <div class="journal-content">Completed week 2 of the fitness routine. Notice I'm sleeping better and feeling less stressed.</div>
+                </div>
+                
+                <div class="journal-entry">
+                    <div class="journal-header">
+                        <div class="journal-date">3 days ago</div>
+                    </div>
+                    <div class="journal-content">Finally joined the gym! The staff was really helpful in showing me around. Excited to start this journey.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📊</span>
+            Dashboard
+        </a>
+        <a href="#" class="nav-item active">
+            <span class="nav-icon">🎯</span>
+            Goals
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">✅</span>
+            Tasks
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🔄</span>
+            Habits
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📝</span>
+            Journal
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📅</span>
+            Calendar
+        </a>
+        
+        <!-- AI Button (Premium) -->
+        <button class="ai-button">🤖</button>
+    </nav>
+</body>
+</html>

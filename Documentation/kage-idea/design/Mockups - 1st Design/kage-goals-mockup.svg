@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 360 640" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="360" height="640" fill="#121212"/>
+  
+  <!-- Status Bar -->
+  <rect width="360" height="30" fill="#0A0A0A"/>
+  <text x="20" y="20" font-family="Arial" font-size="12" fill="#FFFFFF">9:45 AM</text>
+  <text x="320" y="20" font-family="Arial" font-size="12" fill="#FFFFFF">100%</text>
+  
+  <!-- App Header -->
+  <rect width="360" height="60" y="30" fill="#1A1A1A"/>
+  <text x="20" y="70" font-family="Arial" font-size="24" font-weight="bold" fill="#F4F4F4">Goals & Habits</text>
+  
+  <!-- Tab Navigation -->
+  <rect width="360" height="40" y="90" fill="#1A1A1A"/>
+  <rect width="180" height="40" y="90" fill="#8E44AD"/>
+  <text x="90" y="115" font-family="Arial" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">GOALS</text>
+  <text x="270" y="115" font-family="Arial" font-size="14" fill="#B0B0B0" text-anchor="middle">HABITS</text>
+  
+  <!-- Goal Card 1 -->
+  <rect x="20" y="150" width="320" height="120" rx="10" fill="#2D2D2D"/>
+  <circle cx="50" cy="180" r="20" fill="#3498DB" opacity="0.8"/>
+  <text x="50" y="185" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">🌍</text>
+  <text x="85" y="170" font-family="Arial" font-size="18" font-weight="bold" fill="#F4F4F4">Learn French</text>
+  <text x="85" y="190" font-family="Arial" font-size="12" fill="#B0B0B0">Goal: Basic Conversation by Dec</text>
+  
+  <!-- Progress Bar -->
+  <rect x="85" y="205" width="220" height="10" rx="5" fill="#4A4A4A"/>
+  <rect x="85" y="205" width="75" height="10" rx="5" fill="#3498DB"/>
+  <text x="85" y="230" font-family="Arial" font-size="12" fill="#B0B0B0">34% Complete • 3 active habits</text>
+  <circle cx="320" cy="180" r="15" fill="#2D2D2D"/>
+  <text x="320" y="185" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">﹥</text>
+  
+  <!-- Goal Card 2 -->
+  <rect x="20" y="290" width="320" height="120" rx="10" fill="#2D2D2D"/>
+  <circle cx="50" cy="320" r="20" fill="#2ECC71" opacity="0.8"/>
+  <text x="50" y="325" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">💪</text>
+  <text x="85" y="310" font-family="Arial" font-size="18" font-weight="bold" fill="#F4F4F4">Fitness Transformation</text>
+  <text x="85" y="330" font-family="Arial" font-size="12" fill="#B0B0B0">Goal: 5 pullups by August</text>
+  
+  <!-- Progress Bar -->
+  <rect x="85" y="345" width="220" height="10" rx="5" fill="#4A4A4A"/>
+  <rect x="85" y="345" width="110" height="10" rx="5" fill="#2ECC71"/>
+  <text x="85" y="370" font-family="Arial" font-size="12" fill="#B0B0B0">50% Complete • 4 active habits</text>
+  <circle cx="320" cy="320" r="15" fill="#2D2D2D"/>
+  <text x="320" y="325" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">﹥</text>
+  
+  <!-- Goal Card 3 -->
+  <rect x="20" y="430" width="320" height="120" rx="10" fill="#2D2D2D"/>
+  <circle cx="50" cy="460" r="20" fill="#E74C3C" opacity="0.8"/>
+  <text x="50" y="465" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">📚</text>
+  <text x="85" y="450" font-family="Arial" font-size="18" font-weight="bold" fill="#F4F4F4">Read 20 Books</text>
+  <text x="85" y="470" font-family="Arial" font-size="12" fill="#B0B0B0">Goal: Yearly Reading Challenge</text>
+  
+  <!-- Progress Bar -->
+  <rect x="85" y="485" width="220" height="10" rx="5" fill="#4A4A4A"/>
+  <rect x="85" y="485" width="45" height="10" rx="5" fill="#E74C3C"/>
+  <text x="85" y="510" font-family="Arial" font-size="12" fill="#B0B0B0">20% Complete • 2 active habits</text>
+  <circle cx="320" cy="460" r="15" fill="#2D2D2D"/>
+  <text x="320" y="465" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">﹥</text>
+  
+  <!-- Add New Goal Button -->
+  <circle cx="310" cy="570" r="30" fill="#8E44AD"/>
+  <text x="310" y="575" font-family="Arial" font-size="24" fill="#FFFFFF" text-anchor="middle">+</text>
+  
+  <!-- Navigation Bar -->
+  <rect x="0" y="570" width="360" height="70" fill="#1A1A1A"/>
+  
+  <circle cx="60" cy="605" r="20" fill="#2D2D2D"/>
+  <text x="60" y="610" font-family="Arial" font-size="12" fill="#FFFFFF" text-anchor="middle">🏠</text>
+  
+  <circle cx="140" cy="605" r="20" fill="#8E44AD"/>
+  <text x="140" y="610" font-family="Arial" font-size="12" fill="#FFFFFF" text-anchor="middle">🎯</text>
+  
+  <circle cx="220" cy="605" r="20" fill="#2D2D2D"/>
+  <text x="220" y="610" font-family="Arial" font-size="12" fill="#FFFFFF" text-anchor="middle">📓</text>
+  
+  <circle cx="300" cy="605" r="20" fill="#2D2D2D"/>
+  <text x="300" y="610" font-family="Arial" font-size="12" fill="#FFFFFF" text-anchor="middle">🧘</text>
+</svg>

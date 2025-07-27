@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="#FF7101"/>
+  
+  <!-- White Inner Circle -->
+  <circle cx="256" cy="256" r="200" fill="white"/>
+  
+  <!-- Kage Logo - Stylized K -->
+  <g fill="#FF7101">
+    <!-- Vertical line of K -->
+    <rect x="180" y="180" width="20" height="152" rx="10"/>
+    
+    <!-- Upper diagonal of K -->
+    <path d="M200 220 L280 180 L300 195 L220 235 Z" fill="#FF7101"/>
+    
+    <!-- Lower diagonal of K -->
+    <path d="M220 277 L300 317 L280 332 L200 292 Z" fill="#FF7101"/>
+    
+    <!-- Goal target circles -->
+    <circle cx="320" cy="256" r="8" fill="#FF7101" opacity="0.6"/>
+    <circle cx="320" cy="256" r="16" fill="none" stroke="#FF7101" stroke-width="2" opacity="0.4"/>
+    <circle cx="320" cy="256" r="24" fill="none" stroke="#FF7101" stroke-width="1" opacity="0.2"/>
+  </g>
+</svg>

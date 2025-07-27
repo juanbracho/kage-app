@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1000" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">8:30 AM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1050" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="400" y="195" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Today's Habits</text>
+  
+  <!-- Date Display -->
+  <rect x="170" y="230" width="460" height="50" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="220" y="260" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Monday, August 18, 2025</text>
+  
+  <!-- Quick Stats -->
+  <rect x="170" y="290" width="460" height="80" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  
+  <!-- Completion Rate -->
+  <text x="250" y="320" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#2A3990">78%</text>
+  <text x="250" y="345" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Today's Completion</text>
+  
+  <!-- Streak -->
+  <text x="400" y="320" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#F5A623">5</text>
+  <text x="400" y="345" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Day Streak</text>
+  
+  <!-- Week Progress -->
+  <text x="550" y="320" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#83CE8B">21/25</text>
+  <text x="550" y="345" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Weekly Progress</text>
+  
+  <!-- Morning Habits Section -->
+  <rect x="170" y="380" width="460" height="40" rx="0" ry="0" fill="#E9EDF8" />
+  <text x="200" y="405" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Morning Habits</text>
+  
+  <!-- Morning Habit 1 - Completed -->
+  <rect x="170" y="420" width="460" height="70" rx="0" ry="0" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <circle cx="200" cy="455" r="20" fill="#DCF7E0" />
+  <path d="M190 455 L200 465 L215 445" stroke="#83CE8B" stroke-width="3" fill="transparent" />
+  <text x="230" y="445" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">French Vocabulary</text>
+  <text x="230" y="465" font-family="Arial" font-size="12" fill="#9A9A9A">7:15 AM • 10 minutes • Learn 5 new words</text>
+  <rect x="590" y="455" width="30" height="30" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="605" y="471" font-family="Arial" font-size="24" text-anchor="middle" fill="#83CE8B">⋯</text>
+  
+  <!-- Morning Habit 2 - In Progress -->
+  <rect x="170" y="490" width="460" height="70" rx="0" ry="0" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <circle cx="200" cy="525" r="20" fill="#FCF3D9" />
+  <text x="200" y="530" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#F5A623">▶</text>
+  <text x="230" y="515" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Daily Meditation</text>
+  <text x="230" y="535" font-family="Arial" font-size="12" fill="#9A9A9A">8:30 AM • 10 minutes • 3 minutes remaining</text>
+  <rect x="530" y="510" width="90" height="30" rx="15" ry="15" fill="#F5A623" />
+  <text x="575" y="528" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">FINISH</text>
+  
+  <!-- Noon Habits Section -->
+  <rect x="170" y="570" width="460" height="40" rx="0" ry="0" fill="#E9EDF8" />
+  <text x="200" y="595" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Noon Habits</text>
+  
+  <!-- Noon Habit 1 - Upcoming -->
+  <rect x="170" y="610" width="460" height="70" rx="0" ry="0" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <circle cx="200" cy="645" r="20" fill="#E0E2E8" />
+  <text x="200" y="650" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#9A9A9A">○</text>
+  <text x="230" y="635" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Lunchtime French Podcast</text>
+  <text x="230" y="655" font-family="Arial" font-size="12" fill="#9A9A9A">12:30 PM • 20 minutes • Episode 12</text>
+  <rect x="530" y="630" width="90" height="30" rx="15" ry="15" fill="#2A3990" />
+  <text x="575" y="648" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">START</text>
+  
+  <!-- Evening Habits Section -->
+  <rect x="170" y="690" width="460" height="40" rx="0" ry="0" fill="#E9EDF8" />
+  <text x="200" y="715" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Evening Habits</text>
+  
+  <!-- Evening Habit 1 - Upcoming -->
+  <rect x="170" y="730" width="460" height="70" rx="0" ry="0" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <circle cx="200" cy="765" r="20" fill="#E0E2E8" />
+  <text x="200" y="770" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#9A9A9A">○</text>
+  <text x="230" y="755" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Grammar Practice</text>
+  <text x="230" y="775" font-family="Arial" font-size="12" fill="#9A9A9A">6:30 PM • 15 minutes • Present tense verbs</text>
+  <rect x="530" y="750" width="90" height="30" rx="15" ry="15" fill="#2A3990" />
+  <text x="575" y="768" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">START</text>
+  
+  <!-- Evening Habit 2 - Upcoming -->
+  <rect x="170" y="800" width="460" height="70" rx="0" ry="0" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <circle cx="200" cy="835" r="20" fill="#E0E2E8" />
+  <text x="200" y="840" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#9A9A9A">○</text>
+  <text x="230" y="825" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">French Show with Subtitles</text>
+  <text x="230" y="845" font-family="Arial" font-size="12" fill="#9A9A9A">8:00 PM • 30 minutes • Episode 3</text>
+  <rect x="530" y="820" width="90" height="30" rx="15" ry="15" fill="#2A3990" />
+  <text x="575" y="838" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">START</text>
+  
+  <!-- Weekly Progress View -->
+  <rect x="170" y="890" width="460" height="150" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="200" y="920" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Weekly Habit Progress</text>
+  
+  <!-- Day Labels -->
+  <text x="220" y="950" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">M</text>
+  <text x="270" y="950" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">T</text>
+  <text x="320" y="950" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">W</text>
+  <text x="370" y="950" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">T</text>
+  <text x="420" y="950" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">F</text>
+  <text x="470" y="950" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">S</text>
+  <text x="520" y="950" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">S</text>
+  
+  <!-- Habit Completion Dots -->
+  <!-- Today (Monday) -->
+  <circle cx="220" cy="980" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  <circle cx="220" cy="1020" r="15" fill="#FCF3D9" stroke="#F5A623" stroke-width="2" />
+  <circle cx="220" cy="1020" r="7" fill="#F5A623" />
+  
+  <!-- Tuesday -->
+  <circle cx="270" cy="980" r="15" fill="#E0E2E8" stroke="#9A9A9A" stroke-width="1" />
+  <circle cx="270" cy="1020" r="15" fill="#E0E2E8" stroke="#9A9A9A" stroke-width="1" />
+  
+  <!-- Past days -->
+  <!-- Wednesday (Last Week) -->
+  <circle cx="320" cy="980" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  <circle cx="320" cy="1020" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  
+  <!-- Thursday (Last Week) -->
+  <circle cx="370" cy="980" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  <circle cx="370" cy="1020" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  
+  <!-- Friday (Last Week) -->
+  <circle cx="420" cy="980" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  <circle cx="420" cy="1020" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  
+  <!-- Saturday (Last Week) -->
+  <circle cx="470" cy="980" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  <circle cx="470" cy="1020" r="15" fill="#E0E2E8" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Sunday (Last Week) -->
+  <circle cx="520" cy="980" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  <circle cx="520" cy="1020" r="15" fill="#DCF7E0" stroke="#83CE8B" stroke-width="2" />
+  
+  <!-- Habit Labels -->
+  <text x="170" y="980" font-family="Arial" font-size="10" text-anchor="end" fill="#333333">Vocabulary</text>
+  <text x="170" y="1020" font-family="Arial" font-size="10" text-anchor="end" fill="#333333">Meditation</text>
+  
+  <!-- Focus Mode Button -->
+  <rect x="170" y="1050" width="460" height="50" rx="25" ry="25" fill="#2A3990" />
+  <text x="400" y="1080" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Enter Focus Mode</text>
+  
+  <!-- Side Panel: Habit Health Score -->
+  <g>
+    <rect x="580" y="400" width="200" height="220" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="430" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Habit Health Score</text>
+    
+    <line x1="600" y1="440" x2="760" y2="440" stroke="#E0E2E8" stroke-width="1" />
+    
+    <!-- Habit Health Meter -->
+    <circle cx="680" cy="500" r="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="3" />
+    <path d="M680 460 A40 40 0 0 1 714.6 485 L680 500 Z" fill="#83CE8B" />
+    <path d="M714.6 485 A40 40 0 0 1 703.9 534.6 L680 500 Z" fill="#F5A623" />
+    <circle cx="680" cy="500" r="35" fill="#FFFFFF" />
+    <text x="680" y="505" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">83%</text>
+    
+    <text x="600" y="560" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">
+      <tspan x="600" y="560">Overall habit health is good</tspan>
+    </text>
+    
+    <text x="600" y="585" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="585">• Strong consistency</tspan>
+      <tspan x="600" y="605">• Good weekend adherence</tspan>
+    </text>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="1150" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1150">Project Kage - Habit Tracking Dashboard</tspan>
+    <tspan x="400" y="1175">Feature: Comprehensive Habit Management</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>

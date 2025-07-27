@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Creation - Tasks & Habits Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8fafc;
+            padding: 20px;
+        }
+
+        .mockup-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f8fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .modal-body {
+            padding: 0 24px 24px;
+            max-height: calc(90vh - 160px);
+            overflow-y: auto;
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+            background: white;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #FF7101;
+            box-shadow: 0 0 0 3px rgba(255, 113, 1, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* Tasks & Habits Section */
+        .tasks-habits-section {
+            margin-bottom: 24px;
+        }
+
+        .tasks-habits-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tasks-habits-header:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .tasks-habits-header.expanded {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom: none;
+            background: #fff;
+            border-color: #FF7101;
+        }
+
+        .tasks-habits-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .tasks-habits-icon {
+            font-size: 20px;
+        }
+
+        .expand-arrow {
+            font-size: 14px;
+            color: #6b7280;
+            transition: transform 0.2s;
+        }
+
+        .tasks-habits-header.expanded .expand-arrow {
+            transform: rotate(180deg);
+        }
+
+        .tasks-habits-content {
+            display: none;
+            border: 2px solid #FF7101;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            padding: 20px;
+            background: #fff;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .tasks-habits-content.expanded {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .add-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .add-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .add-btn:hover {
+            border-color: #FF7101;
+            color: #FF7101;
+            background: rgba(255, 113, 1, 0.05);
+        }
+
+        .add-btn-icon {
+            font-size: 16px;
+        }
+
+        /* Items List */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .item-card:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 2px;
+        }
+
+        .item-type {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .item-action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .edit-btn {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .edit-btn:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .delete-btn {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .delete-btn:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 24px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .empty-state-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        /* Mock Modal Overlay */
+        .mock-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .mock-modal {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .mock-modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .mock-form-field {
+            margin-bottom: 16px;
+        }
+
+        .mock-form-field label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .mock-form-field input, .mock-form-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .mock-form-field input:focus, .mock-form-field textarea:focus {
+            border-color: #FF7101;
+        }
+
+        .mock-modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .mock-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .mock-btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .mock-btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .mock-btn-primary {
+            background: #FF7101;
+            color: white;
+        }
+
+        .mock-btn-primary:hover {
+            background: #e55a00;
+        }
+
+        /* Color picker for habits */
+        .color-picker {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.selected {
+            border-color: #374151;
+            transform: scale(1.1);
+        }
+
+        .target-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .target-row .form-input {
+            flex: 1;
+        }
+
+        .target-row select {
+            max-width: 140px;
+        }
+
+        /* Responsive */
+        @media (max-width: 540px) {
+            .mockup-container {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+
+            .add-buttons {
+                flex-direction: column;
+            }
+
+            .add-btn {
+                padding: 16px;
+            }
+
+            .mock-modal {
+                width: 95%;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mockup-container">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <div class="modal-title">New Goal</div>
+            <button class="close-btn">✕</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+            <!-- Goal Name -->
+            <div class="form-section">
+                <label class="section-label">Goal Name *</label>
+                <input type="text" class="form-input" placeholder="What do you want to achieve?" value="Get Promoted to Senior Developer">
+            </div>
+
+            <!-- Description -->
+            <div class="form-section">
+                <label class="section-label">Description</label>
+                <textarea class="form-input form-textarea" placeholder="Describe your goal in detail. What does success look like?">Advance my career by getting promoted to senior developer within the next 6 months by improving my technical skills and taking on more leadership responsibilities.</textarea>
+            </div>
+
+            <!-- NEW: Tasks & Habits Section -->
+            <div class="tasks-habits-section">
+                <div class="tasks-habits-header" onclick="toggleTasksHabits()">
+                    <div class="tasks-habits-title">
+                        <span class="tasks-habits-icon">📋</span>
+                        <span>Tasks & Habits</span>
+                    </div>
+                    <span class="expand-arrow">▼</span>
+                </div>
+                
+                <div class="tasks-habits-content" id="tasksHabitsContent">
+                    <!-- Add Buttons -->
+                    <div class="add-buttons">
+                        <button class="add-btn" onclick="showTaskModal()">
+                            <span class="add-btn-icon">+</span>
+                            <span>Add Task</span>
+                        </button>
+                        <button class="add-btn" onclick="showHabitModal()">
+                            <span class="add-btn-icon">+</span>
+                            <span>Add Habit</span>
+                        </button>
+                    </div>
+
+                    <!-- Items List -->
+                    <div class="items-list" id="itemsList">
+                        <!-- Sample Task -->
+                        <div class="item-card">
+                            <div class="item-icon" style="background: #3B82F6;">📋</div>
+                            <div class="item-info">
+                                <div class="item-name">Complete React.js certification</div>
+                                <div class="item-type">Task</div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="item-action-btn edit-btn">✏️</button>
+                                <button class="item-action-btn delete-btn" onclick="deleteItem(this)">🗑️</button>
+                            </div>
+                        </div>
+
+                        <!-- Sample Habit -->
+                        <div class="item-card">
+                            <div class="item-icon" style="background: #FF7101;">💻</div>
+                            <div class="item-info">
+                                <div class="item-name">Code for 1 hour daily</div>
+                                <div class="item-type">Habit</div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="item-action-btn edit-btn">✏️</button>
+                                <button class="item-action-btn delete-btn" onclick="deleteItem(this)">🗑️</button>
+                            </div>
+                        </div>
+
+                        <!-- Sample Task -->
+                        <div class="item-card">
+                            <div class="item-icon" style="background: #22C55E;">📚</div>
+                            <div class="item-info">
+                                <div class="item-name">Read "Clean Code" book</div>
+                                <div class="item-type">Task</div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="item-action-btn edit-btn">✏️</button>
+                                <button class="item-action-btn delete-btn" onclick="deleteItem(this)">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Completion -->
+            <div class="form-section">
+                <label class="section-label">Target Completion</label>
+                <div class="target-row">
+                    <input type="date" class="form-input" value="2025-12-31">
+                    <select class="form-input">
+                        <option>6 months</option>
+                        <option>3 months</option>
+                        <option>1 year</option>
+                        <option>Custom</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="mock-modal-overlay" id="taskModal">
+        <div class="mock-modal">
+            <div class="mock-modal-title">Add Task</div>
+            <div class="mock-form-field">
+                <label>Task Name *</label>
+                <input type="text" id="taskName" placeholder="What needs to be done?">
+            </div>
+            <div class="mock-form-field">
+                <label>Description</label>
+                <textarea id="taskDescription" placeholder="Additional details..." rows="3"></textarea>
+            </div>
+            <div class="mock-form-field">
+                <label>Icon</label>
+                <input type="text" id="taskIcon" placeholder="📋" maxlength="2">
+            </div>
+            <div class="mock-form-field">
+                <label>Color</label>
+                <div class="color-picker">
+                    <div class="color-option selected" style="background: #FF7101;" data-color="#FF7101"></div>
+                    <div class="color-option" style="background: #3B82F6;" data-color="#3B82F6"></div>
+                    <div class="color-option" style="background: #22C55E;" data-color="#22C55E"></div>
+                    <div class="color-option" style="background: #A855F7;" data-color="#A855F7"></div>
+                    <div class="color-option" style="background: #EF4444;" data-color="#EF4444"></div>
+                    <div class="color-option" style="background: #F59E0B;" data-color="#F59E0B"></div>
+                </div>
+            </div>
+            <div class="mock-modal-actions">
+                <button class="mock-btn mock-btn-secondary" onclick="closeModal('taskModal')">Cancel</button>
+                <button class="mock-btn mock-btn-primary" onclick="addTask()">Add Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Habit Modal -->
+    <div class="mock-modal-overlay" id="habitModal">
+        <div class="mock-modal">
+            <div class="mock-modal-title">Add Habit</div>
+            <div class="mock-form-field">
+                <label>Habit Name *</label>
+                <input type="text" id="habitName" placeholder="What habit do you want to build?">
+            </div>
+            <div class="mock-form-field">
+                <label>Description</label>
+                <textarea id="habitDescription" placeholder="Why is this habit important?" rows="3"></textarea>
+            </div>
+            <div class="mock-form-field">
+                <label>Icon</label>
+                <input type="text" id="habitIcon" placeholder="💻" maxlength="2">
+            </div>
+            <div class="mock-form-field">
+                <label>Color (inherited from goal)</label>
+                <div class="color-picker">
+                    <div class="color-option selected" style="background: #FF7101;" data-color="#FF7101"></div>
+                    <div class="color-option" style="background: #3B82F6;" data-color="#3B82F6"></div>
+                    <div class="color-option" style="background: #22C55E;" data-color="#22C55E"></div>
+                    <div class="color-option" style="background: #A855F7;" data-color="#A855F7"></div>
+                    <div class="color-option" style="background: #EF4444;" data-color="#EF4444"></div>
+                    <div class="color-option" style="background: #F59E0B;" data-color="#F59E0B"></div>
+                </div>
+            </div>
+            <div class="mock-modal-actions">
+                <button class="mock-btn mock-btn-secondary" onclick="closeModal('habitModal')">Cancel</button>
+                <button class="mock-btn mock-btn-primary" onclick="addHabit()">Add Habit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedTaskColor = '#FF7101';
+        let selectedHabitColor = '#FF7101';
+
+        function toggleTasksHabits() {
+            const header = document.querySelector('.tasks-habits-header');
+            const content = document.getElementById('tasksHabitsContent');
+            
+            header.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+
+        function showTaskModal() {
+            document.getElementById('taskModal').style.display = 'flex';
+            // Reset form
+            document.getElementById('taskName').value = '';
+            document.getElementById('taskDescription').value = '';
+            document.getElementById('taskIcon').value = '📋';
+            selectedTaskColor = '#FF7101';
+            updateColorSelection('taskModal');
+        }
+
+        function showHabitModal() {
+            document.getElementById('habitModal').style.display = 'flex';
+            // Reset form
+            document.getElementById('habitName').value = '';
+            document.getElementById('habitDescription').value = '';
+            document.getElementById('habitIcon').value = '💻';
+            selectedHabitColor = '#FF7101'; // Inherit from goal
+            updateColorSelection('habitModal');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function addTask() {
+            const name = document.getElementById('taskName').value;
+            const icon = document.getElementById('taskIcon').value || '📋';
+            
+            if (!name.trim()) {
+                alert('Please enter a task name');
+                return;
+            }
+
+            const itemsList = document.getElementById('itemsList');
+            const newItem = document.createElement('div');
+            newItem.className = 'item-card';
+            newItem.innerHTML = `
+                <div class="item-icon" style="background: ${selectedTaskColor};">${icon}</div>
+                <div class="item-info">
+                    <div class="item-name">${name}</div>
+                    <div class="item-type">Task</div>
+                </div>
+                <div class="item-actions">
+                    <button class="item-action-btn edit-btn">✏️</button>
+                    <button class="item-action-btn delete-btn" onclick="deleteItem(this)">🗑️</button>
+                </div>
+            `;
+            
+            itemsList.appendChild(newItem);
+            closeModal('taskModal');
+            
+            // Here you would normally save to database
+            console.log('Task added:', { name, icon, color: selectedTaskColor });
+        }
+
+        function addHabit() {
+            const name = document.getElementById('habitName').value;
+            const icon = document.getElementById('habitIcon').value || '💻';
+            
+            if (!name.trim()) {
+                alert('Please enter a habit name');
+                return;
+            }
+
+            const itemsList = document.getElementById('itemsList');
+            const newItem = document.createElement('div');
+            newItem.className = 'item-card';
+            newItem.innerHTML = `
+                <div class="item-icon" style="background: ${selectedHabitColor};">${icon}</div>
+                <div class="item-info">
+                    <div class="item-name">${name}</div>
+                    <div class="item-type">Habit</div>
+                </div>
+                <div class="item-actions">
+                    <button class="item-action-btn edit-btn">✏️</button>
+                    <button class="item-action-btn delete-btn" onclick="deleteItem(this)">🗑️</button>
+                </div>
+            `;
+            
+            itemsList.appendChild(newItem);
+            closeModal('habitModal');
+            
+            // Here you would normally save to database
+            console.log('Habit added:', { name, icon, color: selectedHabitColor });
+        }
+
+        function deleteItem(button) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                button.closest('.item-card').remove();
+            }
+        }
+
+        function updateColorSelection(modalId) {
+            const modal = document.getElementById(modalId);
+            const colorOptions = modal.querySelectorAll('.color-option');
+            
+            colorOptions.forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.color === (modalId === 'taskModal' ? selectedTaskColor : selectedHabitColor)) {
+                    option.classList.add('selected');
+                }
+            });
+        }
+
+        // Color picker functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('color-option')) {
+                const modal = e.target.closest('.mock-modal-overlay');
+                const color = e.target.dataset.color;
+                
+                // Update selection
+                modal.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+                e.target.classList.add('selected');
+                
+                // Update selected color variable
+                if (modal.id === 'taskModal') {
+                    selectedTaskColor = color;
+                } else {
+                    selectedHabitColor = color;
+                }
+            }
+        });
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('mock-modal-overlay')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // Auto-expand section for demo
+        setTimeout(() => {
+            toggleTasksHabits();
+        }, 1000);
+    </script>
+</body>
+</html>

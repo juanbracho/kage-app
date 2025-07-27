@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Extended viewBox height to accommodate non-overlapping elements -->
+  
+  <!-- Background -->
+  <rect width="800" height="1400" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1160" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">1:30 PM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1210" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="400" y="195" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Goal Projects</text>
+  
+  <!-- Main Container -->
+  <rect x="170" y="230" width="460" height="970" fill="#F6F7FB" rx="15" ry="15" />
+  
+  <!-- Goal Selection Panel -->
+  <rect x="190" y="250" width="420" height="80" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="280" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Select Goal</text>
+  
+  <rect x="210" y="290" width="350" height="30" rx="15" ry="15" fill="#F6F7FB" />
+  <text x="230" y="310" font-family="Arial" font-size="14" fill="#333333">Career Advancement</text>
+  <text x="575" y="310" font-family="Arial" font-size="14" text-anchor="end" fill="#9A9A9A">▼</text>
+  
+  <!-- Progress Overview -->
+  <rect x="190" y="340" width="420" height="140" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="370" font-family="Arial" font-size="16" font-weight="bold" fill="#333333">Goal Progress</text>
+  
+  <!-- Progress Bar -->
+  <rect x="210" y="385" width="380" height="20" rx="10" ry="10" fill="#F6F7FB" />
+  <rect x="210" y="385" width="190" height="20" rx="10" ry="10" fill="#2A3990" />
+  <text x="400" y="400" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">50% Complete</text>
+  
+  <!-- Due Date and Milestones -->
+  <rect x="210" y="415" width="180" height="50" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="230" y="435" font-family="Arial" font-size="12" fill="#333333">Target Date</text>
+  <text x="230" y="455" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">September 30, 2025</text>
+  
+  <rect x="410" y="415" width="180" height="50" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="430" y="435" font-family="Arial" font-size="12" fill="#333333">Next Milestone</text>
+  <text x="430" y="455" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Certification (Jun 15)</text>
+  
+  <!-- Projects List -->
+  <rect x="190" y="490" width="420" height="540" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="520" font-family="Arial" font-size="16" font-weight="bold" fill="#333333">Projects Contributing to Goal</text>
+  <text x="550" y="520" font-family="Arial" font-size="12" text-anchor="end" fill="#2A3990">Add New</text>
+  
+  <!-- Project 1 -->
+  <rect x="210" y="535" width="380" height="150" rx="10" ry="10" fill="#F6F7FB" />
+  
+  <!-- Project Header -->
+  <rect x="210" y="535" width="380" height="40" rx="10" ry="10" fill="#2A399022" />
+  <text x="230" y="560" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Professional Certification</text>
+  <text x="530" y="560" font-family="Arial" font-size="12" text-anchor="end" fill="#333333">30% of Goal</text>
+  
+  <!-- Project Details -->
+  <text x="230" y="590" font-family="Arial" font-size="12" fill="#333333">Progress: 65% complete</text>
+  <rect x="230" y="600" width="340" height="10" rx="5" ry="5" fill="#FFFFFF" />
+  <rect x="230" y="600" width="221" height="10" rx="5" ry="5" fill="#83CE8B" />
+  
+  <text x="230" y="625" font-family="Arial" font-size="12" fill="#333333">4 Tasks • 2 Completed • 2 Remaining</text>
+  
+  <!-- Critical Path -->
+  <rect x="230" y="635" width="100" height="20" rx="10" ry="10" fill="#E54D4222" />
+  <text x="280" y="650" font-family="Arial" font-size="10" text-anchor="middle" fill="#E54D42">Critical Path</text>
+  
+  <rect x="340" y="635" width="100" height="20" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="390" y="650" font-family="Arial" font-size="10" text-anchor="middle" fill="#333333">Due June 15</text>
+  
+  <rect x="450" y="635" width="100" height="20" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="500" y="650" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">View Details</text>
+  
+  <!-- Project 2 -->
+  <rect x="210" y="695" width="380" height="150" rx="10" ry="10" fill="#F6F7FB" />
+  
+  <!-- Project Header -->
+  <rect x="210" y="695" width="380" height="40" rx="10" ry="10" fill="#2A399022" />
+  <text x="230" y="720" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Leadership Training</text>
+  <text x="530" y="720" font-family="Arial" font-size="12" text-anchor="end" fill="#333333">25% of Goal</text>
+  
+  <!-- Project Details -->
+  <text x="230" y="750" font-family="Arial" font-size="12" fill="#333333">Progress: 40% complete</text>
+  <rect x="230" y="760" width="340" height="10" rx="5" ry="5" fill="#FFFFFF" />
+  <rect x="230" y="760" width="136" height="10" rx="5" ry="5" fill="#83CE8B" />
+  
+  <text x="230" y="785" font-family="Arial" font-size="12" fill="#333333">5 Tasks • 2 Completed • 3 Remaining</text>
+  
+  <rect x="230" y="795" width="100" height="20" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="280" y="810" font-family="Arial" font-size="10" text-anchor="middle" fill="#333333">Weekly</text>
+  
+  <rect x="340" y="795" width="100" height="20" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="390" y="810" font-family="Arial" font-size="10" text-anchor="middle" fill="#333333">Due Aug 31</text>
+  
+  <rect x="450" y="795" width="100" height="20" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="500" y="810" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">View Details</text>
+  
+  <!-- Project 3 -->
+  <rect x="210" y="855" width="380" height="150" rx="10" ry="10" fill="#F6F7FB" />
+  
+  <!-- Project Header -->
+  <rect x="210" y="855" width="380" height="40" rx="10" ry="10" fill="#2A399022" />
+  <text x="230" y="880" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Industry Networking</text>
+  <text x="530" y="880" font-family="Arial" font-size="12" text-anchor="end" fill="#333333">15% of Goal</text>
+  
+  <!-- Project Details -->
+  <text x="230" y="910" font-family="Arial" font-size="12" fill="#333333">Progress: 75% complete</text>
+  <rect x="230" y="920" width="340" height="10" rx="5" ry="5" fill="#FFFFFF" />
+  <rect x="230" y="920" width="255" height="10" rx="5" ry="5" fill="#83CE8B" />
+  
+  <text x="230" y="945" font-family="Arial" font-size="12" fill="#333333">6 Tasks • 4 Completed • 2 Remaining</text>
+  
+  <rect x="230" y="955" width="100" height="20" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="280" y="970" font-family="Arial" font-size="10" text-anchor="middle" fill="#333333">Monthly</text>
+  
+  <rect x="340" y="955" width="100" height="20" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="390" y="970" font-family="Arial" font-size="10" text-anchor="middle" fill="#333333">Due Sep 30</text>
+  
+  <rect x="450" y="955" width="100" height="20" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="500" y="970" font-family="Arial" font-size="10" text-anchor="middle" fill="#9A9A9A">View Details</text>
+  
+  <!-- Side Panels -->
+  
+  <!-- Hierarchy Explanation -->
+  <g>
+    <rect x="580" y="230" width="200" height="220" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="260" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Goal Hierarchy</text>
+    
+    <line x1="600" y1="270" x2="760" y2="270" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="290" font-family="Arial" font-size="12" fill="#333333">Structure breakdown:</text>
+    
+    <!-- Hierarchy Diagram -->
+    <rect x="610" y="305" width="140" height="35" rx="5" ry="5" fill="#2A399033" />
+    <text x="680" y="327" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#2A3990">GOAL</text>
+    
+    <line x1="680" y1="340" x2="680" y2="355" stroke="#2A3990" stroke-width="1" />
+    
+    <rect x="610" y="355" width="140" height="35" rx="5" ry="5" fill="#5BC0EB33" />
+    <text x="680" y="377" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#5BC0EB">PROJECTS</text>
+    
+    <line x1="630" y1="390" x2="630" y2="405" stroke="#5BC0EB" stroke-width="1" />
+    <line x1="680" y1="390" x2="680" y2="405" stroke="#5BC0EB" stroke-width="1" />
+    <line x1="730" y1="390" x2="730" y2="405" stroke="#5BC0EB" stroke-width="1" />
+    
+    <rect x="590" y="405" width="60" height="30" rx="5" ry="5" fill="#83CE8B33" />
+    <text x="620" y="425" font-family="Arial" font-size="10" font-weight="bold" text-anchor="middle" fill="#83CE8B">TASKS</text>
+    
+    <rect x="655" y="405" width="50" height="30" rx="5" ry="5" fill="#83CE8B33" />
+    <text x="680" y="425" font-family="Arial" font-size="10" font-weight="bold" text-anchor="middle" fill="#83CE8B">TASKS</text>
+    
+    <rect x="710" y="405" width="60" height="30" rx="5" ry="5" fill="#83CE8B33" />
+    <text x="740" y="425" font-family="Arial" font-size="10" font-weight="bold" text-anchor="middle" fill="#83CE8B">TASKS</text>
+  </g>
+  
+  <!-- Resource Allocation -->
+  <g>
+    <rect x="580" y="460" width="200" height="220" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="490" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Resource Allocation</text>
+    
+    <line x1="600" y1="500" x2="760" y2="500" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="520" font-family="Arial" font-size="12" fill="#333333">Distribution across projects:</text>
+    
+    <!-- Allocation Chart -->
+    <rect x="605" y="535" width="150" height="20" rx="3" ry="3" fill="#2A399055" />
+    <rect x="605" y="535" width="45" height="20" rx="3" ry="3" fill="#2A3990" />
+    <text x="615" y="550" font-family="Arial" font-size="10" fill="#FFFFFF">30%</text>
+    <text x="765" y="550" font-family="Arial" font-size="10" text-anchor="end" fill="#333333">Certification</text>
+    
+    <rect x="605" y="565" width="150" height="20" rx="3" ry="3" fill="#2A399055" />
+    <rect x="605" y="565" width="37.5" height="20" rx="3" ry="3" fill="#2A3990" />
+    <text x="615" y="580" font-family="Arial" font-size="10" fill="#FFFFFF">25%</text>
+    <text x="765" y="580" font-family="Arial" font-size="10" text-anchor="end" fill="#333333">Leadership</text>
+    
+    <rect x="605" y="595" width="150" height="20" rx="3" ry="3" fill="#2A399055" />
+    <rect x="605" y="595" width="22.5" height="20" rx="3" ry="3" fill="#2A3990" />
+    <text x="615" y="610" font-family="Arial" font-size="10" fill="#FFFFFF">15%</text>
+    <text x="765" y="610" font-family="Arial" font-size="10" text-anchor="end" fill="#333333">Networking</text>
+    
+    <rect x="605" y="625" width="150" height="20" rx="3" ry="3" fill="#2A399055" />
+    <rect x="605" y="625" width="45" height="20" rx="3" ry="3" fill="#2A3990" />
+    <text x="615" y="640" font-family="Arial" font-size="10" fill="#FFFFFF">30%</text>
+    <text x="765" y="640" font-family="Arial" font-size="10" text-anchor="end" fill="#333333">Unallocated</text>
+    
+    <text x="600" y="670" font-family="Arial" font-size="12" fill="#333333">Total allocation: 100%</text>
+  </g>
+  
+  <!-- Critical Path Analysis -->
+  <g>
+    <rect x="580" y="690" width="200" height="230" rx="15" ry="15" fill="#FFFFFF" stroke="#E54D42" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="720" font-family="Arial" font-size="14" font-weight="bold" fill="#E54D42">Critical Path</text>
+    
+    <line x1="600" y1="730" x2="760" y2="730" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="750" font-family="Arial" font-size="12" fill="#333333">Key tasks for goal success:</text>
+    
+    <!-- Critical Tasks -->
+    <rect x="600" y="760" width="160" height="45" rx="5" ry="5" fill="#FFF3F3" stroke="#E54D42" stroke-width="1" />
+    <text x="610" y="780" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Complete Study Materials</text>
+    <text x="610" y="795" font-family="Arial" font-size="10" fill="#E54D42">Certification • Due May 20</text>
+    
+    <rect x="600" y="815" width="160" height="45" rx="5" ry="5" fill="#FFF3F3" stroke="#E54D42" stroke-width="1" />
+    <text x="610" y="835" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Schedule Exam</text>
+    <text x="610" y="850" font-family="Arial" font-size="10" fill="#E54D42">Certification • Due May 25</text>
+    
+    <rect x="600" y="870" width="160" height="45" rx="5" ry="5" fill="#FFF3F3" stroke="#E54D42" stroke-width="1" />
+    <text x="610" y="890" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Complete Practice Tests</text>
+    <text x="610" y="905" font-family="Arial" font-size="10" fill="#E54D42">Certification • Due June 10</text>
+  </g>
+  
+  <!-- Project Detail Modal - Completely separate from other content -->
+  <rect x="170" y="1040" width="460" height="300" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  
+  <!-- Project Header -->
+  <rect x="170" y="1040" width="460" height="50" rx="15" ry="15" fill="#2A3990" />
+  <text x="210" y="1075" font-family="Arial" font-size="18" font-weight="bold" fill="#FFFFFF">Professional Certification</text>
+  
+  <rect x="190" y="1100" width="170" height="25" rx="12.5" ry="12.5" fill="#F6F7FB" />
+  <text x="275" y="1118" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">Career Advancement Goal</text>
+  
+  <!-- Project Progress -->
+  <text x="190" y="1145" font-family="Arial" font-size="14" fill="#333333">Project Progress</text>
+  <rect x="190" y="1155" width="420" height="10" rx="5" ry="5" fill="#F6F7FB" />
+  <rect x="190" y="1155" width="273" height="10" rx="5" ry="5" fill="#83CE8B" />
+  <text x="400" y="1175" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">65% Complete • Due June 15</text>
+  
+  <!-- Project Tasks -->
+  <text x="190" y="1200" font-family="Arial" font-size="14" fill="#333333">Project Tasks</text>
+  
+  <!-- Completed Tasks -->
+  <circle cx="200" cy="1220" r="10" fill="#83CE8B" />
+  <text x="200" y="1224" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">✓</text>
+  <text x="220" y="1224" font-family="Arial" font-size="14" fill="#9A9A9A"><tspan text-decoration="line-through">Research certification requirements</tspan></text>
+  
+  <circle cx="200" cy="1245" r="10" fill="#83CE8B" />
+  <text x="200" y="1249" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">✓</text>
+  <text x="220" y="1249" font-family="Arial" font-size="14" fill="#9A9A9A"><tspan text-decoration="line-through">Purchase study materials</tspan></text>
+  
+  <!-- Remaining Tasks (Critical) -->
+  <circle cx="200" cy="1270" r="10" fill="#FFFFFF" stroke="#E54D42" stroke-width="2" />
+  <text x="220" y="1274" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Complete study materials</text>
+  <rect x="405" y="1262" width="50" height="20" rx="10" ry="10" fill="#E54D4222" />
+  <text x="430" y="1277" font-family="Arial" font-size="10" text-anchor="middle" fill="#E54D42">Critical</text>
+  
+  <circle cx="200" cy="1295" r="10" fill="#FFFFFF" stroke="#E54D42" stroke-width="2" />
+  <text x="220" y="1299" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Schedule certification exam</text>
+  <rect x="405" y="1287" width="50" height="20" rx="10" ry="10" fill="#E54D4222" />
+  <text x="430" y="1302" font-family="Arial" font-size="10" text-anchor="middle" fill="#E54D42">Critical</text>
+  
+  <!-- Close Button -->
+  <rect x="385" y="1320" width="70" height="30" rx="15" ry="15" fill="#2A3990" />
+  <text x="420" y="1340" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Close</text>
+  
+  <!-- Goal Selection Alert -->
+  <g>
+    <rect x="270" y="170" width="260" height="80" rx="10" ry="10" fill="#FFFFFF" filter="url(#shadow)" />
+    <rect x="270" y="170" width="260" height="25" rx="10" ry="10" fill="#2A3990" />
+    <text x="290" y="188" font-family="Arial" font-size="12" fill="#FFFFFF">Goal Structure</text>
+    <text x="510" y="188" font-family="Arial" font-size="12" text-anchor="end" fill="#FFFFFF">now</text>
+    <text x="290" y="215" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Career Advancement structured into</text>
+    <text x="290" y="235" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">3 projects with 15 supporting tasks.</text>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="1380" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1380">Project Kage - Project Linking to Goals</tspan>
+    <tspan x="400" y="1405">Feature: Structured Goal-Project-Task Hierarchy</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>

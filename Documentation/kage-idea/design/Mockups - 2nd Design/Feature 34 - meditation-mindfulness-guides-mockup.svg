@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1000" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">6:30 AM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1050" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="400" y="195" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Meditation</text>
+  
+  <!-- Main Container -->
+  <rect x="170" y="230" width="460" height="810" fill="#F6F7FB" rx="15" ry="15" />
+  
+  <!-- Meditation Stats Card -->
+  <rect x="190" y="250" width="420" height="130" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="280" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Your Meditation Journey</text>
+  
+  <!-- Stats -->
+  <rect x="210" y="295" width="125" height="70" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="272.5" y="325" font-family="Arial" font-size="28" font-weight="bold" text-anchor="middle" fill="#2A3990">23</text>
+  <text x="272.5" y="345" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Day Streak</text>
+  
+  <rect x="342.5" y="295" width="125" height="70" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="405" y="325" font-family="Arial" font-size="28" font-weight="bold" text-anchor="middle" fill="#2A3990">285</text>
+  <text x="405" y="345" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Total Minutes</text>
+  
+  <rect x="475" y="295" width="125" height="70" rx="10" ry="10" fill="#F6F7FB" />
+  <text x="537.5" y="325" font-family="Arial" font-size="28" font-weight="bold" text-anchor="middle" fill="#2A3990">12</text>
+  <text x="537.5" y="345" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Sessions</text>
+  
+  <!-- Recommended Today Card -->
+  <rect x="190" y="390" width="420" height="180" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="420" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Recommended for Today</text>
+  <text x="210" y="440" font-family="Arial" font-size="12" fill="#9A9A9A">Based on your morning energy and schedule</text>
+  
+  <!-- Meditation Entry -->
+  <rect x="210" y="455" width="380" height="100" rx="10" ry="10" fill="#F6F7FB" />
+  <circle cx="250" cy="505" r="30" fill="#9F85FF" />
+  <text x="250" y="510" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">10m</text>
+  
+  <text x="290" y="485" font-family="Arial" font-size="16" font-weight="bold" fill="#333333">Morning Clarity</text>
+  <text x="290" y="505" font-family="Arial" font-size="12" fill="#9A9A9A">Guided • Focus • Breathing</text>
+  <text x="290" y="525" font-family="Arial" font-size="12" fill="#9A9A9A">Perfect for starting your workday</text>
+  
+  <rect x="490" y="480" width="80" height="40" rx="20" ry="20" fill="#2A3990" />
+  <text x="530" y="505" font-family="Arial" font-size="14" text-anchor="middle" fill="#FFFFFF">Begin</text>
+  
+  <!-- Practice Library Card -->
+  <rect x="190" y="580" width="420" height="460" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="610" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Practice Library</text>
+  
+  <!-- Search Bar -->
+  <rect x="210" y="625" width="380" height="40" rx="20" ry="20" fill="#F6F7FB" />
+  <text x="240" y="650" font-family="Arial" font-size="14" fill="#9A9A9A">Search meditations...</text>
+  <text x="570" y="650" font-family="Arial" font-size="14" text-anchor="end" fill="#9A9A9A">🔍</text>
+  
+  <!-- Category Filter -->
+  <rect x="210" y="675" width="80" height="30" rx="15" ry="15" fill="#2A3990" />
+  <text x="250" y="695" font-family="Arial" font-size="12" text-anchor="middle" fill="#FFFFFF">All</text>
+  
+  <rect x="300" y="675" width="80" height="30" rx="15" ry="15" fill="#F6F7FB" />
+  <text x="340" y="695" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Focus</text>
+  
+  <rect x="390" y="675" width="80" height="30" rx="15" ry="15" fill="#F6F7FB" />
+  <text x="430" y="695" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Sleep</text>
+  
+  <rect x="480" y="675" width="80" height="30" rx="15" ry="15" fill="#F6F7FB" />
+  <text x="520" y="695" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Stress</text>
+  
+  <!-- Practice 1 -->
+  <rect x="210" y="715" width="380" height="80" rx="10" ry="10" fill="#F6F7FB" />
+  <circle cx="240" cy="755" r="20" fill="#9F85FF" />
+  <text x="240" y="760" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">5m</text>
+  
+  <text x="270" y="740" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Quick Reset</text>
+  <text x="270" y="760" font-family="Arial" font-size="12" fill="#9A9A9A">Short break • Breathing • Unguided</text>
+  <text x="270" y="780" font-family="Arial" font-size="12" fill="#83CE8B">Completed 8 times</text>
+  
+  <circle cx="570" cy="755" r="15" fill="#F6F7FB" />
+  <text x="570" y="759" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">▶</text>
+  
+  <!-- Practice 2 -->
+  <rect x="210" y="805" width="380" height="80" rx="10" ry="10" fill="#F6F7FB" />
+  <circle cx="240" cy="845" r="20" fill="#9F85FF" />
+  <text x="240" y="850" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">15m</text>
+  
+  <text x="270" y="830" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Body Scan</text>
+  <text x="270" y="850" font-family="Arial" font-size="12" fill="#9A9A9A">Relaxation • Guided • Lying Down</text>
+  <text x="270" y="870" font-family="Arial" font-size="12" fill="#83CE8B">Completed 3 times</text>
+  
+  <circle cx="570" cy="845" r="15" fill="#F6F7FB" />
+  <text x="570" y="849" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">▶</text>
+  
+  <!-- Practice 3 -->
+  <rect x="210" y="895" width="380" height="80" rx="10" ry="10" fill="#F6F7FB" />
+  <circle cx="240" cy="935" r="20" fill="#9F85FF" />
+  <text x="240" y="940" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">20m</text>
+  
+  <text x="270" y="920" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Evening Wind-down</text>
+  <text x="270" y="940" font-family="Arial" font-size="12" fill="#9A9A9A">Sleep • Guided • Relaxation</text>
+  <text x="270" y="960" font-family="Arial" font-size="12" fill="#9A9A9A">New session</text>
+  
+  <circle cx="570" cy="935" r="15" fill="#F6F7FB" />
+  <text x="570" y="939" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">▶</text>
+  
+  <!-- Progress Section -->
+  <rect x="210" y="985" width="380" height="40" rx="20" ry="20" fill="#F6F7FB" />
+  <text x="400" y="1010" font-family="Arial" font-size="14" text-anchor="middle" fill="#2A3990">View All (15)</text>
+  
+  <!-- Side Card: Meditation Benefits -->
+  <g>
+    <rect x="580" y="250" width="200" height="240" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="280" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Your Benefits So Far</text>
+    
+    <line x1="600" y1="290" x2="760" y2="290" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="310" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="310">Based on your journal entries</tspan>
+      <tspan x="600" y="330">and mood tracking:</tspan>
+    </text>
+    
+    <!-- Benefit 1 -->
+    <rect x="600" y="345" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="615" cy="365" r="8" fill="#83CE8B" />
+    <text x="630" y="360" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Stress Reduction</text>
+    <text x="630" y="375" font-family="Arial" font-size="10" fill="#9A9A9A">12% lower stress scores</text>
+    
+    <!-- Benefit 2 -->
+    <rect x="600" y="395" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="615" cy="415" r="8" fill="#83CE8B" />
+    <text x="630" y="410" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Focus Improvement</text>
+    <text x="630" y="425" font-family="Arial" font-size="10" fill="#9A9A9A">8% longer focus sessions</text>
+    
+    <!-- Benefit 3 -->
+    <rect x="600" y="445" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="615" cy="465" r="8" fill="#83CE8B" />
+    <text x="630" y="460" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Sleep Quality</text>
+    <text x="630" y="475" font-family="Arial" font-size="10" fill="#9A9A9A">15% improvement in deep sleep</text>
+  </g>
+  
+  <!-- Side Card: Technique Guide -->
+  <g>
+    <rect x="580" y="500" width="200" height="240" rx="15" ry="15" fill="#FFFFFF" stroke="#9F85FF" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="530" font-family="Arial" font-size="14" font-weight="bold" fill="#9F85FF">Technique Guide</text>
+    
+    <line x1="600" y1="540" x2="760" y2="540" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="560" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="560">Focus meditation basics:</tspan>
+    </text>
+    
+    <!-- Step 1 -->
+    <rect x="600" y="575" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="615" cy="595" r="8" fill="#9F85FF" />
+    <text x="615" y="598" font-family="Arial" font-size="10" text-anchor="middle" fill="#FFFFFF">1</text>
+    <text x="630" y="590" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Comfortable Position</text>
+    <text x="630" y="605" font-family="Arial" font-size="10" fill="#9A9A9A">Seated with straight back</text>
+    
+    <!-- Step 2 -->
+    <rect x="600" y="625" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="615" cy="645" r="8" fill="#9F85FF" />
+    <text x="615" y="648" font-family="Arial" font-size="10" text-anchor="middle" fill="#FFFFFF">2</text>
+    <text x="630" y="640" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Breath Awareness</text>
+    <text x="630" y="655" font-family="Arial" font-size="10" fill="#9A9A9A">Notice natural breathing</text>
+    
+    <!-- Step 3 -->
+    <rect x="600" y="675" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="615" cy="695" r="8" fill="#9F85FF" />
+    <text x="615" y="698" font-family="Arial" font-size="10" text-anchor="middle" fill="#FFFFFF">3</text>
+    <text x="630" y="690" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Gentle Redirection</text>
+    <text x="630" y="705" font-family="Arial" font-size="10" fill="#9A9A9A">When mind wanders, return</text>
+  </g>
+  
+  <!-- Side Card: Today's Ideal Times -->
+  <g>
+    <rect x="580" y="750" width="200" height="180" rx="15" ry="15" fill="#FFFFFF" stroke="#F5A623" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="780" font-family="Arial" font-size="14" font-weight="bold" fill="#F5A623">Optimal Today</text>
+    
+    <line x1="600" y1="790" x2="760" y2="790" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="810" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="810">Best times to meditate today</tspan>
+      <tspan x="600" y="830">based on your schedule:</tspan>
+    </text>
+    
+    <!-- Time 1 -->
+    <rect x="600" y="845" width="160" height="35" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="615" cy="862.5" r="8" fill="#F5A623" />
+    <text x="615" y="866" font-family="Arial" font-size="10" text-anchor="middle" fill="#FFFFFF">AM</text>
+    <text x="630" y="865" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">6:45 - 7:00 AM</text>
+    <text x="740" y="865" font-family="Arial" font-size="10" text-anchor="end" fill="#2A3990">Now</text>
+    
+    <!-- Time 2 -->
+    <rect x="600" y="890" width="160" height="35" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="615" cy="907.5" r="8" fill="#9F85FF" />
+    <text x="615" y="911" font-family="Arial" font-size="10" text-anchor="middle" fill="#FFFFFF">PM</text>
+    <text x="630" y="910" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">5:30 - 5:45 PM</text>
+    <text x="740" y="910" font-family="Arial" font-size="10" text-anchor="end" fill="#9A9A9A">Later</text>
+  </g>
+  
+  <!-- Active Session Popup -->
+  <g>
+    <rect x="250" y="190" width="300" height="90" rx="10" ry="10" fill="#FFFFFF" filter="url(#shadow)" />
+    <text x="270" y="220" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Morning Clarity</text>
+    <text x="270" y="240" font-family="Arial" font-size="12" fill="#9A9A9A">Continue your 10-minute session?</text>
+    <rect x="270" y="255" width="120" height="30" rx="15" ry="15" fill="#2A3990" />
+    <text x="330" y="275" font-family="Arial" font-size="12" text-anchor="middle" fill="#FFFFFF">Resume</text>
+    <rect x="400" y="255" width="120" height="30" rx="15" ry="15" fill="#F6F7FB" />
+    <text x="460" y="275" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Restart</text>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="1150" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1150">Project Kage - Meditation and Mindfulness Guides</tspan>
+    <tspan x="400" y="1175">Feature: Mental Wellness Practice Development</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>

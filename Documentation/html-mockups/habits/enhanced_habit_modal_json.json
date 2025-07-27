@@ -1,0 +1,1362 @@
+{
+  "component": "EnhancedHabitCreationModal",
+  "description": "Complete habit creation modal with HabitKit-style dark theme, icon selection, measurement types, frequency settings, and calendar scheduling integration",
+  "version": "2.0",
+  "structure": {
+    "modal_overlay": {
+      "component": "ModalOverlay",
+      "props": {
+        "className": "modal-overlay",
+        "onClick": "closeModal",
+        "background": "rgba(0, 0, 0, 0.8)",
+        "position": "fixed",
+        "zIndex": 1000,
+        "display": "flex",
+        "alignItems": "center",
+        "justifyContent": "center"
+      },
+      "children": ["modal_container"]
+    },
+    "modal_container": {
+      "component": "ModalContainer",
+      "props": {
+        "className": "modal",
+        "background": "#1a1a1a",
+        "color": "white",
+        "maxWidth": "500px",
+        "maxHeight": "90vh",
+        "borderRadius": "20px",
+        "boxShadow": "0 20px 60px rgba(0, 0, 0, 0.5)",
+        "animation": "modalSlideUp 0.3s ease-out",
+        "overflow": "hidden"
+      },
+      "children": ["modal_header", "modal_body", "modal_footer"]
+    },
+    "modal_header": {
+      "component": "ModalHeader",
+      "props": {
+        "className": "modal-header",
+        "padding": "24px 24px 16px",
+        "borderBottom": "1px solid #333",
+        "display": "flex",
+        "alignItems": "center",
+        "justifyContent": "space-between"
+      },
+      "children": ["modal_title", "close_button"]
+    },
+    "modal_title": {
+      "component": "Title",
+      "props": {
+        "className": "modal-title",
+    "create_button": {
+      "component": "Button",
+      "props": {
+        "className": "btn btn-primary",
+        "onClick": "saveHabit",
+        "id": "saveBtn",
+        "text": "Create Habit",
+        "padding": "12px 24px",
+        "borderRadius": "10px",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "background": "#FF7101",
+        "color": "white",
+        "boxShadow": "0 2px 8px rgba(255, 113, 1, 0.3)",
+        "hoverBackground": "#e55a00",
+        "hoverBoxShadow": "0 4px 12px rgba(255, 113, 1, 0.4)",
+        "hoverTransform": "translateY(-1px)",
+        "disabledBackground": "#555",
+        "disabledColor": "#999",
+        "initialDisabled": true
+      }
+    }
+  },
+  "reusable_components": {
+    "icon_selection_system": {
+      "description": "HIGHLY REUSABLE - Complete icon selection system for any modal",
+      "component_files": [
+        "IconSelectionSection.jsx",
+        "IconDisplay.jsx", 
+        "IconGrid.jsx",
+        "IconOption.jsx"
+      ],
+      "usage_examples": [
+        "GoalCreationModal - for goal icons",
+        "TaskCreationModal - for task type icons", 
+        "HabitCreationModal - for habit icons",
+        "CategorySelectionModal - for category icons"
+      ],
+      "customization_props": {
+        "iconCategories": "Array of icon categories to show",
+        "defaultIcon": "Default selected icon",
+        "accentColor": "Highlight color for selections",
+        "gridColumns": "Number of columns in icon grid",
+        "iconSize": "Size of individual icons",
+        "allowEmoji": "Boolean to enable emoji support",
+        "searchEnabled": "Boolean to enable icon search",
+        "maxSelection": "Number for multi-select (default: 1)"
+      },
+      "integration_example": {
+        "react": `
+import { IconSelectionSection } from './components/IconSelectionSection';
+
+<IconSelectionSection 
+  defaultIcon="🎯"
+  accentColor="#FF7101" 
+  categories={['health', 'productivity', 'learning']}
+  onIconSelect={handleIconSelect}
+  selectedIcon={selectedIcon}
+/>`,
+        "vue": `
+<IconSelectionSection 
+  :default-icon="🎯"
+  :accent-color="#FF7101"
+  :categories="['health', 'productivity', 'learning']"
+  @icon-select="handleIconSelect"
+  :selected-icon="selectedIcon"
+/>`
+      }
+    },
+    "color_selection_system": {
+      "description": "REUSABLE - Color palette selection system",
+      "component_files": [
+        "ColorSelectionSection.jsx",
+        "ColorGrid.jsx",
+        "ColorOption.jsx"
+      ],
+      "usage_examples": [
+        "Any creation modal needing color selection",
+        "Theme customization interfaces",
+        "Category color assignment"
+      ],
+      "color_system": {
+        "primary_palette": [
+          "#FF7101", "#2196F3", "#4CAF50", "#9C27B0", 
+          "#E91E63", "#FFEB3B", "#607D8B"
+        ],
+        "accessibility": "All colors meet WCAG AA contrast requirements",
+        "semantic_mapping": {
+          "orange": "Primary brand, energy, motivation",
+          "blue": "Productivity, work, focus", 
+          "green": "Health, nature, growth",
+          "purple": "Learning, creativity, wisdom",
+          "pink": "Self-care, relationships, love",
+          "yellow": "Happiness, morning, energy",
+          "gray": "Professional, neutral, calm"
+        }
+      }
+    },
+    "toggle_switch_system": {
+      "description": "REUSABLE - Animated toggle switch component",
+      "component_files": ["ToggleSwitch.jsx"],
+      "usage_examples": [
+        "Goal linking toggles",
+        "Notification settings",
+        "Feature enable/disable",
+        "Calendar integration toggles"
+      ]
+    }
+  },
+  "state_management": {
+    "selectedIcon": {
+      "type": "string",
+      "default": "🎯",
+      "description": "Currently selected icon emoji"
+    },
+    "selectedColor": {
+      "type": "string", 
+      "default": "linear-gradient(135deg, #FF7101, #FF5722)",
+      "description": "Selected color gradient"
+    },
+    "selectedMeasurementType": {
+      "type": "string",
+      "default": "simple",
+      "options": ["simple", "count", "time", "custom"],
+      "description": "How habit completion is measured"
+    },
+    "selectedFrequency": {
+      "type": "string",
+      "default": "daily",
+      "options": ["daily", "weekly", "custom"],
+      "description": "How often habit should be done"
+    },
+    "selectedDays": {
+      "type": "array",
+      "default": [],
+      "description": "Array of selected days for weekly frequency",
+      "options": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+    },
+    "goalLinkEnabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether habit should be linked to a goal"
+    },
+    "calendarIntegrationEnabled": {
+      "type": "boolean", 
+      "default": true,
+      "description": "Whether to create calendar events for habit"
+    },
+    "iconGridVisible": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether icon selection grid is currently visible"
+    },
+    "schedulingExpanded": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether scheduling section is expanded"
+    }
+  },
+  "functions": {
+    "toggleIconGrid": {
+      "description": "REUSABLE - Toggles icon selection grid visibility",
+      "parameters": [],
+      "logic": [
+        "Find icon grid element by ID",
+        "Toggle display between 'none' and 'grid'",
+        "Update iconGridVisible state",
+        "Can be enhanced with smooth animations"
+      ],
+      "reusability": "Can be used in any modal with icon selection"
+    },
+    "selectIcon": {
+      "description": "REUSABLE - Handles icon selection from grid",
+      "parameters": ["element", "icon"],
+      "logic": [
+        "Remove 'selected' class from all icon options",
+        "Add 'selected' class to clicked element", 
+        "Update selectedIcon state",
+        "Update main icon display with new icon",
+        "Add 'selected' class to main icon display",
+        "Hide icon grid automatically",
+        "Trigger validation if needed"
+      ],
+      "reusability": "Core icon selection logic for any modal"
+    },
+    "selectColor": {
+      "description": "REUSABLE - Handles color selection from palette",
+      "parameters": ["element"],
+      "logic": [
+        "Remove 'selected' class from all color options",
+        "Add 'selected' class to clicked element",
+        "Extract background gradient from element style",
+        "Update selectedColor state",
+        "Trigger form validation",
+        "Update any color-dependent UI elements"
+      ],
+      "reusability": "Standard color selection for any modal"
+    },
+    "selectMeasurementType": {
+      "description": "Handles measurement type selection with dynamic UI",
+      "parameters": ["element", "type"],
+      "logic": [
+        "Remove 'selected' class from all measurement types",
+        "Add 'selected' class to clicked element",
+        "Update selectedMeasurementType state",
+        "Show/hide target section based on type",
+        "Update target unit label based on type",
+        "Set target input required status",
+        "Update placeholder values contextually",
+        "Trigger form validation"
+      ],
+      "measurement_type_logic": {
+        "simple": {
+          "showTarget": false,
+          "targetRequired": false,
+          "description": "Yes/No completion tracking"
+        },
+        "count": {
+          "showTarget": true,
+          "targetRequired": true,
+          "unit": "times",
+          "placeholder": "10",
+          "description": "Track number of repetitions"
+        },
+        "time": {
+          "showTarget": true,
+          "targetRequired": true,
+          "unit": "minutes", 
+          "placeholder": "30",
+          "description": "Track duration in minutes"
+        },
+        "custom": {
+          "showTarget": true,
+          "targetRequired": true,
+          "unit": "units",
+          "placeholder": "5", 
+          "description": "Track custom measurements"
+        }
+      }
+    },
+    "selectFrequency": {
+      "description": "Handles frequency selection with conditional UI",
+      "parameters": ["element", "frequency"],
+      "logic": [
+        "Remove 'selected' class from all frequency options",
+        "Add 'selected' class to clicked element",
+        "Update selectedFrequency state",
+        "Hide all frequency-specific sections",
+        "Show appropriate section based on selection",
+        "Reset dependent state (selectedDays for weekly)",
+        "Trigger form validation",
+        "Update calendar preview"
+      ],
+      "frequency_logic": {
+        "daily": {
+          "showSection": null,
+          "description": "Habit done every single day"
+        },
+        "weekly": {
+          "showSection": "weeklyDays",
+          "validation": "At least one day must be selected",
+          "description": "Habit done on specific days of week"
+        },
+        "custom": {
+          "showSection": "customFrequency", 
+          "validation": "Number must be 1 or greater",
+          "description": "Habit done X times per period"
+        }
+      }
+    },
+    "toggleDay": {
+      "description": "Toggles individual day selection for weekly frequency",
+      "parameters": ["element"],
+      "logic": [
+        "Get day value from element dataset",
+        "Check if day is currently selected",
+        "If selected: remove from selectedDays array and remove 'selected' class",
+        "If not selected: add to selectedDays array and add 'selected' class",
+        "Update selectedDays state",
+        "Trigger form validation",
+        "Update calendar preview with new frequency pattern"
+      ]
+    },
+    "toggleScheduling": {
+      "description": "Expands/collapses scheduling section",
+      "parameters": ["element"],
+      "logic": [
+        "Toggle 'expanded' class on toggle element",
+        "Toggle 'expanded' class on scheduling content",
+        "Update schedulingExpanded state",
+        "If expanding: call updateCalendarPreview()",
+        "Animate arrow rotation and background change"
+      ]
+    },
+    "toggleCalendarIntegration": {
+      "description": "Enables/disables calendar event creation",
+      "parameters": ["element"],
+      "logic": [
+        "Toggle 'active' class on toggle switch",
+        "Update calendarIntegrationEnabled state",
+        "Show/hide calendar preview based on state",
+        "Update knob position animation",
+        "If disabled: clear any generated calendar events"
+      ]
+    },
+    "updateCalendarPreview": {
+      "description": "Updates live preview of calendar events",
+      "parameters": [],
+      "logic": [
+        "Get current habit name from input",
+        "Get scheduled time from time input",
+        "Generate frequency text based on current selection",
+        "Update preview event title with habit name or 'New Habit'",
+        "Update preview time with formatted time display",
+        "Update preview frequency with readable frequency text",
+        "Handle edge cases for incomplete data"
+      ],
+      "frequency_display_logic": {
+        "daily": "Daily",
+        "weekly": "M, W, F (example based on selected days)",
+        "custom": "3 times per week (example based on input)"
+      }
+    },
+    "validateForm": {
+      "description": "Comprehensive form validation with real-time feedback",
+      "parameters": [],
+      "logic": [
+        "Check habit name is not empty",
+        "If measurement type != 'simple': validate target amount > 0",
+        "If frequency == 'weekly': validate at least one day selected",
+        "If frequency == 'custom': validate custom input > 0",
+        "Update save button disabled state based on validation",
+        "Return overall validation status"
+      ],
+      "validation_rules": {
+        "habitName": {
+          "required": true,
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "targetAmount": {
+          "required": "when measurementType !== 'simple'",
+          "min": 1,
+          "type": "integer"
+        },
+        "weeklyDays": {
+          "required": "when frequency === 'weekly'",
+          "minLength": 1
+        },
+        "customFrequency": {
+          "required": "when frequency === 'custom'",
+          "min": 1,
+          "type": "integer"
+        }
+      }
+    },
+    "generateCalendarEvents": {
+      "description": "Creates calendar events based on habit frequency",
+      "parameters": ["habitData"],
+      "logic": [
+        "Get start date and scheduled time",
+        "Based on frequency type, generate appropriate events",
+        "For daily: create events for next 30 days",
+        "For weekly: create events for selected days over 8 weeks", 
+        "For custom: create flexible recurring pattern",
+        "Return array of calendar event objects"
+      ],
+      "event_structure": {
+        "title": "habitData.name",
+        "start": "ISO datetime string",
+        "end": "ISO datetime string (start + 30min default)",
+        "description": "Complete habit: [name]",
+        "type": "habit",
+        "habitId": "null (set after habit creation)",
+        "reminder": "reminderMinutes or null",
+        "icon": "habitData.icon",
+        "color": "habitData.color"
+      }
+    },
+    "collectHabitData": {
+      "description": "Collects all form data into structured habit object",
+      "parameters": [],
+      "logic": [
+        "Collect basic habit information",
+        "Add measurement type and target data if applicable",
+        "Add frequency-specific data based on type",
+        "Add scheduling information if provided",
+        "Generate calendar events if integration enabled",
+        "Return complete habit data structure"
+      ]
+    },
+    "saveHabit": {
+      "description": "Validates and saves the habit",
+      "parameters": [],
+      "logic": [
+        "Run final validation check",
+        "If invalid: show validation message and return",
+        "Collect all form data using collectHabitData()",
+        "Call API endpoint to create habit",
+        "If calendar integration enabled: create calendar events",
+        "Show success message",
+        "Close modal and reset form",
+        "Trigger parent component refresh"
+      ]
+    }
+  },
+  "api_integration": {
+    "endpoint": "/api/habits",
+    "method": "POST", 
+    "request_structure": {
+      "name": "string (required, 1-50 chars)",
+      "description": "string|null (max 200 chars)",
+      "icon": "string (emoji)",
+      "color": "string (CSS gradient)",
+      "measurementType": "enum: [simple, count, time, custom]",
+      "targetAmount": "number|null (required if not simple)",
+      "targetUnit": "string|null (times, minutes, units)",
+      "frequency": "enum: [daily, weekly, custom]",
+      "selectedDays": "array|null (for weekly frequency)",
+      "customFrequency": "object|null (for custom frequency)",
+      "goalId": "string|null (if goal linking enabled)",
+      "startDate": "string|null (ISO date)",
+      "scheduledTime": "string|null (HH:MM format)",
+      "reminderMinutes": "number|null",
+      "calendarIntegration": "boolean",
+      "calendarEvents": "array|null (if integration enabled)",
+      "createdAt": "string (ISO datetime)"
+    },
+    "response_structure": {
+      "success": {
+        "id": "string (habit ID)",
+        "message": "Habit created successfully",
+        "habit": "complete habit object",
+        "calendarEvents": "array of created event IDs"
+      },
+      "error": {
+        "message": "string",
+        "errors": "array of validation errors",
+        "field": "string (field with error)"
+      }
+    }
+  },
+  "calendar_integration": {
+    "event_generation_logic": {
+      "daily_habits": {
+        "pattern": "Create event for each day",
+        "duration": "30 days in advance",
+        "recurrence": "Daily until manually stopped"
+      },
+      "weekly_habits": {
+        "pattern": "Create events for selected days only",
+        "duration": "8 weeks in advance", 
+        "recurrence": "Weekly on specified days"
+      },
+      "custom_habits": {
+        "pattern": "Flexible scheduling based on frequency",
+        "duration": "Next occurrence calculation",
+        "recurrence": "Custom pattern matching user input"
+      }
+    },
+    "event_properties": {
+      "calendar_app_integration": "Compatible with Google Calendar, Apple Calendar, Outlook",
+      "reminder_system": "Integrates with device notification system",
+      "progress_tracking": "Events link back to habit completion",
+      "conflict_detection": "Can detect scheduling conflicts",
+      "bulk_operations": "Support for editing/deleting recurring events"
+    }
+  },
+  "responsive_design": {
+    "mobile_breakpoint": "540px",
+    "mobile_optimizations": [
+      "Single column layout for measurement types",
+      "Single column layout for frequency options", 
+      "Reduced color grid columns (5 instead of 7)",
+      "Smaller icon grid (6 columns instead of 8)",
+      "Full width modal with 16px margins",
+      "Stacked footer buttons",
+      "Touch-optimized tap targets (minimum 44px)"
+    ],
+    "tablet_breakpoint": "768px",
+    "tablet_optimizations": [
+      "Maintain desktop layout with slight adjustments",
+      "Optimize spacing for tablet viewports"
+    ]
+  },
+  "accessibility": {
+    "keyboard_navigation": [
+      "Tab through all interactive elements",
+      "Enter/Space to select icons and colors",
+      "Arrow keys to navigate icon grid",
+      "Escape to close modal or icon grid"
+    ],
+    "screen_reader": [
+      "All icons have aria-labels with descriptions",
+      "Form sections have proper headings",
+      "Toggle switches announce state changes",
+      "Calendar preview has descriptive text"
+    ],
+    "color_contrast": [
+      "All text meets WCAG AA standards (4.5:1 ratio)",
+      "Focus indicators clearly visible",
+      "Selected states use multiple indicators (color + border + checkmark)",
+      "High contrast mode support"
+    ]
+  },
+  "testing_checklist": [
+    "Icon selection and display updates correctly",
+    "Color selection updates background and selection state",
+    "Measurement type changes show/hide target section appropriately",
+    "Target unit updates based on measurement type",
+    "Frequency selection shows correct conditional sections",
+    "Weekly day selection validates at least one day",
+    "Custom frequency validates positive numbers",
+    "Calendar preview updates in real-time",
+    "Toggle switches animate correctly",
+    "Form validation prevents saving invalid data",
+    "Responsive layout works on mobile devices",
+    "Keyboard navigation covers all interactive elements",
+    "Screen readers announce important state changes"
+  ],
+  "implementation_priority": [
+    "1. Core modal structure and basic form fields",
+    "2. Icon selection system (highest reusability)",
+    "3. Color selection system", 
+    "4. Measurement type logic with conditional target section",
+    "5. Frequency selection with conditional day/custom sections",
+    "6. Form validation and save functionality",
+    "7. Scheduling section with calendar preview",
+    "8. Calendar integration and event generation",
+    "9. Responsive design and mobile optimization",
+    "10. Accessibility features and keyboard navigation"
+  ],
+  "performance_considerations": [
+    "Debounce calendar preview updates to avoid excessive re-renders",
+    "Lazy load icon grid to improve initial modal render time",
+    "Use CSS transforms for animations instead of changing layout properties",
+    "Minimize DOM queries by caching element references",
+    "Use event delegation for icon grid to reduce event listener count"
+  ]
+} "New Habit",
+        "fontSize": "24px",
+        "fontWeight": "700",
+        "color": "white"
+      }
+    },
+    "close_button": {
+      "component": "CloseButton",
+      "props": {
+        "className": "close-btn",
+        "onClick": "closeModal",
+        "icon": "✕",
+        "size": "36px",
+        "borderRadius": "8px",
+        "background": "#333",
+        "color": "#ccc",
+        "hoverBackground": "#444",
+        "hoverColor": "white"
+      }
+    },
+    "modal_body": {
+      "component": "ModalBody",
+      "props": {
+        "className": "modal-body",
+        "padding": "0 24px 24px",
+        "maxHeight": "calc(90vh - 160px)",
+        "overflowY": "auto"
+      },
+      "children": [
+        "icon_selection_section",
+        "name_section",
+        "description_section", 
+        "color_selection_section",
+        "measurement_type_section",
+        "frequency_section",
+        "goal_linking_section",
+        "scheduling_section"
+      ]
+    },
+    "icon_selection_section": {
+      "component": "IconSelectionSection",
+      "reusable": true,
+      "description": "REUSABLE COMPONENT - Can be used in Goal, Task, and other creation modals",
+      "props": {
+        "className": "icon-section",
+        "marginBottom": "24px",
+        "textAlign": "center"
+      },
+      "children": ["icon_display", "icon_grid"],
+      "implementation_notes": {
+        "reusability": "This entire section can be extracted as a standalone component",
+        "customization": "Icons can be filtered by category (health, productivity, etc.)",
+        "extensibility": "Easy to add emoji support alongside icons"
+      }
+    },
+    "icon_display": {
+      "component": "IconDisplay",
+      "reusable": true,
+      "props": {
+        "className": "icon-display",
+        "id": "selectedIcon",
+        "onClick": "toggleIconGrid",
+        "width": "120px",
+        "height": "120px",
+        "borderRadius": "60px",
+        "background": "#333",
+        "selectedBackground": "#FF7101",
+        "margin": "0 auto 16px",
+        "display": "flex",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "fontSize": "48px",
+        "cursor": "pointer",
+        "transition": "all 0.2s",
+        "border": "3px solid transparent",
+        "selectedBorderColor": "#FF7101",
+        "defaultIcon": "🎯"
+      },
+      "styling": {
+        "normal": {
+          "background": "#333",
+          "border": "3px solid transparent"
+        },
+        "selected": {
+          "background": "#FF7101",
+          "borderColor": "#FF7101"
+        },
+        "hover": {
+          "transform": "scale(1.05)"
+        }
+      }
+    },
+    "icon_grid": {
+      "component": "IconGrid",
+      "reusable": true,
+      "description": "HIGHLY REUSABLE - Core icon selection grid component",
+      "props": {
+        "className": "icon-grid",
+        "id": "iconGrid", 
+        "display": "none",
+        "gridTemplateColumns": "repeat(8, 1fr)",
+        "gap": "8px",
+        "marginTop": "16px",
+        "maxHeight": "200px",
+        "overflowY": "auto",
+        "padding": "8px",
+        "background": "#222",
+        "borderRadius": "12px",
+        "toggleDisplay": "grid"
+      },
+      "children": ["icon_options"],
+      "data_structure": {
+        "icons_by_category": {
+          "health_fitness": ["💪", "🏃", "💧", "🥗", "🧘", "🏋️", "🚴", "🏊"],
+          "productivity": ["📝", "💼", "⏰", "📊", "💻", "📱", "🎯", "⚡"],
+          "learning": ["📚", "🎓", "🧠", "📖", "✏️", "🔬", "🎨", "🎵"],
+          "finance": ["💰", "💳", "💎", "📈", "🏦", "💵", "🪙", "💸"],
+          "social": ["👥", "🤝", "💬", "📞", "✉️", "🎉", "🍽️", "🎭"],
+          "self_care": ["🌱", "🌸", "🕯️", "🛁", "💤", "🧴", "🌺", "✨"],
+          "creative": ["🎨", "📷", "🎪", "🎬", "🖼️", "🎭", "🎪", "🎨"],
+          "travel": ["✈️", "🗺️", "🧳", "🏖️", "🏔️", "🚗", "🛥️", "🎒"]
+        },
+        "icon_metadata": {
+          "💪": {"category": "health_fitness", "keywords": ["exercise", "workout", "strength", "gym"]},
+          "🏃": {"category": "health_fitness", "keywords": ["running", "cardio", "fitness", "exercise"]},
+          "💧": {"category": "health_fitness", "keywords": ["water", "hydration", "drink", "health"]},
+          "📚": {"category": "learning", "keywords": ["reading", "study", "books", "education"]},
+          "🧘": {"category": "health_fitness", "keywords": ["meditation", "mindfulness", "zen", "calm"]},
+          "🥗": {"category": "health_fitness", "keywords": ["nutrition", "healthy", "diet", "vegetables"]},
+          "💰": {"category": "finance", "keywords": ["money", "savings", "budget", "finance"]},
+          "🌅": {"category": "self_care", "keywords": ["morning", "routine", "sunrise", "early"]},
+          "📝": {"category": "productivity", "keywords": ["writing", "journal", "notes", "planning"]},
+          "🎯": {"category": "productivity", "keywords": ["goals", "target", "focus", "aim"]}
+        }
+      }
+    },
+    "icon_option": {
+      "component": "IconOption",
+      "reusable": true,
+      "props": {
+        "className": "icon-option",
+        "onClick": "selectIcon",
+        "width": "40px",
+        "height": "40px",
+        "borderRadius": "8px",
+        "background": "#333",
+        "display": "flex",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "fontSize": "20px",
+        "cursor": "pointer",
+        "transition": "all 0.2s",
+        "border": "2px solid transparent",
+        "selectedBorderColor": "#FF7101",
+        "selectedBackground": "#FF7101",
+        "hoverBackground": "#444",
+        "hoverTransform": "scale(1.1)"
+      },
+      "states": {
+        "normal": {
+          "background": "#333",
+          "border": "2px solid transparent"
+        },
+        "hover": {
+          "background": "#444",
+          "transform": "scale(1.1)"
+        },
+        "selected": {
+          "borderColor": "#FF7101",
+          "background": "#FF7101"
+        }
+      }
+    },
+    "name_section": {
+      "component": "FormSection",
+      "props": {
+        "className": "form-section",
+        "marginBottom": "24px"
+      },
+      "children": ["name_label", "name_input"]
+    },
+    "name_label": {
+      "component": "SectionLabel",
+      "props": {
+        "className": "section-label",
+        "text": "Name *",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "color": "#ccc",
+        "marginBottom": "8px"
+      }
+    },
+    "name_input": {
+      "component": "TextInput",
+      "props": {
+        "className": "form-input",
+        "placeholder": "What habit do you want to build?",
+        "maxLength": 50,
+        "required": true,
+        "onInput": "validateForm",
+        "padding": "12px 16px",
+        "border": "2px solid #333",
+        "borderRadius": "12px",
+        "fontSize": "16px",
+        "color": "white",
+        "background": "#222",
+        "focusBorderColor": "#FF7101",
+        "focusBoxShadow": "0 0 0 3px rgba(255, 113, 1, 0.1)",
+        "placeholderColor": "#666"
+      }
+    },
+    "description_section": {
+      "component": "FormSection",
+      "props": {
+        "className": "form-section",
+        "marginBottom": "24px"
+      },
+      "children": ["description_label", "description_textarea"]
+    },
+    "description_label": {
+      "component": "SectionLabel",
+      "props": {
+        "text": "Description (Optional)"
+      }
+    },
+    "description_textarea": {
+      "component": "Textarea",
+      "props": {
+        "className": "form-input form-textarea",
+        "placeholder": "Why is this habit important to you?",
+        "maxLength": 200,
+        "minHeight": "80px",
+        "resize": "vertical"
+      }
+    },
+    "color_selection_section": {
+      "component": "ColorSelectionSection",
+      "reusable": true,
+      "description": "REUSABLE COMPONENT - Can be used across Goal, Task, Habit modals",
+      "props": {
+        "className": "form-section",
+        "marginBottom": "24px"
+      },
+      "children": ["color_label", "color_grid"]
+    },
+    "color_label": {
+      "component": "SectionLabel",
+      "props": {
+        "text": "Color *"
+      }
+    },
+    "color_grid": {
+      "component": "ColorGrid",
+      "reusable": true,
+      "props": {
+        "className": "color-grid",
+        "display": "grid",
+        "gridTemplateColumns": "repeat(7, 1fr)",
+        "gap": "12px"
+      },
+      "children": ["color_options"],
+      "color_palette": {
+        "orange": {
+          "gradient": "linear-gradient(135deg, #FF7101, #FF5722)",
+          "name": "Orange (Primary)",
+          "usage": "Default Kage brand color"
+        },
+        "blue": {
+          "gradient": "linear-gradient(135deg, #2196F3, #1976D2)",
+          "name": "Blue",
+          "usage": "Productivity, work-related habits"
+        },
+        "green": {
+          "gradient": "linear-gradient(135deg, #4CAF50, #388E3C)",
+          "name": "Green", 
+          "usage": "Health, fitness, nature habits"
+        },
+        "purple": {
+          "gradient": "linear-gradient(135deg, #9C27B0, #7B1FA2)",
+          "name": "Purple",
+          "usage": "Learning, creativity, spirituality"
+        },
+        "pink": {
+          "gradient": "linear-gradient(135deg, #E91E63, #C2185B)",
+          "name": "Pink",
+          "usage": "Self-care, relationships, social"
+        },
+        "yellow": {
+          "gradient": "linear-gradient(135deg, #FFEB3B, #FBC02D)",
+          "name": "Yellow",
+          "usage": "Energy, motivation, morning routines"
+        },
+        "gray": {
+          "gradient": "linear-gradient(135deg, #607D8B, #455A64)",
+          "name": "Gray",
+          "usage": "Neutral, professional habits"
+        }
+      }
+    },
+    "color_option": {
+      "component": "ColorOption",
+      "reusable": true,
+      "props": {
+        "className": "color-option",
+        "onClick": "selectColor",
+        "width": "48px",
+        "height": "48px",
+        "borderRadius": "12px",
+        "cursor": "pointer",
+        "transition": "all 0.2s",
+        "border": "3px solid transparent",
+        "selectedBorderColor": "white",
+        "selectedBoxShadow": "0 0 0 2px #FF7101",
+        "hoverTransform": "scale(1.1)"
+      },
+      "selected_indicator": {
+        "content": "✓",
+        "position": "absolute",
+        "top": "50%",
+        "left": "50%",
+        "transform": "translate(-50%, -50%)",
+        "color": "white",
+        "fontWeight": "bold",
+        "fontSize": "18px"
+      }
+    },
+    "measurement_type_section": {
+      "component": "MeasurementTypeSection",
+      "props": {
+        "className": "form-section",
+        "marginBottom": "24px"
+      },
+      "children": ["measurement_label", "measurement_types", "target_section"]
+    },
+    "measurement_label": {
+      "component": "SectionLabel",
+      "props": {
+        "text": "How should completions be tracked? *"
+      }
+    },
+    "measurement_types": {
+      "component": "MeasurementTypesGrid",
+      "props": {
+        "className": "measurement-types",
+        "display": "grid",
+        "gridTemplateColumns": "repeat(2, 1fr)",
+        "gap": "12px",
+        "marginBottom": "16px"
+      },
+      "children": ["simple_type", "count_type", "time_type", "custom_type"]
+    },
+    "simple_type": {
+      "component": "MeasurementTypeOption",
+      "props": {
+        "className": "measurement-type selected",
+        "onClick": "selectMeasurementType",
+        "type": "simple",
+        "icon": "✅",
+        "name": "Simple",
+        "description": "Yes/No daily",
+        "defaultSelected": true
+      }
+    },
+    "count_type": {
+      "component": "MeasurementTypeOption",
+      "props": {
+        "className": "measurement-type",
+        "onClick": "selectMeasurementType",
+        "type": "count",
+        "icon": "🔢",
+        "name": "Count",
+        "description": "Track number"
+      }
+    },
+    "time_type": {
+      "component": "MeasurementTypeOption",
+      "props": {
+        "className": "measurement-type",
+        "onClick": "selectMeasurementType",
+        "type": "time",
+        "icon": "⏱️",
+        "name": "Time",
+        "description": "Track duration"
+      }
+    },
+    "custom_type": {
+      "component": "MeasurementTypeOption",
+      "props": {
+        "className": "measurement-type",
+        "onClick": "selectMeasurementType",
+        "type": "custom",
+        "icon": "📊",
+        "name": "Custom",
+        "description": "Custom units"
+      }
+    },
+    "target_section": {
+      "component": "TargetSection",
+      "props": {
+        "className": "target-section",
+        "id": "targetSection",
+        "display": "none",
+        "showWhen": "selectedMeasurementType !== 'simple'",
+        "marginTop": "16px",
+        "padding": "16px",
+        "background": "#222",
+        "borderRadius": "12px",
+        "border": "1px solid #333"
+      },
+      "children": ["target_label", "target_container"]
+    },
+    "target_container": {
+      "component": "TargetContainer",
+      "props": {
+        "className": "target-container",
+        "display": "grid",
+        "gridTemplateColumns": "1fr auto",
+        "gap": "12px",
+        "alignItems": "center"
+      },
+      "children": ["target_input", "target_unit"]
+    },
+    "target_input": {
+      "component": "NumberInput",
+      "props": {
+        "className": "target-input",
+        "id": "targetInput",
+        "type": "number",
+        "placeholder": "0",
+        "min": "1",
+        "required": "conditional"
+      }
+    },
+    "target_unit": {
+      "component": "TargetUnit",
+      "props": {
+        "className": "target-unit",
+        "id": "targetUnit",
+        "text": "times",
+        "dynamicText": {
+          "count": "times",
+          "time": "minutes", 
+          "custom": "units"
+        },
+        "padding": "8px 12px",
+        "background": "#333",
+        "borderRadius": "8px",
+        "fontSize": "14px",
+        "color": "#ccc",
+        "minWidth": "80px",
+        "textAlign": "center"
+      }
+    },
+    "frequency_section": {
+      "component": "FrequencySection",
+      "props": {
+        "className": "form-section",
+        "marginBottom": "24px"
+      },
+      "children": ["frequency_label", "frequency_options", "weekly_days", "custom_frequency"]
+    },
+    "frequency_label": {
+      "component": "SectionLabel",
+      "props": {
+        "text": "Frequency *"
+      }
+    },
+    "frequency_options": {
+      "component": "FrequencyOptionsGrid",
+      "props": {
+        "className": "frequency-options",
+        "display": "grid",
+        "gridTemplateColumns": "repeat(3, 1fr)",
+        "gap": "12px",
+        "marginBottom": "16px"
+      },
+      "children": ["daily_frequency", "weekly_frequency", "custom_frequency_option"]
+    },
+    "daily_frequency": {
+      "component": "FrequencyOption",
+      "props": {
+        "className": "frequency-option selected",
+        "onClick": "selectFrequency",
+        "type": "daily",
+        "name": "Daily",
+        "description": "Every day",
+        "defaultSelected": true
+      }
+    },
+    "weekly_frequency": {
+      "component": "FrequencyOption",
+      "props": {
+        "className": "frequency-option",
+        "onClick": "selectFrequency",
+        "type": "weekly",
+        "name": "Weekly",
+        "description": "Select days"
+      }
+    },
+    "custom_frequency_option": {
+      "component": "FrequencyOption",
+      "props": {
+        "className": "frequency-option",
+        "onClick": "selectFrequency",
+        "type": "custom",
+        "name": "Custom",
+        "description": "X times per period"
+      }
+    },
+    "weekly_days": {
+      "component": "WeeklyDaysSection",
+      "props": {
+        "className": "weekly-days",
+        "id": "weeklyDays",
+        "display": "none",
+        "showWhen": "selectedFrequency === 'weekly'",
+        "marginTop": "12px"
+      },
+      "children": ["weekly_days_label", "days_grid"]
+    },
+    "days_grid": {
+      "component": "DaysGrid",
+      "props": {
+        "className": "days-grid",
+        "display": "grid",
+        "gridTemplateColumns": "repeat(7, 1fr)",
+        "gap": "8px"
+      },
+      "children": ["day_options"]
+    },
+    "day_option": {
+      "component": "DayOption",
+      "props": {
+        "className": "day-option",
+        "onClick": "toggleDay",
+        "padding": "8px 4px",
+        "border": "2px solid #333",
+        "borderRadius": "8px",
+        "cursor": "pointer",
+        "transition": "all 0.2s",
+        "background": "#222",
+        "textAlign": "center",
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "selectedBorderColor": "#FF7101",
+        "selectedBackground": "#FF7101",
+        "selectedColor": "white"
+      },
+      "days": [
+        {"dataDay": "mon", "text": "M"},
+        {"dataDay": "tue", "text": "T"},
+        {"dataDay": "wed", "text": "W"},
+        {"dataDay": "thu", "text": "T"},
+        {"dataDay": "fri", "text": "F"},
+        {"dataDay": "sat", "text": "S"},
+        {"dataDay": "sun", "text": "S"}
+      ]
+    },
+    "custom_frequency": {
+      "component": "CustomFrequencySection",
+      "props": {
+        "className": "custom-frequency",
+        "id": "customFrequency",
+        "display": "none",
+        "showWhen": "selectedFrequency === 'custom'",
+        "marginTop": "12px"
+      },
+      "children": ["custom_frequency_label", "custom_container"]
+    },
+    "custom_container": {
+      "component": "CustomContainer",
+      "props": {
+        "className": "custom-container",
+        "display": "grid",
+        "gridTemplateColumns": "auto 1fr auto",
+        "gap": "12px",
+        "alignItems": "center"
+      },
+      "children": ["custom_input", "custom_times_text", "custom_select"]
+    },
+    "goal_linking_section": {
+      "component": "GoalLinkingSection",
+      "props": {
+        "className": "goal-linking",
+        "marginBottom": "24px"
+      },
+      "children": ["goal_toggle_container", "goal_select"]
+    },
+    "goal_toggle_container": {
+      "component": "GoalToggleContainer",
+      "props": {
+        "className": "goal-toggle-container",
+        "display": "flex",
+        "alignItems": "center",
+        "justifyContent": "space-between",
+        "marginBottom": "12px"
+      },
+      "children": ["goal_toggle_label", "goal_toggle_switch"]
+    },
+    "goal_toggle_switch": {
+      "component": "ToggleSwitch",
+      "reusable": true,
+      "props": {
+        "className": "toggle-switch active",
+        "id": "goalToggle",
+        "onClick": "toggleGoalLink",
+        "width": "48px",
+        "height": "24px",
+        "background": "#333",
+        "activeBackground": "#FF7101",
+        "borderRadius": "12px",
+        "position": "relative",
+        "cursor": "pointer",
+        "transition": "all 0.2s",
+        "defaultActive": true
+      },
+      "children": ["toggle_knob"]
+    },
+    "toggle_knob": {
+      "component": "ToggleKnob",
+      "props": {
+        "className": "toggle-knob",
+        "width": "20px",
+        "height": "20px",
+        "background": "white",
+        "borderRadius": "10px",
+        "position": "absolute",
+        "top": "2px",
+        "left": "2px",
+        "activeLeft": "26px",
+        "transition": "all 0.2s",
+        "boxShadow": "0 1px 3px rgba(0, 0, 0, 0.3)"
+      }
+    },
+    "goal_select": {
+      "component": "GoalSelect",
+      "props": {
+        "className": "goal-select",
+        "id": "goalSelect",
+        "width": "100%",
+        "padding": "12px 16px",
+        "border": "2px solid #333",
+        "borderRadius": "8px",
+        "fontSize": "14px",
+        "background": "#222",
+        "color": "white",
+        "focusBorderColor": "#FF7101"
+      },
+      "options": [
+        {"value": "", "text": "Select a goal..."},
+        {"value": "1", "text": "🏃 Get Fit & Healthy"},
+        {"value": "2", "text": "🚀 Launch Side Project"},
+        {"value": "3", "text": "📚 Learn Spanish"},
+        {"value": "4", "text": "🧘 Mindfulness Practice"},
+        {"value": "new", "text": "+ Create New Goal"}
+      ]
+    },
+    "scheduling_section": {
+      "component": "SchedulingSection",
+      "props": {
+        "className": "scheduling-options",
+        "marginBottom": "24px"
+      },
+      "children": ["scheduling_toggle", "scheduling_content"]
+    },
+    "scheduling_toggle": {
+      "component": "SchedulingToggle",
+      "props": {
+        "className": "scheduling-toggle",
+        "onClick": "toggleScheduling",
+        "display": "flex",
+        "alignItems": "center",
+        "gap": "12px",
+        "cursor": "pointer",
+        "marginBottom": "16px",
+        "padding": "12px 16px",
+        "background": "#222",
+        "borderRadius": "12px",
+        "border": "1px solid #333",
+        "hoverBackground": "#2a2a2a",
+        "expandedBackground": "rgba(255, 113, 1, 0.1)",
+        "expandedBorderColor": "#FF7101"
+      },
+      "children": ["scheduling_icon", "scheduling_text", "scheduling_arrow"]
+    },
+    "scheduling_content": {
+      "component": "SchedulingContent",
+      "props": {
+        "className": "scheduling-content",
+        "id": "schedulingContent",
+        "display": "none",
+        "expandedDisplay": "block",
+        "animation": "slideDown 0.3s ease-out",
+        "padding": "20px",
+        "background": "#1a1a1a",
+        "borderRadius": "12px",
+        "border": "1px solid #333",
+        "marginTop": "8px"
+      },
+      "children": ["scheduling_grid", "calendar_preview"]
+    },
+    "scheduling_grid": {
+      "component": "SchedulingGrid",
+      "props": {
+        "className": "scheduling-grid",
+        "display": "grid",
+        "gridTemplateColumns": "1fr 1fr",
+        "gap": "16px",
+        "marginBottom": "20px"
+      },
+      "children": ["start_date_field", "time_field", "reminder_field", "calendar_integration_field"]
+    },
+    "calendar_preview": {
+      "component": "CalendarPreview",
+      "props": {
+        "className": "calendar-preview",
+        "id": "calendarPreview",
+        "background": "#222",
+        "borderRadius": "12px",
+        "border": "1px solid #333",
+        "marginBottom": "20px",
+        "overflow": "hidden"
+      },
+      "children": ["calendar_preview_header", "calendar_preview_content", "calendar_preview_note"]
+    },
+    "calendar_event_preview": {
+      "component": "CalendarEventPreview",
+      "props": {
+        "className": "calendar-event-preview",
+        "background": "rgba(255, 113, 1, 0.1)",
+        "border": "1px solid rgba(255, 113, 1, 0.3)",
+        "borderRadius": "8px",
+        "padding": "12px",
+        "borderLeft": "4px solid #FF7101"
+      },
+      "children": ["event_time", "event_title", "event_frequency"]
+    },
+    "modal_footer": {
+      "component": "ModalFooter",
+      "props": {
+        "className": "modal-footer",
+        "padding": "16px 24px 24px",
+        "borderTop": "1px solid #333",
+        "display": "flex",
+        "gap": "12px",
+        "justifyContent": "flex-end"
+      },
+      "children": ["cancel_button", "create_button"]
+    },
+    "cancel_button": {
+      "component": "Button",
+      "props": {
+        "className": "btn btn-secondary",
+        "onClick": "closeModal",
+        "text": "Cancel",
+        "padding": "12px 24px",
+        "borderRadius": "10px",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "background": "#333",
+        "color": "#ccc",
+        "border": "1px solid #444",
+        "hoverBackground": "#444",
+        "hoverColor": "white"
+      }
+    },
+    "create_button": {
+      "component": "Button",
+      "props": {
+        "className": "btn btn-primary",
+        "onClick": "saveHabit",
+        "id": "saveBtn",
+        "text":

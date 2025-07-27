@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1000" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">8:15 AM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1050" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="400" y="195" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Smart Schedule</text>
+  
+  <!-- Schedule View -->
+  <rect x="170" y="230" width="460" height="810" fill="#F6F7FB" rx="15" ry="15" />
+  
+  <!-- AI Introduction -->
+  <g>
+    <rect x="190" y="250" width="420" height="100" rx="15" ry="15" fill="#E9EDF8" />
+    <text x="210" y="270" font-family="Arial" font-size="15" fill="#333333">
+      <tspan x="210" y="280">I've analyzed your calendar and energy</tspan>
+      <tspan x="210" y="305">patterns to optimize your French learning</tspan>
+      <tspan x="210" y="330">habits. Here's a suggested schedule:</tspan>
+    </text>
+    
+    <!-- AI Avatar -->
+    <circle cx="180" cy="295" r="20" fill="#2A3990" />
+    <text x="180" y="301" font-family="Arial" font-size="18" text-anchor="middle" fill="#FFFFFF">K</text>
+    
+    <!-- Timestamp -->
+    <text x="320" y="350" font-family="Arial" font-size="10" fill="#9A9A9A">8:15 AM</text>
+  </g>
+  
+  <!-- Daily Schedule Overview -->
+  <rect x="190" y="370" width="420" height="270" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="210" y="395" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Today's Optimized Schedule</text>
+  
+  <!-- Morning Block -->
+  <rect x="210" y="415" width="380" height="60" rx="8" ry="8" fill="#FCF3D9" />
+  <rect x="210" y="415" width="10" height="60" rx="0" ry="0" fill="#F5A623" />
+  <text x="230" y="435" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">
+    <tspan x="230" y="435">7:30 - 7:45 AM</tspan>
+  </text>
+  <text x="230" y="455" font-family="Arial" font-size="13" fill="#333333">
+    <tspan x="230" y="455">French vocabulary practice (with coffee)</tspan>
+  </text>
+  <circle cx="570" cy="445" r="12" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="570" y="449" font-family="Arial" font-size="14" text-anchor="middle" fill="#2A3990">D</text>
+  
+  <!-- Lunch Block -->
+  <rect x="210" y="485" width="380" height="60" rx="8" ry="8" fill="#DCF7E0" />
+  <rect x="210" y="485" width="10" height="60" rx="0" ry="0" fill="#83CE8B" />
+  <text x="230" y="505" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">
+    <tspan x="230" y="505">12:15 - 12:30 PM</tspan>
+  </text>
+  <text x="230" y="525" font-family="Arial" font-size="13" fill="#333333">
+    <tspan x="230" y="525">French podcast while eating lunch</tspan>
+  </text>
+  <circle cx="570" cy="515" r="12" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="570" y="519" font-family="Arial" font-size="14" text-anchor="middle" fill="#2A3990">S</text>
+  
+  <!-- Evening Block -->
+  <rect x="210" y="555" width="380" height="60" rx="8" ry="8" fill="#E0EBFA" />
+  <rect x="210" y="555" width="10" height="60" rx="0" ry="0" fill="#4A90E2" />
+  <text x="230" y="575" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">
+    <tspan x="230" y="575">8:00 - 8:45 PM</tspan>
+  </text>
+  <text x="230" y="595" font-family="Arial" font-size="13" fill="#333333">
+    <tspan x="230" y="595">French conversation practice (online)</tspan>
+  </text>
+  <circle cx="570" cy="585" r="12" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="570" y="589" font-family="Arial" font-size="14" text-anchor="middle" fill="#2A3990">O</text>
+  
+  <!-- AI Optimization Explanation -->
+  <g>
+    <rect x="190" y="660" width="420" height="180" rx="15" ry="15" fill="#E9EDF8" />
+    
+    <!-- AI Avatar -->
+    <circle cx="180" cy="715" r="20" fill="#2A3990" />
+    <text x="180" y="721" font-family="Arial" font-size="18" text-anchor="middle" fill="#FFFFFF">K</text>
+    
+    <!-- Message Text -->
+    <text x="210" y="680" font-family="Arial" font-size="15" font-weight="bold" fill="#2A3990">
+      <tspan x="210" y="680">Why This Schedule Works:</tspan>
+    </text>
+    
+    <text x="210" y="705" font-family="Arial" font-size="14" fill="#333333">
+      <tspan x="210" y="705">• Morning vocabulary paired with coffee (habit</tspan>
+      <tspan x="210" y="730">  stacking) when your focus is highest</tspan>
+      <tspan x="210" y="755"></tspan>
+      <tspan x="210" y="755">• Passive learning during lunch (easy to maintain)</tspan>
+      <tspan x="210" y="780"></tspan>
+      <tspan x="210" y="780">• Evening practice when you're relaxed but still</tspan>
+      <tspan x="210" y="805">  alert, with buffer time before bed</tspan>
+    </text>
+    
+    <!-- Timestamp -->
+    <text x="320" y="835" font-family="Arial" font-size="10" fill="#9A9A9A">8:15 AM</text>
+  </g>
+  
+  <!-- Energy Level Chart -->
+  <g>
+    <rect x="190" y="860" width="420" height="160" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+    <text x="210" y="885" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Your Energy Pattern & Activities</text>
+    
+    <!-- Energy curve -->
+    <polyline points="210,965 250,935 300,925 350,940 400,960 450,975 500,995 550,970 590,980" fill="none" stroke="#2A3990" stroke-width="3" />
+    
+    <!-- Time markers -->
+    <line x1="210" y1="1005" x2="590" y2="1005" stroke="#E0E2E8" stroke-width="1" />
+    <text x="210" y="1020" font-family="Arial" font-size="10" fill="#9A9A9A" text-anchor="middle">6AM</text>
+    <text x="300" y="1020" font-family="Arial" font-size="10" fill="#9A9A9A" text-anchor="middle">9AM</text>
+    <text x="400" y="1020" font-family="Arial" font-size="10" fill="#9A9A9A" text-anchor="middle">12PM</text>
+    <text x="500" y="1020" font-family="Arial" font-size="10" fill="#9A9A9A" text-anchor="middle">6PM</text>
+    <text x="590" y="1020" font-family="Arial" font-size="10" fill="#9A9A9A" text-anchor="middle">10PM</text>
+    
+    <!-- Activity markers -->
+    <circle cx="250" cy="935" r="8" fill="#F5A623" />
+    <circle cx="400" cy="960" r="8" fill="#83CE8B" />
+    <circle cx="550" cy="970" r="8" fill="#4A90E2" />
+  </g>
+  
+  <!-- Action Buttons -->
+  <rect x="170" y="1050" width="230" height="40" rx="8" ry="8" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="285" y="1075" font-family="Arial" font-size="14" text-anchor="middle" fill="#2A3990">Adjust Schedule</text>
+  
+  <rect x="400" y="1050" width="230" height="40" rx="8" ry="8" fill="#2A3990" />
+  <text x="515" y="1075" font-family="Arial" font-size="14" text-anchor="middle" fill="#FFFFFF">Apply to Calendar</text>
+  
+  <!-- DOSE Legend Card -->
+  <g>
+    <rect x="550" y="400" width="180" height="140" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="565" y="425" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">DOSE Legend</text>
+    
+    <circle cx="575" cy="445" r="10" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+    <text x="575" y="449" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">D</text>
+    <text x="595" y="449" font-family="Arial" font-size="12" fill="#333333">Dopamine</text>
+    
+    <circle cx="575" cy="475" r="10" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+    <text x="575" y="479" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">O</text>
+    <text x="595" y="479" font-family="Arial" font-size="12" fill="#333333">Oxytocin</text>
+    
+    <circle cx="575" cy="505" r="10" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+    <text x="575" y="509" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">S</text>
+    <text x="595" y="509" font-family="Arial" font-size="12" fill="#333333">Serotonin</text>
+    
+    <circle cx="575" cy="535" r="10" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+    <text x="575" y="539" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">E</text>
+    <text x="595" y="539" font-family="Arial" font-size="12" fill="#333333">Endorphins</text>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="1150" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1150">Project Kage - Schedule Optimization and Suggestions</tspan>
+    <tspan x="400" y="1175">Feature: Energy-Matched Scheduling</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>

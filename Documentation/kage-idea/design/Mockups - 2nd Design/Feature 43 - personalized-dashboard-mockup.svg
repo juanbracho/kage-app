@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1000" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">8:30 AM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1050" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="220" y="195" font-family="Arial" font-size="24" font-weight="bold" fill="#FFFFFF">Good Morning, Alex</text>
+  <text x="580" y="195" font-family="Arial" font-size="16" font-weight="bold" text-anchor="end" fill="#FFFFFF">☀️</text>
+  
+  <!-- Main Container -->
+  <rect x="170" y="230" width="460" height="810" fill="#F6F7FB" rx="15" ry="15" />
+  
+  <!-- Day Overview Card -->
+  <rect x="190" y="250" width="420" height="150" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="280" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Today's Focus</text>
+  
+  <!-- Progress Indicator -->
+  <circle cx="550" cy="275" r="25" fill="#F6F7FB" />
+  <path d="M550,250 A25,25 0 0,1 568,262.5" stroke="#83CE8B" stroke-width="5" fill="none" />
+  <text x="550" y="280" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#2A3990">2/7</text>
+  
+  <!-- Focus Areas -->
+  <rect x="210" y="295" width="380" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="230" y="320" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Digital Wellness</text>
+  <rect x="210" y="295" width="5" height="40" rx="2.5" ry="2.5" fill="#2A3990" />
+  <text x="560" y="320" font-family="Arial" font-size="14" text-anchor="end" fill="#333333">Primary Goal</text>
+  
+  <rect x="210" y="345" width="380" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="230" y="370" font-family="Arial" font-size="14" fill="#333333">Morning Meditation</text>
+  <rect x="210" y="345" width="5" height="40" rx="2.5" ry="2.5" fill="#83CE8B" />
+  <text x="560" y="370" font-family="Arial" font-size="14" text-anchor="end" fill="#83CE8B">Completed ✓</text>
+  
+  <!-- Priority Habits Card -->
+  <rect x="190" y="410" width="420" height="220" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="440" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Today's Habits</text>
+  <text x="580" y="440" font-family="Arial" font-size="12" text-anchor="end" fill="#9A9A9A">5 remaining</text>
+  
+  <!-- Habit 1 -->
+  <rect x="210" y="455" width="380" height="50" rx="5" ry="5" fill="#F6F7FB" />
+  <circle cx="230" cy="480" r="15" fill="#FFFFFF" stroke="#83CE8B" stroke-width="2" />
+  <text x="230" y="485" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#83CE8B">✓</text>
+  <text x="255" y="475" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Morning Meditation</text>
+  <text x="255" y="495" font-family="Arial" font-size="12" fill="#9A9A9A">10 min • 8:15 AM</text>
+  <text x="570" y="485" font-family="Arial" font-size="12" text-anchor="end" fill="#83CE8B">16-day streak!</text>
+  
+  <!-- Habit 2 -->
+  <rect x="210" y="515" width="380" height="50" rx="5" ry="5" fill="#F6F7FB" />
+  <circle cx="230" cy="540" r="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="230" y="545" font-family="Arial" font-size="14" text-anchor="middle" fill="#2A3990">⬜</text>
+  <text x="255" y="535" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Exercise Session</text>
+  <text x="255" y="555" font-family="Arial" font-size="12" fill="#9A9A9A">30 min • 12:00 PM</text>
+  <text x="570" y="545" font-family="Arial" font-size="12" text-anchor="end" fill="#F5A623">Due in 3h 30m</text>
+  
+  <!-- Habit 3 -->
+  <rect x="210" y="575" width="380" height="50" rx="5" ry="5" fill="#F6F7FB" />
+  <circle cx="230" cy="600" r="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="230" y="605" font-family="Arial" font-size="14" text-anchor="middle" fill="#2A3990">⬜</text>
+  <text x="255" y="595" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Digital Detox</text>
+  <text x="255" y="615" font-family="Arial" font-size="12" fill="#9A9A9A">60 min • 6:00 PM</text>
+  <text x="570" y="605" font-family="Arial" font-size="12" text-anchor="end" fill="#9A9A9A">Coming up</text>
+  
+  <!-- Goal Progress Card -->
+  <rect x="190" y="640" width="205" height="190" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="670" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Goal Progress</text>
+  
+  <!-- Progress Chart -->
+  <circle cx="292.5" cy="745" r="50" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  <path d="M292.5,695 A50,50 0 0,1 335,725" stroke="#2A3990" stroke-width="8" fill="none" stroke-linecap="round" />
+  <text x="292.5" y="740" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#2A3990">42%</text>
+  <text x="292.5" y="760" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Digital Wellness</text>
+  <text x="292.5" y="780" font-family="Arial" font-size="12" text-anchor="middle" fill="#9A9A9A">Goal</text>
+  
+  <!-- Streaks Card -->
+  <rect x="405" y="640" width="205" height="190" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="425" y="670" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Current Streaks</text>
+  
+  <!-- Streak 1 -->
+  <rect x="425" y="690" width="165" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="445" y="715" font-family="Arial" font-size="14" fill="#333333">Meditation</text>
+  <text x="570" y="715" font-family="Arial" font-size="16" font-weight="bold" text-anchor="end" fill="#F5A623">16</text>
+  
+  <!-- Streak 2 -->
+  <rect x="425" y="740" width="165" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="445" y="765" font-family="Arial" font-size="14" fill="#333333">Journaling</text>
+  <text x="570" y="765" font-family="Arial" font-size="16" font-weight="bold" text-anchor="end" fill="#F5A623">9</text>
+  
+  <!-- Streak 3 -->
+  <rect x="425" y="790" width="165" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="445" y="815" font-family="Arial" font-size="14" fill="#333333">Exercise</text>
+  <text x="570" y="815" font-family="Arial" font-size="16" font-weight="bold" text-anchor="end" fill="#F5A623">3</text>
+  
+  <!-- Quick Actions Card -->
+  <rect x="190" y="840" width="420" height="90" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="870" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Quick Actions</text>
+  
+  <!-- Action Buttons -->
+  <rect x="210" y="885" width="95" height="35" rx="17.5" ry="17.5" fill="#2A3990" />
+  <text x="257.5" y="907" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Add Habit</text>
+  
+  <rect x="315" y="885" width="100" height="35" rx="17.5" ry="17.5" fill="#2A3990" />
+  <text x="365" y="907" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Journal</text>
+  
+  <rect x="425" y="885" width="95" height="35" rx="17.5" ry="17.5" fill="#2A3990" />
+  <text x="472.5" y="907" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Schedule</text>
+  
+  <!-- AI Insights Card -->
+  <rect x="190" y="940" width="420" height="90" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="970" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">AI Assistant Insight</text>
+  
+  <!-- Insight Content -->
+  <text x="210" y="995" font-family="Arial" font-size="14" fill="#333333">"Your meditation consistency is improving your focus. Consider</text>
+  <text x="210" y="1015" font-family="Arial" font-size="14" fill="#333333">shifting your digital detox earlier for better sleep quality."</text>
+  
+  <!-- Side Card: Weather -->
+  <g>
+    <rect x="580" y="250" width="200" height="100" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="280" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Today's Weather</text>
+    
+    <line x1="600" y1="290" x2="760" y2="290" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="315" font-family="Arial" font-size="12" fill="#333333">Dallas, TX</text>
+    <text x="600" y="335" font-family="Arial" font-size="22" font-weight="bold" fill="#2A3990">72°F</text>
+    <text x="655" y="335" font-family="Arial" font-size="12" fill="#9A9A9A">Sunny</text>
+    
+    <text x="730" y="315" font-family="Arial" font-size="30" text-anchor="middle" fill="#F5A623">☀️</text>
+  </g>
+  
+  <!-- Side Card: Energy Level -->
+  <g>
+    <rect x="580" y="360" width="200" height="130" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="390" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Energy Level</text>
+    
+    <line x1="600" y1="400" x2="760" y2="400" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="425" font-family="Arial" font-size="12" fill="#333333">How are you feeling?</text>
+    
+    <!-- Energy Level Buttons -->
+    <rect x="600" y="440" width="75" height="30" rx="15" ry="15" fill="#2A3990" />
+    <text x="637.5" y="460" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#FFFFFF">High</text>
+    
+    <rect x="685" y="440" width="75" height="30" rx="15" ry="15" fill="#F6F7FB" />
+    <text x="722.5" y="460" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Medium</text>
+    
+    <rect x="600" y="480" width="75" height="30" rx="15" ry="15" fill="#F6F7FB" />
+    <text x="637.5" y="500" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Low</text>
+    
+    <rect x="685" y="480" width="75" height="30" rx="15" ry="15" fill="#F6F7FB" />
+    <text x="722.5" y="500" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Tired</text>
+  </g>
+  
+  <!-- Side Card: Time Block -->
+  <g>
+    <rect x="580" y="500" width="200" height="220" rx="15" ry="15" fill="#FFFFFF" stroke="#F5A623" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="530" font-family="Arial" font-size="14" font-weight="bold" fill="#F5A623">Your Schedule</text>
+    
+    <line x1="600" y1="540" x2="760" y2="540" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="560" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="560">Next up today:</tspan>
+    </text>
+    
+    <!-- Time Block 1 -->
+    <rect x="600" y="575" width="160" height="50" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="610" y="595" font-family="Arial" font-size="12" fill="#F5A623">12:00 PM - 12:30 PM</text>
+    <text x="610" y="615" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Exercise Session</text>
+    
+    <!-- Time Block 2 -->
+    <rect x="600" y="635" width="160" height="50" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="610" y="655" font-family="Arial" font-size="12" fill="#9A9A9A">3:00 PM - 4:30 PM</text>
+    <text x="610" y="675" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Project Meeting</text>
+    
+    <!-- Time Block 3 -->
+    <rect x="600" y="695" width="160" height="50" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="610" y="715" font-family="Arial" font-size="12" fill="#9A9A9A">6:00 PM - 7:00 PM</text>
+    <text x="610" y="735" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Digital Detox</text>
+  </g>
+  
+  <!-- Side Card: Suggested Focus -->
+  <g>
+    <rect x="580" y="730" width="200" height="170" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="760" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Suggested Focus</text>
+    
+    <line x1="600" y1="770" x2="760" y2="770" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="790" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="790">Based on your energy level:</tspan>
+    </text>
+    
+    <!-- Suggestions -->
+    <rect x="600" y="805" width="160" height="80" rx="5" ry="5" fill="#2A399022" />
+    <circle cx="615" cy="830" r="10" fill="#2A3990" />
+    <text x="615" y="834" font-family="Arial" font-size="12" text-anchor="middle" fill="#FFFFFF">💡</text>
+    <text x="635" y="820" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">High Energy Morning</text>
+    <text x="635" y="840" font-family="Arial" font-size="11" fill="#333333">Perfect time for creative work</text>
+    <text x="635" y="855" font-family="Arial" font-size="11" fill="#333333">and challenging tasks before</text>
+    <text x="635" y="870" font-family="Arial" font-size="11" fill="#333333">your afternoon meetings.</text>
+  </g>
+  
+  <!-- AI Assistant Popup -->
+  <g>
+    <rect x="270" y="170" width="260" height="100" rx="10" ry="10" fill="#FFFFFF" filter="url(#shadow)" />
+    <rect x="270" y="170" width="260" height="25" rx="10" ry="10" fill="#2A3990" />
+    <text x="290" y="188" font-family="Arial" font-size="12" fill="#FFFFFF">AI Assistant</text>
+    <text x="510" y="188" font-family="Arial" font-size="12" text-anchor="end" fill="#FFFFFF">now</text>
+    <text x="290" y="215" font-family="Arial" font-size="14" fill="#333333">Great job with your meditation!</text>
+    <text x="290" y="235" font-family="Arial" font-size="14" fill="#333333">Would you like me to suggest some</text>
+    <text x="290" y="255" font-family="Arial" font-size="14" fill="#333333">focus exercises for your workday?</text>
+  </g>
+  
+  <!-- AI Assistant Chat Button -->
+  <circle cx="400" cy="1075" r="25" fill="#2A3990" filter="url(#shadow)" />
+  <text x="400" y="1082" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="#FFFFFF">AI</text>
+  
+  <!-- Caption -->
+  <text x="400" y="1150" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1150">Project Kage - Personalized Dashboard</tspan>
+    <tspan x="400" y="1175">Feature: Central Hub User Experience</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>

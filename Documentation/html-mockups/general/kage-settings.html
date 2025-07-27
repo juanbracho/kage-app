@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Kage - Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #4a5568;
+            transition: all 0.2s;
+        }
+        
+        .back-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            color: #2d3748;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 16px;
+            color: #4a5568;
+        }
+        
+        .icon-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 24px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Profile Section */
+        .profile-section {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e9ecef;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #FF7101, #FF8534);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .profile-avatar:hover {
+            transform: scale(1.05);
+        }
+        
+        .avatar-badge {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 24px;
+            height: 24px;
+            background: #10B981;
+            border: 3px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+        
+        .profile-email {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 12px;
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FF7101;
+            margin-bottom: 2px;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .edit-profile-btn {
+            padding: 8px 16px;
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .edit-profile-btn:hover {
+            background: #edf2f7;
+            border-color: #FF7101;
+            color: #FF7101;
+        }
+        
+        /* Settings Sections */
+        .settings-section {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            background: #fafbfc;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-icon {
+            font-size: 18px;
+        }
+        
+        /* Settings Items */
+        .settings-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-item:hover {
+            background: #f8fafc;
+        }
+        
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+        
+        .item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .item-icon.notifications {
+            background: linear-gradient(135deg, #3B82F6, #60A5FA);
+        }
+        
+        .item-icon.theme {
+            background: linear-gradient(135deg, #6B7280, #9CA3AF);
+        }
+        
+        .item-icon.privacy {
+            background: linear-gradient(135deg, #10B981, #22C55E);
+        }
+        
+        .item-icon.data {
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+        }
+        
+        .item-icon.support {
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+        }
+        
+        .item-icon.account {
+            background: linear-gradient(135deg, #EF4444, #F87171);
+        }
+        
+        .item-content {
+            flex: 1;
+        }
+        
+        .item-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 2px;
+        }
+        
+        .item-subtitle {
+            font-size: 13px;
+            color: #718096;
+        }
+        
+        .item-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .item-value {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .chevron {
+            font-size: 14px;
+            color: #a0aec0;
+        }
+        
+        /* Toggle Switch */
+        .toggle-switch {
+            width: 48px;
+            height: 28px;
+            background: #e5e7eb;
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .toggle-switch.active {
+            background: #FF7101;
+        }
+        
+        .toggle-knob {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 12px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .toggle-switch.active .toggle-knob {
+            transform: translateX(20px);
+        }
+        
+        /* Premium Badge */
+        .premium-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* AI Features Callout */
+        .ai-callout {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ai-callout::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .ai-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .ai-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .ai-description {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        
+        .upgrade-btn {
+            background: white;
+            color: #667eea;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .upgrade-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* Version Info */
+        .version-info {
+            text-align: center;
+            padding: 20px;
+            color: #a0aec0;
+            font-size: 12px;
+        }
+        
+        .app-version {
+            margin-bottom: 4px;
+        }
+        
+        .copyright {
+            opacity: 0.7;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: relative;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            color: #718096;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .nav-item.active {
+            color: #FF7101;
+        }
+        
+        .nav-item:hover {
+            color: #FF7101;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+        }
+        
+        /* AI Button */
+        .ai-button {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 28px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ai-button:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 20px 16px;
+            }
+            
+            .profile-section {
+                padding: 20px;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+            
+            .profile-stats {
+                justify-content: center;
+            }
+            
+            .settings-item {
+                padding: 14px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="back-btn">←</button>
+            <div class="logo">
+                🏮 <span>Kage</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn">📊</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    👤
+                    <div class="avatar-badge">✓</div>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name">Alex Chen</div>
+                    <div class="profile-email">alex.chen@example.com</div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">4</div>
+                            <div class="stat-label">Goals</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">23</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">127</div>
+                            <div class="stat-label">Total Tasks</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="edit-profile-btn">Edit</button>
+            </div>
+        </div>
+
+        <!-- AI Premium Callout -->
+        <div class="ai-callout">
+            <div class="ai-header">
+                <div class="ai-icon">🤖</div>
+                <div class="ai-title">Unlock AI Superpowers</div>
+            </div>
+            <div class="ai-description">
+                Get personalized insights, smart goal suggestions, and auto-generated journal prompts that make your productivity journey effortless.
+            </div>
+            <button class="upgrade-btn">Upgrade to Premium</button>
+        </div>
+
+        <!-- Notifications Settings -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="section-icon">🔔</span>
+                    Notifications
+                </div>
+            </div>
+            
+            <div class="settings-item" onclick="toggleSetting(this)">
+                <div class="item-left">
+                    <div class="item-icon notifications">🔔</div>
+                    <div class="item-content">
+                        <div class="item-title">Push Notifications</div>
+                        <div class="item-subtitle">Get reminders for habits and tasks</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="toggle-switch active">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon notifications">⏰</div>
+                    <div class="item-content">
+                        <div class="item-title">Reminder Time</div>
+                        <div class="item-subtitle">When to send daily reminders</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="item-value">8:00 AM</div>
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item" onclick="toggleSetting(this)">
+                <div class="item-left">
+                    <div class="item-icon notifications">🎉</div>
+                    <div class="item-content">
+                        <div class="item-title">Achievement Notifications</div>
+                        <div class="item-subtitle">Celebrate streaks and milestones</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="toggle-switch active">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appearance Settings -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="section-icon">🎨</span>
+                    Appearance
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon theme">🌙</div>
+                    <div class="item-content">
+                        <div class="item-title">Theme</div>
+                        <div class="item-subtitle">Choose your preferred theme</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="item-value">Light</div>
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon theme">🌈</div>
+                    <div class="item-content">
+                        <div class="item-title">Accent Color</div>
+                        <div class="item-subtitle">Customize your experience</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="item-value">Orange</div>
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item" onclick="toggleSetting(this)">
+                <div class="item-left">
+                    <div class="item-icon theme">✨</div>
+                    <div class="item-content">
+                        <div class="item-title">Animations</div>
+                        <div class="item-subtitle">Enable smooth transitions</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="toggle-switch active">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy & Data -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="section-icon">🔒</span>
+                    Privacy & Data
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon privacy">🔒</div>
+                    <div class="item-content">
+                        <div class="item-title">Privacy Policy</div>
+                        <div class="item-subtitle">How we protect your data</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon data">📊</div>
+                    <div class="item-content">
+                        <div class="item-title">Data Export</div>
+                        <div class="item-subtitle">Download your data</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item" onclick="toggleSetting(this)">
+                <div class="item-left">
+                    <div class="item-icon privacy">📈</div>
+                    <div class="item-content">
+                        <div class="item-title">Analytics</div>
+                        <div class="item-subtitle">Help improve Kage</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="toggle-switch active">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Features -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="section-icon">⭐</span>
+                    Premium Features
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon support">🤖</div>
+                    <div class="item-content">
+                        <div class="item-title">AI Assistant</div>
+                        <div class="item-subtitle">Smart insights and suggestions</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="premium-badge">Premium</div>
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon data">📊</div>
+                    <div class="item-content">
+                        <div class="item-title">Advanced Analytics</div>
+                        <div class="item-subtitle">Detailed progress insights</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="premium-badge">Premium</div>
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon privacy">☁️</div>
+                    <div class="item-content">
+                        <div class="item-title">Cloud Sync</div>
+                        <div class="item-subtitle">Access anywhere</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="premium-badge">Premium</div>
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support & About -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="section-icon">💬</span>
+                    Support & About
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon support">💬</div>
+                    <div class="item-content">
+                        <div class="item-title">Help & Support</div>
+                        <div class="item-subtitle">Get help with Kage</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon support">⭐</div>
+                    <div class="item-content">
+                        <div class="item-title">Rate Kage</div>
+                        <div class="item-subtitle">Share your feedback</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon support">ℹ️</div>
+                    <div class="item-content">
+                        <div class="item-title">About Kage</div>
+                        <div class="item-subtitle">Version, terms, and more</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Management -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="section-icon">👤</span>
+                    Account
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon account">🔑</div>
+                    <div class="item-content">
+                        <div class="item-title">Change Password</div>
+                        <div class="item-subtitle">Update your password</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            
+            <div class="settings-item">
+                <div class="item-left">
+                    <div class="item-icon account">🚪</div>
+                    <div class="item-content">
+                        <div class="item-title">Sign Out</div>
+                        <div class="item-subtitle">Sign out of your account</div>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Version Info -->
+        <div class="version-info">
+            <div class="app-version">Kage v1.0.0</div>
+            <div class="copyright">© 2025 Kage. Made with ❤️ for productivity.</div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📊</span>
+            Dashboard
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🎯</span>
+            Goals
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">✅</span>
+            Tasks
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🔄</span>
+            Habits
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📝</span>
+            Journal
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📅</span>
+            Calendar
+        </a>
+        
+        <!-- AI Button (Premium) -->
+        <button class="ai-button">🤖</button>
+    </nav>
+
+    <script>
+        function toggleSetting(element) {
+            const toggle = element.querySelector('.toggle-switch');
+            if (toggle) {
+                toggle.classList.toggle('active');
+            }
+        }
+    </script>
+</body>
+</html>

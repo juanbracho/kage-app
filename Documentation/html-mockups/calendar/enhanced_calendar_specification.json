@@ -1,0 +1,781 @@
+{
+  "component": "enhanced_calendar_views",
+  "description": "Complete calendar interface with insightful habit/task visualization across day, week, and month views",
+  "location": "Replace existing calendar.html and associated templates",
+  
+  "html_structure": {
+    "header": {
+      "class": "header",
+      "elements": [
+        {
+          "element": "div",
+          "class": "logo",
+          "content": "Kage"
+        },
+        {
+          "element": "div",
+          "class": "header-title",
+          "content": "Calendar"
+        },
+        {
+          "element": "div",
+          "class": "header-actions",
+          "children": [
+            {
+              "element": "button",
+              "class": "header-btn",
+              "content": "⚙️"
+            },
+            {
+              "element": "button",
+              "class": "header-btn",
+              "content": "☰"
+            }
+          ]
+        }
+      ]
+    },
+    "calendar_navigation": {
+      "class": "calendar-nav",
+      "elements": [
+        {
+          "element": "div",
+          "class": "nav-controls",
+          "children": [
+            {
+              "element": "button",
+              "class": "nav-btn",
+              "attributes": {
+                "onclick": "previousPeriod()"
+              },
+              "content": "‹"
+            },
+            {
+              "element": "div",
+              "class": "current-period",
+              "id": "currentPeriod",
+              "content": "July 09, 2025"
+            },
+            {
+              "element": "button",
+              "class": "nav-btn",
+              "attributes": {
+                "onclick": "nextPeriod()"
+              },
+              "content": "›"
+            }
+          ]
+        },
+        {
+          "element": "div",
+          "class": "view-tabs",
+          "children": [
+            {
+              "element": "button",
+              "class": "view-tab active",
+              "attributes": {
+                "onclick": "switchView('day')"
+              },
+              "content": "Day"
+            },
+            {
+              "element": "button",
+              "class": "view-tab",
+              "attributes": {
+                "onclick": "switchView('week')"
+              },
+              "content": "Week"
+            },
+            {
+              "element": "button",
+              "class": "view-tab",
+              "attributes": {
+                "onclick": "switchView('month')"
+              },
+              "content": "Month"
+            }
+          ]
+        }
+      ]
+    },
+    "day_view_structure": {
+      "container": "day-view",
+      "elements": [
+        {
+          "element": "div",
+          "class": "day-header",
+          "children": [
+            {
+              "element": "div",
+              "class": "day-title",
+              "content": "Dynamic date title"
+            },
+            {
+              "element": "div",
+              "class": "day-stats",
+              "children": [
+                {
+                  "element": "div",
+                  "class": "stat-item",
+                  "children": [
+                    {
+                      "element": "span",
+                      "class": "stat-icon",
+                      "content": "📋"
+                    },
+                    {
+                      "element": "span",
+                      "content": "X tasks"
+                    }
+                  ]
+                },
+                {
+                  "element": "div",
+                  "class": "stat-item",
+                  "children": [
+                    {
+                      "element": "span",
+                      "class": "stat-icon",
+                      "content": "🔄"
+                    },
+                    {
+                      "element": "span",
+                      "content": "X habits"
+                    }
+                  ]
+                },
+                {
+                  "element": "div",
+                  "class": "stat-item",
+                  "children": [
+                    {
+                      "element": "span",
+                      "class": "stat-icon",
+                      "content": "✅"
+                    },
+                    {
+                      "element": "span",
+                      "content": "X completed"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "element": "div",
+          "class": "day-timeline",
+          "content": "Dynamic time slots with events"
+        }
+      ]
+    },
+    "week_view_structure": {
+      "container": "week-view",
+      "elements": [
+        {
+          "element": "div",
+          "class": "week-header",
+          "content": "Grid header with days and stats"
+        },
+        {
+          "element": "div",
+          "class": "week-grid",
+          "content": "Time-based grid with events"
+        }
+      ]
+    },
+    "month_view_structure": {
+      "container": "month-view",
+      "elements": [
+        {
+          "element": "div",
+          "class": "month-grid",
+          "content": "Calendar grid with events"
+        }
+      ]
+    }
+  },
+
+  "css_specifications": {
+    "layout": {
+      "body": {
+        "font-family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+        "background": "#f8fafc",
+        "height": "100vh",
+        "display": "flex",
+        "flex-direction": "column"
+      },
+      "header": {
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "space-between",
+        "padding": "16px 24px",
+        "background": "white",
+        "border-bottom": "1px solid #e2e8f0"
+      },
+      "calendar_container": {
+        "flex": "1",
+        "padding": "20px 24px",
+        "overflow-y": "auto"
+      }
+    },
+    "navigation": {
+      "calendar_nav": {
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "space-between",
+        "margin-bottom": "24px"
+      },
+      "nav_controls": {
+        "display": "flex",
+        "align-items": "center",
+        "gap": "16px"
+      },
+      "nav_btn": {
+        "width": "36px",
+        "height": "36px",
+        "border": "none",
+        "background": "white",
+        "border-radius": "8px",
+        "cursor": "pointer",
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "center",
+        "color": "#64748b",
+        "transition": "all 0.2s",
+        "box-shadow": "0 1px 3px rgba(0, 0, 0, 0.1)",
+        "hover": {
+          "background": "#f8fafc",
+          "color": "#475569"
+        }
+      },
+      "view_tabs": {
+        "display": "flex",
+        "gap": "4px",
+        "background": "#f1f5f9",
+        "padding": "4px",
+        "border-radius": "8px"
+      },
+      "view_tab": {
+        "padding": "8px 16px",
+        "border": "none",
+        "background": "transparent",
+        "border-radius": "6px",
+        "cursor": "pointer",
+        "font-size": "14px",
+        "font-weight": "500",
+        "color": "#64748b",
+        "transition": "all 0.2s",
+        "active": {
+          "background": "#FF7101",
+          "color": "white",
+          "box-shadow": "0 1px 3px rgba(255, 113, 1, 0.3)"
+        }
+      }
+    },
+    "day_view_styles": {
+      "day_header": {
+        "padding": "20px 24px",
+        "border-bottom": "1px solid #e2e8f0",
+        "background": "#f8fafc"
+      },
+      "day_title": {
+        "font-size": "20px",
+        "font-weight": "600",
+        "color": "#2d3748",
+        "margin-bottom": "12px"
+      },
+      "day_stats": {
+        "display": "flex",
+        "gap": "24px"
+      },
+      "stat_item": {
+        "display": "flex",
+        "align-items": "center",
+        "gap": "8px",
+        "font-size": "14px",
+        "color": "#64748b"
+      },
+      "time_slot": {
+        "display": "flex",
+        "align-items": "stretch",
+        "border-bottom": "1px solid #f1f5f9",
+        "min-height": "60px"
+      },
+      "time_label": {
+        "width": "80px",
+        "padding": "12px 16px",
+        "font-size": "12px",
+        "color": "#64748b",
+        "background": "#f8fafc",
+        "border-right": "1px solid #e2e8f0"
+      },
+      "event_item": {
+        "display": "flex",
+        "align-items": "center",
+        "gap": "8px",
+        "padding": "8px 12px",
+        "border-radius": "6px",
+        "font-size": "13px",
+        "font-weight": "500"
+      },
+      "event_task": {
+        "background": "#dbeafe",
+        "color": "#1e40af",
+        "border-left": "3px solid #3b82f6"
+      },
+      "event_habit": {
+        "background": "#fef3c7",
+        "color": "#92400e",
+        "border-left": "3px solid #f59e0b"
+      },
+      "event_completed": {
+        "opacity": "0.6",
+        "text-decoration": "line-through"
+      }
+    },
+    "week_view_styles": {
+      "week_header": {
+        "display": "grid",
+        "grid-template-columns": "80px repeat(7, 1fr)",
+        "border-bottom": "2px solid #e2e8f0"
+      },
+      "week_day_header": {
+        "padding": "16px 8px",
+        "text-align": "center",
+        "border-right": "1px solid #e2e8f0",
+        "background": "#f8fafc"
+      },
+      "week_day_number": {
+        "font-size": "18px",
+        "font-weight": "600",
+        "color": "#2d3748",
+        "margin-bottom": "4px"
+      },
+      "week_day_stats": {
+        "display": "flex",
+        "justify-content": "center",
+        "gap": "8px"
+      },
+      "week_stat": {
+        "display": "flex",
+        "align-items": "center",
+        "gap": "2px",
+        "font-size": "10px",
+        "color": "#64748b"
+      },
+      "week_grid": {
+        "display": "grid",
+        "grid-template-columns": "80px repeat(7, 1fr)"
+      },
+      "week_time_slot": {
+        "padding": "8px 12px",
+        "font-size": "11px",
+        "color": "#64748b",
+        "background": "#f8fafc",
+        "border-right": "1px solid #e2e8f0",
+        "border-bottom": "1px solid #f1f5f9",
+        "height": "50px"
+      },
+      "week_event": {
+        "font-size": "10px",
+        "padding": "2px 6px",
+        "border-radius": "3px",
+        "margin-bottom": "2px",
+        "line-height": "1.2",
+        "font-weight": "500"
+      }
+    },
+    "month_view_styles": {
+      "month_grid": {
+        "display": "grid",
+        "grid-template-columns": "repeat(7, 1fr)",
+        "gap": "1px",
+        "background": "#e2e8f0"
+      },
+      "month_day": {
+        "background": "white",
+        "min-height": "120px",
+        "padding": "8px",
+        "position": "relative"
+      },
+      "month_day_other_month": {
+        "background": "#f8fafc",
+        "color": "#cbd5e1"
+      },
+      "month_day_today": {
+        "background": "#fff7ed",
+        "border": "2px solid #FF7101"
+      },
+      "month_event": {
+        "font-size": "10px",
+        "padding": "2px 4px",
+        "border-radius": "2px",
+        "line-height": "1.2",
+        "font-weight": "500",
+        "white-space": "nowrap",
+        "overflow": "hidden",
+        "text-overflow": "ellipsis"
+      }
+    },
+    "responsive": {
+      "mobile_breakpoint": "768px",
+      "changes": {
+        "calendar_container": {
+          "padding": "16px"
+        },
+        "week_header": {
+          "grid-template-columns": "60px repeat(7, 1fr)"
+        },
+        "week_grid": {
+          "grid-template-columns": "60px repeat(7, 1fr)"
+        },
+        "time_label": {
+          "width": "60px",
+          "padding": "12px 8px"
+        },
+        "month_day": {
+          "min-height": "100px",
+          "padding": "6px"
+        }
+      }
+    }
+  },
+
+  "javascript_functions": {
+    "view_management": {
+      "switchView": {
+        "description": "Switches between day, week, and month views",
+        "parameters": ["view"],
+        "implementation": "Updates active tab, hides/shows view containers, updates period text",
+        "code": "function switchView(view) {\n    document.querySelectorAll('.view-tab').forEach(tab => tab.classList.remove('active'));\n    event.target.classList.add('active');\n    \n    document.querySelectorAll('.day-view, .week-view, .month-view').forEach(v => {\n        v.classList.remove('active');\n    });\n    \n    document.getElementById(view + 'View').classList.add('active');\n    currentView = view;\n    updatePeriodText();\n    loadViewData(view);\n}"
+      },
+      "previousPeriod": {
+        "description": "Navigates to previous time period based on current view",
+        "parameters": [],
+        "implementation": "Adjusts currentDate based on view type, updates display",
+        "code": "function previousPeriod() {\n    switch(currentView) {\n        case 'day': currentDate.setDate(currentDate.getDate() - 1); break;\n        case 'week': currentDate.setDate(currentDate.getDate() - 7); break;\n        case 'month': currentDate.setMonth(currentDate.getMonth() - 1); break;\n    }\n    updatePeriodText();\n    loadViewData(currentView);\n}"
+      },
+      "nextPeriod": {
+        "description": "Navigates to next time period based on current view",
+        "parameters": [],
+        "implementation": "Adjusts currentDate based on view type, updates display",
+        "code": "function nextPeriod() {\n    switch(currentView) {\n        case 'day': currentDate.setDate(currentDate.getDate() + 1); break;\n        case 'week': currentDate.setDate(currentDate.getDate() + 7); break;\n        case 'month': currentDate.setMonth(currentDate.getMonth() + 1); break;\n    }\n    updatePeriodText();\n    loadViewData(currentView);\n}"
+      },
+      "updatePeriodText": {
+        "description": "Updates the period display text based on current view and date",
+        "parameters": [],
+        "implementation": "Formats date string according to view type",
+        "code": "function updatePeriodText() {\n    const periodElement = document.getElementById('currentPeriod');\n    switch(currentView) {\n        case 'day': periodElement.textContent = formatDate(currentDate); break;\n        case 'week': \n            const weekStart = getWeekStart(currentDate);\n            const weekEnd = getWeekEnd(currentDate);\n            periodElement.textContent = `${formatShortDate(weekStart)} - ${formatShortDate(weekEnd)}`;\n            break;\n        case 'month': periodElement.textContent = formatMonth(currentDate); break;\n    }\n}"
+      }
+    },
+    "data_management": {
+      "loadViewData": {
+        "description": "Loads and renders data for the current view and date range",
+        "parameters": ["view"],
+        "implementation": "Fetches relevant tasks/habits, renders in appropriate format",
+        "code": "function loadViewData(view) {\n    const dateRange = getDateRange(view, currentDate);\n    fetchCalendarData(dateRange).then(data => {\n        switch(view) {\n            case 'day': renderDayView(data); break;\n            case 'week': renderWeekView(data); break;\n            case 'month': renderMonthView(data); break;\n        }\n    });\n}"
+      },
+      "fetchCalendarData": {
+        "description": "Fetches tasks and habits for given date range from backend",
+        "parameters": ["dateRange"],
+        "implementation": "API call to get scheduled items with completion status",
+        "endpoint": "/api/calendar/data",
+        "method": "GET",
+        "query_params": {
+          "start_date": "YYYY-MM-DD",
+          "end_date": "YYYY-MM-DD",
+          "include_habits": "true",
+          "include_tasks": "true"
+        }
+      },
+      "toggleEventCompletion": {
+        "description": "Toggles completion status of task or habit",
+        "parameters": ["eventId", "eventType"],
+        "implementation": "Updates UI immediately, syncs with backend",
+        "code": "function toggleEventCompletion(eventId, eventType) {\n    const element = document.querySelector(`[data-event-id='${eventId}']`);\n    element.classList.toggle('completed');\n    \n    updateEventCompletion(eventId, eventType, element.classList.contains('completed'))\n        .then(() => updateStats())\n        .catch(() => element.classList.toggle('completed')); // Revert on error\n}"
+      }
+    },
+    "rendering_functions": {
+      "renderDayView": {
+        "description": "Renders day view with timeline and events",
+        "parameters": ["data"],
+        "implementation": "Creates time slots, places events, updates stats",
+        "code": "function renderDayView(data) {\n    const timeline = document.querySelector('.day-timeline');\n    timeline.innerHTML = '';\n    \n    for(let hour = 6; hour <= 21; hour++) {\n        const timeSlot = createTimeSlot(hour, data.events[hour] || []);\n        timeline.appendChild(timeSlot);\n    }\n    \n    updateDayStats(data.stats);\n}"
+      },
+      "renderWeekView": {
+        "description": "Renders week view with grid layout",
+        "parameters": ["data"],
+        "implementation": "Creates week grid, places events in time/day slots",
+        "code": "function renderWeekView(data) {\n    renderWeekHeader(data.weekDays);\n    renderWeekGrid(data.events);\n}"
+      },
+      "renderMonthView": {
+        "description": "Renders month view with calendar grid",
+        "parameters": ["data"],
+        "implementation": "Creates month grid, places events in day cells",
+        "code": "function renderMonthView(data) {\n    const monthGrid = document.querySelector('.month-grid');\n    monthGrid.innerHTML = '';\n    \n    // Add day headers\n    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];\n    dayNames.forEach(day => {\n        monthGrid.appendChild(createDayHeader(day));\n    });\n    \n    // Add day cells\n    data.days.forEach(day => {\n        monthGrid.appendChild(createMonthDay(day));\n    });\n}"
+      }
+    },
+    "utility_functions": {
+      "formatDate": {
+        "description": "Formats date for display",
+        "parameters": ["date"],
+        "return": "Formatted date string",
+        "code": "function formatDate(date) {\n    return date.toLocaleDateString('en-US', {\n        weekday: 'long',\n        year: 'numeric',\n        month: 'long',\n        day: 'numeric'\n    });\n}"
+      },
+      "getWeekStart": {
+        "description": "Gets start of week (Monday) for given date",
+        "parameters": ["date"],
+        "return": "Date object",
+        "code": "function getWeekStart(date) {\n    const d = new Date(date);\n    const day = d.getDay();\n    const diff = d.getDate() - day + (day === 0 ? -6 : 1);\n    return new Date(d.setDate(diff));\n}"
+      },
+      "calculateStats": {
+        "description": "Calculates task/habit statistics for display",
+        "parameters": ["events"],
+        "return": "Stats object with counts",
+        "code": "function calculateStats(events) {\n    const stats = { tasks: 0, habits: 0, completed: 0 };\n    events.forEach(event => {\n        if (event.type === 'task') stats.tasks++;\n        if (event.type === 'habit') stats.habits++;\n        if (event.completed) stats.completed++;\n    });\n    return stats;\n}"
+      }
+    }
+  },
+
+  "backend_integration": {
+    "api_endpoints": {
+      "calendar_data": {
+        "url": "/api/calendar/data",
+        "method": "GET",
+        "description": "Fetch calendar events for date range",
+        "parameters": {
+          "start_date": "string (YYYY-MM-DD)",
+          "end_date": "string (YYYY-MM-DD)",
+          "include_habits": "boolean",
+          "include_tasks": "boolean"
+        },
+        "response": {
+          "events": [
+            {
+              "id": "integer",
+              "type": "string (task|habit)",
+              "name": "string",
+              "icon": "string",
+              "color": "string",
+              "scheduled_time": "string (HH:MM)",
+              "date": "string (YYYY-MM-DD)",
+              "completed": "boolean",
+              "goal_id": "integer|null"
+            }
+          ],
+          "stats": {
+            "total_tasks": "integer",
+            "total_habits": "integer",
+            "completed_count": "integer"
+          }
+        }
+      },
+      "update_completion": {
+        "url": "/api/calendar/completion",
+        "method": "POST",
+        "description": "Update task/habit completion status",
+        "payload": {
+          "event_id": "integer",
+          "event_type": "string (task|habit)",
+          "completed": "boolean",
+          "completed_at": "string (ISO datetime)"
+        },
+        "response": {
+          "success": "boolean",
+          "message": "string"
+        }
+      },
+      "create_quick_event": {
+        "url": "/api/calendar/quick-add",
+        "method": "POST",
+        "description": "Quick add task or habit from calendar",
+        "payload": {
+          "name": "string",
+          "type": "string (task|habit)",
+          "date": "string (YYYY-MM-DD)",
+          "time": "string (HH:MM)",
+          "icon": "string",
+          "color": "string"
+        }
+      }
+    },
+    "database_queries": {
+      "get_calendar_events": {
+        "description": "Fetch tasks and habits for date range",
+        "query": "SELECT t.id, 'task' as type, t.name, t.icon, t.color, t.due_date as date, t.due_time as time, t.status='completed' as completed FROM tasks t WHERE t.due_date BETWEEN ? AND ? UNION SELECT h.id, 'habit' as type, h.name, h.icon, h.color, ht.date, ht.scheduled_time as time, ht.completed FROM habits h JOIN habit_tracking ht ON h.id = ht.habit_id WHERE ht.date BETWEEN ? AND ?",
+        "parameters": ["start_date", "end_date", "start_date", "end_date"]
+      },
+      "update_task_completion": {
+        "description": "Update task completion status",
+        "query": "UPDATE tasks SET status = ?, completed_at = ? WHERE id = ?",
+        "parameters": ["status", "completed_at", "task_id"]
+      },
+      "update_habit_completion": {
+        "description": "Update habit tracking completion",
+        "query": "INSERT INTO habit_tracking (habit_id, date, completed, completed_at) VALUES (?, ?, ?, ?) ON CONFLICT(habit_id, date) DO UPDATE SET completed = ?, completed_at = ?",
+        "parameters": ["habit_id", "date", "completed", "completed_at", "completed", "completed_at"]
+      }
+    }
+  },
+
+  "data_structures": {
+    "calendar_event": {
+      "id": "integer",
+      "type": "string (task|habit)",
+      "name": "string",
+      "icon": "string",
+      "color": "string",
+      "date": "string (YYYY-MM-DD)",
+      "time": "string (HH:MM)",
+      "completed": "boolean",
+      "goal_id": "integer|null",
+      "category": "string",
+      "priority": "integer (1-5)"
+    },
+    "view_data": {
+      "day": {
+        "date": "string",
+        "events": "array of calendar_event",
+        "stats": {
+          "tasks": "integer",
+          "habits": "integer",
+          "completed": "integer"
+        }
+      },
+      "week": {
+        "start_date": "string",
+        "end_date": "string",
+        "days": [
+          {
+            "date": "string",
+            "day_name": "string",
+            "events": "array of calendar_event",
+            "stats": {
+              "tasks": "integer",
+              "habits": "integer"
+            }
+          }
+        ]
+      },
+      "month": {
+        "year": "integer",
+        "month": "integer",
+        "days": [
+          {
+            "date": "string",
+            "day_number": "integer",
+            "is_current_month": "boolean",
+            "is_today": "boolean",
+            "events": "array of calendar_event"
+          }
+        ]
+      }
+    }
+  },
+
+  "interaction_patterns": {
+    "event_completion": {
+      "trigger": "Click on event item",
+      "action": "Toggle completion status",
+      "visual_feedback": "Strike-through and opacity change",
+      "backend_sync": "Immediate API call to update status"
+    },
+    "view_switching": {
+      "trigger": "Click on view tab",
+      "action": "Switch calendar view",
+      "visual_feedback": "Tab highlighting and content transition",
+      "data_loading": "Fetch appropriate date range data"
+    },
+    "period_navigation": {
+      "trigger": "Click previous/next buttons",
+      "action": "Navigate time periods",
+      "visual_feedback": "Updated period text and content",
+      "data_loading": "Fetch new date range data"
+    },
+    "quick_add": {
+      "trigger": "Click quick add button",
+      "action": "Open quick creation modal",
+      "visual_feedback": "Modal overlay",
+      "data_creation": "Create new task/habit with current date context"
+    }
+  },
+
+  "performance_considerations": {
+    "data_caching": {
+      "strategy": "Cache calendar data for current week/month",
+      "invalidation": "Clear cache on completion updates",
+      "storage": "Browser localStorage for offline capability"
+    },
+    "lazy_loading": {
+      "implementation": "Load only visible time ranges",
+      "pagination": "Load additional data on scroll/navigation",
+      "optimization": "Virtualize large month views"
+    },
+    "real_time_updates": {
+      "websockets": "Optional real-time completion sync",
+      "polling": "Periodic refresh for shared calendars",
+      "conflict_resolution": "Last-write-wins for completion status"
+    }
+  },
+
+  "accessibility": {
+    "keyboard_navigation": {
+      "tab_order": "Header → Navigation → View tabs → Events → Quick add",
+      "arrow_keys": "Navigate between time periods",
+      "enter_space": "Activate buttons and toggle completion",
+      "escape": "Close modals and return focus"
+    },
+    "screen_reader": {
+      "aria_labels": "Descriptive labels for all interactive elements",
+      "live_regions": "Announce completion status changes",
+      "semantic_markup": "Proper heading hierarchy and landmarks"
+    },
+    "visual_accessibility": {
+      "color_contrast": "WCAG AA compliant contrast ratios",
+      "focus_indicators": "Clear focus rings on interactive elements",
+      "text_alternatives": "Alt text for icons and visual indicators"
+    }
+  },
+
+  "testing_scenarios": {
+    "functional_tests": [
+      "Switch between day/week/month views",
+      "Navigate time periods in each view",
+      "Toggle task/habit completion status",
+      "Load calendar data for different date ranges",
+      "Handle empty states (no events)",
+      "Quick add new events from calendar"
+    ],
+    "responsive_tests": [
+      "Mobile layout adaptation",
+      "Touch interaction for completion",
+      "Horizontal scrolling on small screens",
+      "Modal behavior on mobile"
+    ],
+    "performance_tests": [
+      "Large dataset rendering (100+ events)",
+      "View switching speed",
+      "Scroll performance in month view",
+      "API response time handling"
+    ]
+  },
+
+  "implementation_notes": {
+    "file_structure": {
+      "templates": "calendar/index.html",
+      "static_css": "css/calendar.css",
+      "static_js": "js/calendar.js",
+      "backend": "routes/calendar.py"
+    },
+    "dependencies": {
+      "existing_models": "Task, Habit, Goal, HabitTracking",
+      "new_tables": "habit_tracking (if not exists)",
+      "css_framework": "Existing Kage design system",
+      "js_libraries": "Vanilla JavaScript (no external dependencies)"
+    },
+    "migration_strategy": {
+      "phase_1": "Implement day view with basic functionality",
+      "phase_2": "Add week and month views",
+      "

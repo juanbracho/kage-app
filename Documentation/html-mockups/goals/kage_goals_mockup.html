@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Kage - Goals</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            color: #2d3748;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f7fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .icon-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 24px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .add-btn {
+            width: 48px;
+            height: 48px;
+            border: none;
+            background: linear-gradient(135deg, #FF7101, #FF8534);
+            border-radius: 16px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(255, 113, 1, 0.3);
+        }
+        
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 113, 1, 0.4);
+        }
+        
+        /* Goal Cards */
+        .goals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .goal-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .goal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .goal-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .goal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .goal-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .goal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+        
+        .goal-description {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.4;
+        }
+        
+        .goal-date {
+            font-size: 12px;
+            color: #a0aec0;
+            background: #f7fafc;
+            padding: 4px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        
+        .goal-progress {
+            margin-bottom: 16px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .progress-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .progress-percentage {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FF7101;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #edf2f7;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .goal-stats {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #718096;
+        }
+        
+        .stat-icon {
+            font-size: 16px;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        /* Color variations for goals */
+        .goal-health .goal-icon {
+            background: linear-gradient(135deg, #10B981, #22C55E);
+            color: white;
+        }
+        .goal-health .progress-fill {
+            background: linear-gradient(90deg, #10B981, #22C55E);
+        }
+        
+        .goal-career .goal-icon {
+            background: linear-gradient(135deg, #3B82F6, #60A5FA);
+            color: white;
+        }
+        .goal-career .progress-fill {
+            background: linear-gradient(90deg, #3B82F6, #60A5FA);
+        }
+        
+        .goal-personal .goal-icon {
+            background: linear-gradient(135deg, #8B5CF6, #A855F7);
+            color: white;
+        }
+        .goal-personal .progress-fill {
+            background: linear-gradient(90deg, #8B5CF6, #A855F7);
+        }
+        
+        .goal-learning .goal-icon {
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+            color: white;
+        }
+        .goal-learning .progress-fill {
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: relative;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            color: #718096;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .nav-item.active {
+            color: #FF7101;
+        }
+        
+        .nav-item:hover {
+            color: #FF7101;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+        }
+        
+        /* AI Button */
+        .ai-button {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 28px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ai-button:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 20px 16px;
+            }
+            
+            .goal-card {
+                padding: 16px;
+            }
+            
+            .goal-header {
+                gap: 10px;
+            }
+            
+            .goal-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .goal-stats {
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            🏮 <span>Kage</span>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn">📊</button>
+            <button class="icon-btn">⚙️</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Goals</h1>
+            <button class="add-btn">+</button>
+        </div>
+
+        <!-- Goals List -->
+        <div class="goals-list">
+            <!-- Health Goal -->
+            <div class="goal-card goal-health">
+                <div class="goal-header">
+                    <div class="goal-icon">🏃</div>
+                    <div class="goal-info">
+                        <h3 class="goal-title">Get Fit & Healthy</h3>
+                        <p class="goal-description">Build sustainable exercise habits and improve overall wellness</p>
+                    </div>
+                    <div class="goal-date">Dec 31, 2025</div>
+                </div>
+                
+                <div class="goal-progress">
+                    <div class="progress-header">
+                        <span class="progress-label">Progress</span>
+                        <span class="progress-percentage">72%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 72%"></div>
+                    </div>
+                </div>
+                
+                <div class="goal-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">✅</span>
+                        <span class="stat-value">4/6</span>
+                        <span>tasks</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔄</span>
+                        <span class="stat-value">3</span>
+                        <span>habits</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔥</span>
+                        <span class="stat-value">12</span>
+                        <span>day streak</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Career Goal -->
+            <div class="goal-card goal-career">
+                <div class="goal-header">
+                    <div class="goal-icon">🚀</div>
+                    <div class="goal-info">
+                        <h3 class="goal-title">Launch Side Project</h3>
+                        <p class="goal-description">Build and deploy Project Kage productivity app</p>
+                    </div>
+                    <div class="goal-date">Aug 15, 2025</div>
+                </div>
+                
+                <div class="goal-progress">
+                    <div class="progress-header">
+                        <span class="progress-label">Progress</span>
+                        <span class="progress-percentage">45%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 45%"></div>
+                    </div>
+                </div>
+                
+                <div class="goal-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">✅</span>
+                        <span class="stat-value">8/15</span>
+                        <span>tasks</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔄</span>
+                        <span class="stat-value">2</span>
+                        <span>habits</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">⏰</span>
+                        <span class="stat-value">42</span>
+                        <span>days left</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Goal -->
+            <div class="goal-card goal-learning">
+                <div class="goal-header">
+                    <div class="goal-icon">📚</div>
+                    <div class="goal-info">
+                        <h3 class="goal-title">Learn Spanish</h3>
+                        <p class="goal-description">Achieve conversational fluency for travel</p>
+                    </div>
+                    <div class="goal-date">Dec 1, 2025</div>
+                </div>
+                
+                <div class="goal-progress">
+                    <div class="progress-header">
+                        <span class="progress-label">Progress</span>
+                        <span class="progress-percentage">28%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 28%"></div>
+                    </div>
+                </div>
+                
+                <div class="goal-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">✅</span>
+                        <span class="stat-value">2/8</span>
+                        <span>tasks</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔄</span>
+                        <span class="stat-value">4</span>
+                        <span>habits</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔥</span>
+                        <span class="stat-value">5</span>
+                        <span>day streak</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Goal -->
+            <div class="goal-card goal-personal">
+                <div class="goal-header">
+                    <div class="goal-icon">🧘</div>
+                    <div class="goal-info">
+                        <h3 class="goal-title">Mindfulness Practice</h3>
+                        <p class="goal-description">Develop daily meditation and gratitude habits</p>
+                    </div>
+                    <div class="goal-date">Ongoing</div>
+                </div>
+                
+                <div class="goal-progress">
+                    <div class="progress-header">
+                        <span class="progress-label">Progress</span>
+                        <span class="progress-percentage">85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%"></div>
+                    </div>
+                </div>
+                
+                <div class="goal-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">✅</span>
+                        <span class="stat-value">3/3</span>
+                        <span>tasks</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔄</span>
+                        <span class="stat-value">2</span>
+                        <span>habits</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔥</span>
+                        <span class="stat-value">30</span>
+                        <span>day streak</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📊</span>
+            Dashboard
+        </a>
+        <a href="#" class="nav-item active">
+            <span class="nav-icon">🎯</span>
+            Goals
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">✅</span>
+            Tasks
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🔄</span>
+            Habits
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📝</span>
+            Journal
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📅</span>
+            Calendar
+        </a>
+        
+        <!-- AI Button (Premium) -->
+        <button class="ai-button">🤖</button>
+    </nav>
+</body>
+</html>

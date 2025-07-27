@@ -1,0 +1,608 @@
+{
+  "component": "JournalEntryModal",
+  "description": "Modal for creating new journal entries with mood tracking, linking, and auto-save",
+  "structure": {
+    "modal_overlay": {
+      "component": "ModalOverlay",
+      "props": {
+        "className": "modal-overlay",
+        "onClick": "closeModal",
+        "background": "rgba(0, 0, 0, 0.6)",
+        "zIndex": 1000
+      },
+      "children": ["modal_container"]
+    },
+    "modal_container": {
+      "component": "ModalContainer",
+      "props": {
+        "className": "modal",
+        "maxWidth": "480px",
+        "borderRadius": "20px",
+        "boxShadow": "0 20px 60px rgba(0, 0, 0, 0.3)",
+        "animation": "modalSlideUp 0.3s ease-out"
+      },
+      "children": ["modal_header", "modal_body", "modal_footer"]
+    },
+    "modal_header": {
+      "component": "ModalHeader",
+      "props": {
+        "className": "modal-header",
+        "padding": "20px 24px 16px",
+        "borderBottom": "1px solid #f1f5f9"
+      },
+      "children": ["title", "close_button"]
+    },
+    "title": {
+      "component": "Title",
+      "props": {
+        "className": "modal-title",
+        "text": "✍️ New Journal Entry",
+        "fontSize": "20px",
+        "fontWeight": "700",
+        "color": "#2d3748"
+      }
+    },
+    "close_button": {
+      "component": "CloseButton",
+      "props": {
+        "className": "close-btn",
+        "onClick": "closeModal",
+        "icon": "✕",
+        "size": "32px",
+        "borderRadius": "8px",
+        "background": "#f8fafc",
+        "hoverBackground": "#e2e8f0"
+      }
+    },
+    "modal_body": {
+      "component": "ModalBody",
+      "props": {
+        "className": "modal-body",
+        "padding": "0 24px 24px",
+        "maxHeight": "calc(90vh - 140px)",
+        "overflowY": "auto"
+      },
+      "children": ["entry_section", "mood_section", "linking_section", "tags_section"]
+    },
+    "entry_section": {
+      "component": "EntrySection",
+      "props": {
+        "className": "entry-section",
+        "marginBottom": "24px"
+      },
+      "children": ["entry_label", "entry_textarea", "char_counter"]
+    },
+    "entry_label": {
+      "component": "SectionLabel",
+      "props": {
+        "className": "section-label",
+        "text": "What's on your mind?",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "color": "#475569"
+      }
+    },
+    "entry_textarea": {
+      "component": "Textarea",
+      "props": {
+        "className": "entry-textarea",
+        "placeholder": "What's on your mind? Reflect on your progress, share your thoughts, or write about your day...",
+        "minHeight": "120px",
+        "padding": "16px",
+        "border": "2px solid #e2e8f0",
+        "borderRadius": "12px",
+        "fontSize": "16px",
+        "focusBorderColor": "#FF7101",
+        "focusBoxShadow": "0 0 0 3px rgba(255, 113, 1, 0.1)",
+        "onInput": "updateCharCounter",
+        "onKeyUp": "handleAutoSave",
+        "resize": "vertical"
+      }
+    },
+    "char_counter": {
+      "component": "CharCounter",
+      "props": {
+        "className": "char-counter",
+        "fontSize": "12px",
+        "color": "#64748b",
+        "textAlign": "right",
+        "marginTop": "8px",
+        "visibilityThreshold": 100,
+        "id": "charCounter"
+      }
+    },
+    "mood_section": {
+      "component": "MoodSection",
+      "props": {
+        "className": "mood-section",
+        "marginBottom": "24px"
+      },
+      "children": ["mood_label", "mood_grid"]
+    },
+    "mood_label": {
+      "component": "SectionLabel",
+      "props": {
+        "className": "section-label",
+        "text": "How are you feeling?",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "color": "#475569"
+      }
+    },
+    "mood_grid": {
+      "component": "MoodGrid",
+      "props": {
+        "className": "mood-grid",
+        "display": "flex",
+        "gap": "12px",
+        "justifyContent": "space-between"
+      },
+      "children": ["mood_very_low", "mood_low", "mood_neutral", "mood_good", "mood_great"]
+    },
+    "mood_very_low": {
+      "component": "MoodOption",
+      "props": {
+        "className": "mood-option",
+        "onClick": "selectMood",
+        "value": "very-low",
+        "emoji": "😢",
+        "label": "Very Low",
+        "color": "#ef4444"
+      }
+    },
+    "mood_low": {
+      "component": "MoodOption",
+      "props": {
+        "className": "mood-option",
+        "onClick": "selectMood",
+        "value": "low",
+        "emoji": "😕",
+        "label": "Low",
+        "color": "#f97316"
+      }
+    },
+    "mood_neutral": {
+      "component": "MoodOption",
+      "props": {
+        "className": "mood-option",
+        "onClick": "selectMood",
+        "value": "neutral",
+        "emoji": "😐",
+        "label": "Neutral",
+        "color": "#6b7280"
+      }
+    },
+    "mood_good": {
+      "component": "MoodOption",
+      "props": {
+        "className": "mood-option",
+        "onClick": "selectMood",
+        "value": "good",
+        "emoji": "😊",
+        "label": "Good",
+        "color": "#22c55e"
+      }
+    },
+    "mood_great": {
+      "component": "MoodOption",
+      "props": {
+        "className": "mood-option",
+        "onClick": "selectMood",
+        "value": "great",
+        "emoji": "🤩",
+        "label": "Great",
+        "color": "#16a34a"
+      }
+    },
+    "linking_section": {
+      "component": "LinkingSection",
+      "props": {
+        "className": "linking-section",
+        "marginBottom": "24px"
+      },
+      "children": ["linking_label", "link_grid", "selected_links"]
+    },
+    "linking_label": {
+      "component": "SectionLabel",
+      "props": {
+        "className": "section-label",
+        "text": "Link to your progress",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "color": "#475569"
+      }
+    },
+    "link_grid": {
+      "component": "LinkGrid",
+      "props": {
+        "className": "link-grid",
+        "display": "grid",
+        "gridTemplateColumns": "repeat(3, 1fr)",
+        "gap": "12px",
+        "marginBottom": "16px"
+      },
+      "children": ["link_goals", "link_tasks", "link_habits"]
+    },
+    "link_goals": {
+      "component": "LinkOption",
+      "props": {
+        "className": "link-option",
+        "onClick": "toggleLinkType",
+        "type": "goals",
+        "icon": "🎯",
+        "label": "Goals",
+        "activeColor": "#FF7101"
+      }
+    },
+    "link_tasks": {
+      "component": "LinkOption",
+      "props": {
+        "className": "link-option",
+        "onClick": "toggleLinkType",
+        "type": "tasks",
+        "icon": "✅",
+        "label": "Tasks",
+        "activeColor": "#FF7101"
+      }
+    },
+    "link_habits": {
+      "component": "LinkOption",
+      "props": {
+        "className": "link-option",
+        "onClick": "toggleLinkType",
+        "type": "habits",
+        "icon": "🔄",
+        "label": "Habits",
+        "activeColor": "#FF7101"
+      }
+    },
+    "selected_links": {
+      "component": "SelectedLinks",
+      "props": {
+        "className": "selected-links",
+        "id": "selectedLinks",
+        "display": "flex",
+        "flexWrap": "wrap",
+        "gap": "8px",
+        "marginTop": "12px"
+      }
+    },
+    "tags_section": {
+      "component": "TagsSection",
+      "props": {
+        "className": "tags-section",
+        "marginBottom": "32px"
+      },
+      "children": ["tags_label", "tags_input", "tags_help"]
+    },
+    "tags_label": {
+      "component": "SectionLabel",
+      "props": {
+        "className": "section-label",
+        "text": "Tags (optional)",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "color": "#475569"
+      }
+    },
+    "tags_input": {
+      "component": "TagsInput",
+      "props": {
+        "className": "tags-input",
+        "type": "text",
+        "placeholder": "Add tags separated by commas...",
+        "padding": "12px 16px",
+        "border": "2px solid #e2e8f0",
+        "borderRadius": "12px",
+        "fontSize": "14px",
+        "focusBorderColor": "#FF7101",
+        "focusBoxShadow": "0 0 0 3px rgba(255, 113, 1, 0.1)",
+        "onKeyUp": "handleAutoSave"
+      }
+    },
+    "tags_help": {
+      "component": "HelpText",
+      "props": {
+        "className": "tags-help",
+        "text": "Use tags to organize and find your entries later",
+        "fontSize": "12px",
+        "color": "#64748b",
+        "marginTop": "6px"
+      }
+    },
+    "modal_footer": {
+      "component": "ModalFooter",
+      "props": {
+        "className": "modal-footer",
+        "padding": "16px 24px 24px",
+        "borderTop": "1px solid #f1f5f9",
+        "display": "flex",
+        "gap": "12px",
+        "justifyContent": "flex-end"
+      },
+      "children": ["auto_save_status", "cancel_button", "save_button"]
+    },
+    "auto_save_status": {
+      "component": "AutoSaveStatus",
+      "props": {
+        "className": "auto-save",
+        "id": "autoSaveStatus",
+        "fontSize": "12px",
+        "color": "#64748b",
+        "activeColor": "#FF7101"
+      }
+    },
+    "cancel_button": {
+      "component": "Button",
+      "props": {
+        "className": "btn btn-secondary",
+        "onClick": "closeModal",
+        "text": "Cancel",
+        "padding": "12px 24px",
+        "borderRadius": "10px",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "background": "#f8fafc",
+        "color": "#64748b",
+        "border": "1px solid #e2e8f0",
+        "hoverBackground": "#e2e8f0"
+      }
+    },
+    "save_button": {
+      "component": "Button",
+      "props": {
+        "className": "btn btn-primary",
+        "onClick": "saveEntry",
+        "id": "saveBtn",
+        "text": "Save Entry",
+        "padding": "12px 24px",
+        "borderRadius": "10px",
+        "fontSize": "14px",
+        "fontWeight": "600",
+        "background": "#FF7101",
+        "color": "white",
+        "boxShadow": "0 2px 8px rgba(255, 113, 1, 0.3)",
+        "hoverBackground": "#e55a00",
+        "hoverBoxShadow": "0 4px 12px rgba(255, 113, 1, 0.4)",
+        "disabledBackground": "#cbd5e1",
+        "disabledColor": "#94a3b8",
+        "initialDisabled": true
+      }
+    }
+  },
+  "state_management": {
+    "selectedMood": {
+      "type": "string",
+      "default": null,
+      "options": ["very-low", "low", "neutral", "good", "great"]
+    },
+    "activeLinkTypes": {
+      "type": "Set",
+      "default": "new Set()",
+      "description": "Tracks which link types are selected for linking"
+    },
+    "selectedLinks": {
+      "type": "object",
+      "default": {
+        "goals": [],
+        "tasks": [],
+        "habits": []
+      },
+      "description": "Stores actual linked items by type"
+    },
+    "autoSaveTimeout": {
+      "type": "number",
+      "default": null,
+      "description": "Timeout ID for auto-save functionality"
+    },
+    "entryContent": {
+      "type": "string",
+      "default": "",
+      "description": "Current textarea content"
+    },
+    "characterCount": {
+      "type": "number",
+      "default": 0,
+      "description": "Current character count"
+    },
+    "tags": {
+      "type": "array",
+      "default": [],
+      "description": "Array of tag strings"
+    }
+  },
+  "functions": {
+    "updateCharCounter": {
+      "description": "Updates character counter and save button state",
+      "parameters": ["textarea"],
+      "logic": [
+        "Get character count from textarea.value.length",
+        "Show counter if count >= 100",
+        "Enable save button if count >= 10",
+        "Update counter display"
+      ]
+    },
+    "selectMood": {
+      "description": "Handles mood selection",
+      "parameters": ["element", "mood"],
+      "logic": [
+        "Remove 'selected' class from all mood options",
+        "Add 'selected' class to clicked element",
+        "Update selectedMood state"
+      ]
+    },
+    "toggleLinkType": {
+      "description": "Toggles link type selection",
+      "parameters": ["element", "type"],
+      "logic": [
+        "Check if type is in activeLinkTypes Set",
+        "If active: remove from Set and remove 'active' class",
+        "If inactive: add to Set and add 'active' class",
+        "Call showLinkSelection()"
+      ]
+    },
+    "showLinkSelection": {
+      "description": "Shows selection modal/dropdown for chosen link types",
+      "parameters": [],
+      "logic": [
+        "If activeLinkTypes.size > 0: show selection interface",
+        "If activeLinkTypes.size === 0: clear all selections",
+        "Update selectedLinks display"
+      ]
+    },
+    "updateSelectedLinksDisplay": {
+      "description": "Updates the visual display of selected links",
+      "parameters": [],
+      "logic": [
+        "Clear existing link chips",
+        "Iterate through selectedLinks object",
+        "Create chip elements for each selected item",
+        "Add remove buttons to each chip"
+      ]
+    },
+    "removeLink": {
+      "description": "Removes a specific linked item",
+      "parameters": ["type", "itemId"],
+      "logic": [
+        "Filter out item from selectedLinks[type]",
+        "If type array becomes empty, deactivate link type",
+        "Update display"
+      ]
+    },
+    "handleAutoSave": {
+      "description": "Handles auto-save functionality",
+      "parameters": [],
+      "logic": [
+        "Show 'saving' status",
+        "Clear existing timeout",
+        "Set new timeout for 1.5 seconds",
+        "On timeout: show 'saved' status briefly"
+      ]
+    },
+    "saveEntry": {
+      "description": "Saves the journal entry",
+      "parameters": [],
+      "logic": [
+        "Collect all form data",
+        "Validate minimum requirements",
+        "Create entry object with timestamp",
+        "Call API endpoint",
+        "Show success message",
+        "Close modal"
+      ]
+    },
+    "closeModal": {
+      "description": "Closes the modal",
+      "parameters": [],
+      "logic": [
+        "Check if unsaved changes exist",
+        "Show confirmation if needed",
+        "Clear all state",
+        "Hide modal overlay"
+      ]
+    }
+  },
+  "validation_rules": {
+    "content": {
+      "minLength": 10,
+      "maxLength": 10000,
+      "required": true
+    },
+    "mood": {
+      "required": false,
+      "options": ["very-low", "low", "neutral", "good", "great"]
+    },
+    "links": {
+      "maxLinksPerEntry": 10,
+      "allowDuplicates": false
+    },
+    "tags": {
+      "maxTags": 20,
+      "maxTagLength": 50,
+      "separator": ","
+    }
+  },
+  "api_structure": {
+    "endpoint": "/api/journal-entries",
+    "method": "POST",
+    "request_body": {
+      "content": "string",
+      "mood": "string|null",
+      "linkedItems": {
+        "goals": "array<number>",
+        "tasks": "array<number>",
+        "habits": "array<number>"
+      },
+      "tags": "array<string>",
+      "createdAt": "ISO8601 string"
+    },
+    "response": {
+      "success": {
+        "id": "number",
+        "message": "string",
+        "entry": "JournalEntry object"
+      },
+      "error": {
+        "message": "string",
+        "errors": "array<string>"
+      }
+    }
+  },
+  "responsive_breakpoints": {
+    "mobile": {
+      "maxWidth": "540px",
+      "changes": [
+        "Full width modal with margins",
+        "Stack footer buttons vertically",
+        "Reduce padding and gaps",
+        "Smaller emoji sizes in mood grid"
+      ]
+    },
+    "tablet": {
+      "maxWidth": "768px",
+      "changes": [
+        "Maintain desktop layout",
+        "Slightly reduced modal width"
+      ]
+    }
+  },
+  "animations": {
+    "modalSlideUp": {
+      "from": {
+        "transform": "translateY(20px)",
+        "opacity": 0
+      },
+      "to": {
+        "transform": "translateY(0)",
+        "opacity": 1
+      },
+      "duration": "0.3s",
+      "easing": "ease-out"
+    },
+    "pulse": {
+      "keyframes": {
+        "0%, 100%": { "opacity": 1 },
+        "50%": { "opacity": 0.5 }
+      },
+      "duration": "1.5s",
+      "iteration": "infinite"
+    }
+  },
+  "accessibility": {
+    "keyboard_navigation": [
+      "Tab through all interactive elements",
+      "Escape key closes modal",
+      "Enter key submits form when save button focused"
+    ],
+    "screen_reader": [
+      "All inputs have proper labels",
+      "Modal has aria-labelledby for title",
+      "Link chips have aria-label for remove buttons"
+    ],
+    "color_contrast": [
+      "All text meets WCAG AA standards (4.5:1)",
+      "Focus indicators are clearly visible",
+      "Color is not the only indicator of state"
+    ]
+  }
+}

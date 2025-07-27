@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal Entry Modal - Project Kage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.6);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideUp 0.3s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f8fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .modal-body {
+            padding: 0 24px 24px;
+            max-height: calc(90vh - 140px);
+            overflow-y: auto;
+        }
+
+        /* Entry Input Section */
+        .entry-section {
+            margin-bottom: 24px;
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .entry-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #2d3748;
+            background: #f8fafc;
+            transition: all 0.2s;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .entry-textarea:focus {
+            outline: none;
+            border-color: #FF7101;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(255, 113, 1, 0.1);
+        }
+
+        .entry-textarea::placeholder {
+            color: #a0aec0;
+        }
+
+        .char-counter {
+            font-size: 12px;
+            color: #64748b;
+            text-align: right;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .char-counter.visible {
+            display: block;
+        }
+
+        /* Mood Section */
+        .mood-section {
+            margin-bottom: 24px;
+        }
+
+        .mood-grid {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+        }
+
+        .mood-option {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .mood-option:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .mood-option.selected {
+            border-color: #FF7101;
+            background: #fff5f0;
+            box-shadow: 0 0 0 3px rgba(255, 113, 1, 0.1);
+        }
+
+        .mood-emoji {
+            font-size: 24px;
+            transition: all 0.2s;
+        }
+
+        .mood-option.selected .mood-emoji {
+            transform: scale(1.1);
+        }
+
+        .mood-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .mood-option.selected .mood-label {
+            color: #FF7101;
+        }
+
+        /* Linking Section */
+        .linking-section {
+            margin-bottom: 24px;
+        }
+
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .link-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .link-option:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .link-option.active {
+            border-color: #FF7101;
+            background: #fff5f0;
+        }
+
+        .link-icon {
+            font-size: 20px;
+        }
+
+        .link-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .link-option.active .link-text {
+            color: #FF7101;
+        }
+
+        /* Selected Links Display */
+        .selected-links {
+            display: none;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .selected-links.has-links {
+            display: flex;
+        }
+
+        .link-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #fff5f0;
+            border: 1px solid #FF7101;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #FF7101;
+        }
+
+        .link-chip-remove {
+            width: 16px;
+            height: 16px;
+            border: none;
+            background: #FF7101;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        /* Tags Section */
+        .tags-section {
+            margin-bottom: 32px;
+        }
+
+        .tags-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #2d3748;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .tags-input:focus {
+            outline: none;
+            border-color: #FF7101;
+            box-shadow: 0 0 0 3px rgba(255, 113, 1, 0.1);
+        }
+
+        .tags-help {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 6px;
+        }
+
+        /* Modal Footer */
+        .modal-footer {
+            padding: 16px 24px 24px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-primary {
+            background: #FF7101;
+            color: white;
+            box-shadow: 0 2px 8px rgba(255, 113, 1, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #e55a00;
+            box-shadow: 0 4px 12px rgba(255, 113, 1, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Auto-save indicator */
+        .auto-save {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .auto-save.saving {
+            color: #FF7101;
+        }
+
+        .auto-save-dot {
+            width: 6px;
+            height: 6px;
+            background: #64748b;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .auto-save.saving .auto-save-dot {
+            background: #FF7101;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 540px) {
+            .modal {
+                margin: 16px;
+                max-width: none;
+                border-radius: 16px;
+            }
+
+            .modal-header {
+                padding: 16px 20px 12px;
+            }
+
+            .modal-body {
+                padding: 0 20px 20px;
+            }
+
+            .modal-footer {
+                padding: 12px 20px 20px;
+                flex-direction: column-reverse;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .mood-grid {
+                gap: 8px;
+            }
+
+            .mood-option {
+                padding: 10px 6px;
+            }
+
+            .mood-emoji {
+                font-size: 20px;
+            }
+
+            .link-grid {
+                gap: 8px;
+            }
+
+            .link-option {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-overlay">
+        <div class="modal">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    ✍️ New Journal Entry
+                </h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Entry Input Section -->
+                <div class="entry-section">
+                    <label class="section-label">What's on your mind?</label>
+                    <textarea 
+                        class="entry-textarea" 
+                        placeholder="What's on your mind? Reflect on your progress, share your thoughts, or write about your day..."
+                        oninput="updateCharCounter(this)"
+                        onkeyup="handleAutoSave()"
+                    ></textarea>
+                    <div class="char-counter" id="charCounter">0 characters</div>
+                </div>
+
+                <!-- Mood Selection -->
+                <div class="mood-section">
+                    <label class="section-label">How are you feeling?</label>
+                    <div class="mood-grid">
+                        <div class="mood-option" onclick="selectMood(this, 'very-low')">
+                            <div class="mood-emoji">😢</div>
+                            <div class="mood-label">Very Low</div>
+                        </div>
+                        <div class="mood-option" onclick="selectMood(this, 'low')">
+                            <div class="mood-emoji">😕</div>
+                            <div class="mood-label">Low</div>
+                        </div>
+                        <div class="mood-option" onclick="selectMood(this, 'neutral')">
+                            <div class="mood-emoji">😐</div>
+                            <div class="mood-label">Neutral</div>
+                        </div>
+                        <div class="mood-option" onclick="selectMood(this, 'good')">
+                            <div class="mood-emoji">😊</div>
+                            <div class="mood-label">Good</div>
+                        </div>
+                        <div class="mood-option" onclick="selectMood(this, 'great')">
+                            <div class="mood-emoji">🤩</div>
+                            <div class="mood-label">Great</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Linking Section -->
+                <div class="linking-section">
+                    <label class="section-label">Link to your progress</label>
+                    <div class="link-grid">
+                        <div class="link-option" onclick="toggleLinkType(this, 'goals')">
+                            <div class="link-icon">🎯</div>
+                            <div class="link-text">Goals</div>
+                        </div>
+                        <div class="link-option" onclick="toggleLinkType(this, 'tasks')">
+                            <div class="link-icon">✅</div>
+                            <div class="link-text">Tasks</div>
+                        </div>
+                        <div class="link-option" onclick="toggleLinkType(this, 'habits')">
+                            <div class="link-icon">🔄</div>
+                            <div class="link-text">Habits</div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Links Display -->
+                    <div class="selected-links" id="selectedLinks"></div>
+                </div>
+
+                <!-- Tags Section -->
+                <div class="tags-section">
+                    <label class="section-label">Tags (optional)</label>
+                    <input 
+                        type="text" 
+                        class="tags-input" 
+                        placeholder="Add tags separated by commas..."
+                        onkeyup="handleAutoSave()"
+                    >
+                    <div class="tags-help">Use tags to organize and find your entries later</div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <div class="auto-save" id="autoSaveStatus">
+                    <div class="auto-save-dot"></div>
+                    <span>Auto-saving...</span>
+                </div>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEntry()" id="saveBtn">Save Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMood = null;
+        let activeLinkTypes = new Set();
+        let selectedLinks = {
+            goals: [],
+            tasks: [],
+            habits: []
+        };
+        let autoSaveTimeout = null;
+
+        // Sample data for demonstration
+        const sampleData = {
+            goals: [
+                { id: 1, name: "Learn Spanish", emoji: "🇪🇸" },
+                { id: 2, name: "Run Marathon", emoji: "🏃‍♂️" },
+                { id: 3, name: "Read 50 Books", emoji: "📚" }
+            ],
+            tasks: [
+                { id: 1, name: "Complete Spanish lesson", emoji: "📖" },
+                { id: 2, name: "Go for morning run", emoji: "🏃" },
+                { id: 3, name: "Read chapter 5", emoji: "📄" }
+            ],
+            habits: [
+                { id: 1, name: "Drink 8 glasses of water", emoji: "💧" },
+                { id: 2, name: "Exercise 30 minutes", emoji: "💪" },
+                { id: 3, name: "Meditate", emoji: "🧘‍♀️" }
+            ]
+        };
+
+        function updateCharCounter(textarea) {
+            const charCount = textarea.value.length;
+            const counter = document.getElementById('charCounter');
+            
+            if (charCount >= 100) {
+                counter.classList.add('visible');
+                counter.textContent = `${charCount} characters`;
+            } else {
+                counter.classList.remove('visible');
+            }
+
+            // Update save button state
+            const saveBtn = document.getElementById('saveBtn');
+            if (charCount >= 10) {
+                saveBtn.disabled = false;
+            } else {
+                saveBtn.disabled = true;
+            }
+        }
+
+        function selectMood(element, mood) {
+            // Remove previous selection
+            document.querySelectorAll('.mood-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            selectedMood = mood;
+        }
+
+        function toggleLinkType(element, type) {
+            if (activeLinkTypes.has(type)) {
+                // Deactivate if already active
+                element.classList.remove('active');
+                activeLinkTypes.delete(type);
+                showLinkSelection();
+            } else {
+                // Activate if not active
+                element.classList.add('active');
+                activeLinkTypes.add(type);
+                showLinkSelection();
+            }
+        }
+
+        function showLinkSelection() {
+            // In a real app, this would show a dropdown/modal with actual items
+            // For demo purposes, we'll just add some sample links
+            if (activeLinkTypes.size > 0) {
+                // Simulate selecting some items
+                activeLinkTypes.forEach(type => {
+                    if (selectedLinks[type].length === 0) {
+                        // Add a sample item for demo
+                        const sampleItem = sampleData[type][0];
+                        selectedLinks[type].push(sampleItem);
+                    }
+                });
+                updateSelectedLinksDisplay();
+            } else {
+                // Clear all selections
+                selectedLinks = { goals: [], tasks: [], habits: [] };
+                updateSelectedLinksDisplay();
+            }
+        }
+
+        function updateSelectedLinksDisplay() {
+            const container = document.getElementById('selectedLinks');
+            container.innerHTML = '';
+            
+            let hasLinks = false;
+            
+            Object.entries(selectedLinks).forEach(([type, items]) => {
+                items.forEach(item => {
+                    hasLinks = true;
+                    const chip = document.createElement('div');
+                    chip.className = 'link-chip';
+                    chip.innerHTML = `
+                        ${item.emoji} ${item.name}
+                        <button class="link-chip-remove" onclick="removeLink('${type}', ${item.id})">×</button>
+                    `;
+                    container.appendChild(chip);
+                });
+            });
+            
+            container.classList.toggle('has-links', hasLinks);
+        }
+
+        function removeLink(type, itemId) {
+            selectedLinks[type] = selectedLinks[type].filter(item => item.id !== itemId);
+            
+            // If no more items of this type, deactivate the link type
+            if (selectedLinks[type].length === 0) {
+                activeLinkTypes.delete(type);
+                document.querySelector(`[onclick*="${type}"]`).classList.remove('active');
+            }
+            
+            updateSelectedLinksDisplay();
+        }
+
+        function handleAutoSave() {
+            const autoSaveStatus = document.getElementById('autoSaveStatus');
+            autoSaveStatus.classList.add('saving');
+            autoSaveStatus.querySelector('span').textContent = 'Saving...';
+            
+            // Clear existing timeout
+            if (autoSaveTimeout) {
+                clearTimeout(autoSaveTimeout);
+            }
+            
+            // Set new timeout
+            autoSaveTimeout = setTimeout(() => {
+                autoSaveStatus.classList.remove('saving');
+                autoSaveStatus.querySelector('span').textContent = 'Saved';
+                
+                // Hide the saved message after 2 seconds
+                setTimeout(() => {
+                    autoSaveStatus.querySelector('span').textContent = 'Auto-saving...';
+                }, 2000);
+            }, 1500);
+        }
+
+        function saveEntry() {
+            const textarea = document.querySelector('.entry-textarea');
+            const tagsInput = document.querySelector('.tags-input');
+            
+            const entryData = {
+                content: textarea.value,
+                mood: selectedMood,
+                linkedItems: selectedLinks,
+                tags: tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag),
+                createdAt: new Date().toISOString()
+            };
+            
+            console.log('Saving journal entry:', entryData);
+            
+            // Simulate save success
+            alert('Journal entry saved successfully!');
+            closeModal();
+        }
+
+        function closeModal() {
+            document.querySelector('.modal-overlay').style.display = 'none';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Focus on textarea when modal opens
+            document.querySelector('.entry-textarea').focus();
+            
+            // Initialize save button as disabled
+            document.getElementById('saveBtn').disabled = true;
+        });
+
+        // Prevent modal close when clicking inside modal
+        document.querySelector('.modal').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Close modal when clicking overlay
+        document.querySelector('.modal-overlay').addEventListener('click', closeModal);
+
+        // Handle escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

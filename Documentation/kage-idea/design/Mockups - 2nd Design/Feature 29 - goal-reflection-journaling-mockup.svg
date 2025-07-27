@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1000" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">8:45 PM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1050" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="400" y="195" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Goal Reflection</text>
+  
+  <!-- Main Container -->
+  <rect x="170" y="230" width="460" height="810" fill="#F6F7FB" rx="15" ry="15" />
+  
+  <!-- Goal Selection Card -->
+  <rect x="190" y="250" width="420" height="100" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="280" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Select Goal to Reflect On</text>
+  
+  <!-- Goal Selection Dropdown -->
+  <rect x="210" y="295" width="380" height="40" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="230" y="320" font-family="Arial" font-size="14" fill="#333333">Improve Work-Life Balance</text>
+  <text x="570" y="320" font-family="Arial" font-size="14" text-anchor="end" fill="#9A9A9A">▼</text>
+  
+  <!-- Reflection Template Card -->
+  <rect x="190" y="360" width="420" height="100" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="390" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Choose Reflection Type</text>
+  
+  <!-- Reflection Template Selection -->
+  <rect x="210" y="405" width="185" height="40" rx="20" ry="20" fill="#2A3990" />
+  <text x="302.5" y="430" font-family="Arial" font-size="14" text-anchor="middle" fill="#FFFFFF">Progress Check</text>
+  
+  <rect x="405" y="405" width="185" height="40" rx="20" ry="20" fill="#F6F7FB" />
+  <text x="497.5" y="430" font-family="Arial" font-size="14" text-anchor="middle" fill="#9A9A9A">Milestone Review</text>
+  
+  <!-- Goal Context Card -->
+  <rect x="190" y="470" width="420" height="120" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="500" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Goal Context</text>
+  
+  <!-- Goal Status -->
+  <text x="210" y="525" font-family="Arial" font-size="14" fill="#333333">Target Date: September 15, 2025</text>
+  <text x="210" y="550" font-family="Arial" font-size="14" fill="#333333">Current Progress:</text>
+  
+  <!-- Progress Bar -->
+  <rect x="330" y="538" width="200" height="10" rx="5" ry="5" fill="#F6F7FB" />
+  <rect x="330" y="538" width="100" height="10" rx="5" ry="5" fill="#2A3990" />
+  <text x="540" y="550" font-family="Arial" font-size="14" text-anchor="end" fill="#2A3990">50%</text>
+  
+  <!-- Last Reflection -->
+  <text x="210" y="575" font-family="Arial" font-size="14" fill="#333333">Last Reflection: 2 weeks ago</text>
+  
+  <!-- Reflection Template -->
+  <rect x="190" y="600" width="420" height="450" rx="15" ry="15" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <text x="210" y="630" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Progress Reflection</text>
+  <text x="210" y="650" font-family="Arial" font-size="12" fill="#9A9A9A">Monday, May 9, 2025</text>
+  
+  <!-- Question 1 -->
+  <text x="210" y="680" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">1. What progress have you made toward this goal in the past two weeks?</text>
+  <rect x="210" y="690" width="380" height="60" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="225" y="720" font-family="Arial" font-size="12" fill="#9A9A9A">I've successfully maintained my "no work after 7pm" boundary 5 days a week, and implemented a morning routine that helps me prepare for the day...</text>
+  
+  <!-- Question 2 -->
+  <text x="210" y="770" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">2. What obstacles or challenges are you facing right now?</text>
+  <rect x="210" y="780" width="380" height="60" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="225" y="810" font-family="Arial" font-size="12" fill="#9A9A9A">I'm still struggling with unexpected work emergencies that disrupt my evening plans. Also finding it difficult to fully disconnect mentally even when I'm not actively working.</text>
+  
+  <!-- Question 3 -->
+  <text x="210" y="860" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">3. What's working well that you want to continue?</text>
+  <rect x="210" y="870" width="380" height="60" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="225" y="900" font-family="Arial" font-size="12" fill="#9A9A9A">The calendar blocking technique has been very effective. Also, communicating my boundaries clearly to my team has reduced interruptions significantly.</text>
+  
+  <!-- Question 4 -->
+  <text x="210" y="950" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">4. What adjustments will you make going forward?</text>
+  <rect x="210" y="960" width="380" height="60" rx="5" ry="5" fill="#F6F7FB" />
+  <text x="225" y="990" font-family="Arial" font-size="12" fill="#9A9A9A">I need to create a "wind down" ritual to help transition from work mode to personal time. Also will designate a colleague as backup for emergencies.</text>
+  
+  <!-- Save Button -->
+  <rect x="190" y="1060" width="420" height="50" rx="25" ry="25" fill="#2A3990" />
+  <text x="400" y="1090" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Save Reflection</text>
+  
+  <!-- Side Card: Reflection Templates -->
+  <g>
+    <rect x="580" y="250" width="200" height="240" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="280" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Reflection Templates</text>
+    
+    <line x1="600" y1="290" x2="760" y2="290" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="310" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="310">Different templates for</tspan>
+      <tspan x="600" y="330">various goal situations:</tspan>
+    </text>
+    
+    <!-- Template 1 -->
+    <rect x="600" y="345" width="160" height="35" rx="5" ry="5" fill="#2A399022" />
+    <text x="615" y="367" font-family="Arial" font-size="12" font-weight="bold" fill="#2A3990">Progress Check</text>
+    <text x="740" y="367" font-family="Arial" font-size="10" text-anchor="end" fill="#9A9A9A">Active</text>
+    
+    <!-- Template 2 -->
+    <rect x="600" y="390" width="160" height="35" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="615" y="412" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Milestone Review</text>
+    
+    <!-- Template 3 -->
+    <rect x="600" y="435" width="160" height="35" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="615" y="457" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Obstacle Analysis</text>
+    
+    <!-- Template 4 -->
+    <rect x="600" y="480" width="160" height="35" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="615" y="502" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Goal Reset/Revision</text>
+  </g>
+  
+  <!-- Side Card: Reflection Benefits -->
+  <g>
+    <rect x="580" y="500" width="200" height="180" rx="15" ry="15" fill="#FFFFFF" stroke="#F5A623" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="530" font-family="Arial" font-size="14" font-weight="bold" fill="#F5A623">Why Reflect?</text>
+    
+    <line x1="600" y1="540" x2="760" y2="540" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="560" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="560">Regular goal reflection has</tspan>
+      <tspan x="600" y="580">been shown to:</tspan>
+    </text>
+    
+    <!-- Benefit 1 -->
+    <rect x="600" y="595" width="160" height="35" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="610" cy="612" r="5" fill="#F5A623" />
+    <text x="620" y="617" font-family="Arial" font-size="12" fill="#333333">Increase goal success by 42%</text>
+    
+    <!-- Benefit 2 -->
+    <rect x="600" y="640" width="160" height="35" rx="5" ry="5" fill="#F6F7FB" />
+    <circle cx="610" cy="657" r="5" fill="#F5A623" />
+    <text x="620" y="652" font-family="Arial" font-size="12" fill="#333333">Improve problem-solving</text>
+    <text x="620" y="667" font-family="Arial" font-size="12" fill="#333333">skills</text>
+  </g>
+  
+  <!-- Side Card: Previous Reflections -->
+  <g>
+    <rect x="580" y="690" width="200" height="180" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="720" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Previous Reflections</text>
+    
+    <line x1="600" y1="730" x2="760" y2="730" stroke="#E0E2E8" stroke-width="1" />
+    
+    <!-- Entry 1 -->
+    <rect x="600" y="745" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="615" y="765" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Progress Check</text>
+    <text x="615" y="780" font-family="Arial" font-size="10" fill="#9A9A9A">Apr 24, 2025</text>
+    <text x="740" y="765" font-family="Arial" font-size="14" text-anchor="end" fill="#9A9A9A">▶</text>
+    
+    <!-- Entry 2 -->
+    <rect x="600" y="795" width="160" height="40" rx="5" ry="5" fill="#F6F7FB" />
+    <text x="615" y="815" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">Obstacle Analysis</text>
+    <text x="615" y="830" font-family="Arial" font-size="10" fill="#9A9A9A">Apr 10, 2025</text>
+    <text x="740" y="815" font-family="Arial" font-size="14" text-anchor="end" fill="#9A9A9A">▶</text>
+  </g>
+  
+  <!-- AI Assistant Suggestion -->
+  <g>
+    <rect x="380" y="370" width="220" height="80" rx="10" ry="10" fill="#FFFFFF" filter="url(#shadow)" />
+    <text x="400" y="395" font-family="Arial" font-size="12" fill="#333333">Consider using the Obstacle Analysis</text>
+    <text x="400" y="415" font-family="Arial" font-size="12" fill="#333333">template to address the challenges</text>
+    <text x="400" y="435" font-family="Arial" font-size="12" fill="#333333">you mentioned last time.</text>
+    <circle cx="580" cy="400" r="10" fill="#9F85FF" />
+    <text x="580" y="404" font-family="Arial" font-size="10" text-anchor="middle" fill="#FFFFFF">💡</text>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="1150" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1150">Project Kage - Goal Reflection Journaling</tspan>
+    <tspan x="400" y="1175">Feature: Structured Goal Assessment</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>

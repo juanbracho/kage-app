@@ -1,0 +1,546 @@
+{
+  "component": "tasks_habits_expandable_section",
+  "description": "Expandable section for linking tasks and habits to goals during goal creation",
+  "location": "Between description and target completion fields in create.html",
+  "
+  
+  "html_structure": {
+    "section_wrapper": {
+      "class": "tasks-habits-section",
+      "styles": "margin-bottom: 24px",
+      "elements": [
+        {
+          "element": "div",
+          "class": "tasks-habits-header",
+          "attributes": {
+            "onclick": "toggleTasksHabits()",
+            "id": "tasksHabitsHeader"
+          },
+          "children": [
+            {
+              "element": "div",
+              "class": "tasks-habits-title",
+              "children": [
+                {
+                  "element": "span",
+                  "class": "tasks-habits-icon",
+                  "content": "📋"
+                },
+                {
+                  "element": "span",
+                  "content": "Tasks & Habits"
+                }
+              ]
+            },
+            {
+              "element": "span",
+              "class": "expand-arrow",
+              "content": "▼"
+            }
+          ]
+        },
+        {
+          "element": "div",
+          "class": "tasks-habits-content",
+          "id": "tasksHabitsContent",
+          "children": [
+            {
+              "element": "div",
+              "class": "add-buttons",
+              "children": [
+                {
+                  "element": "button",
+                  "class": "add-btn",
+                  "attributes": {
+                    "onclick": "showTaskModal()",
+                    "type": "button"
+                  },
+                  "children": [
+                    {
+                      "element": "span",
+                      "class": "add-btn-icon",
+                      "content": "+"
+                    },
+                    {
+                      "element": "span",
+                      "content": "Add Task"
+                    }
+                  ]
+                },
+                {
+                  "element": "button",
+                  "class": "add-btn",
+                  "attributes": {
+                    "onclick": "showHabitModal()",
+                    "type": "button"
+                  },
+                  "children": [
+                    {
+                      "element": "span",
+                      "class": "add-btn-icon",
+                      "content": "+"
+                    },
+                    {
+                      "element": "span",
+                      "content": "Add Habit"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "element": "div",
+              "class": "items-list",
+              "id": "itemsList",
+              "content": "<!-- Dynamic items will be populated here -->"
+            }
+          ]
+        }
+      ]
+    }
+  },
+
+  "css_styles": {
+    "tasks-habits-section": {
+      "margin-bottom": "24px"
+    },
+    "tasks-habits-header": {
+      "display": "flex",
+      "align-items": "center",
+      "justify-content": "space-between",
+      "padding": "16px 20px",
+      "background": "#f8fafc",
+      "border": "2px solid #e2e8f0",
+      "border-radius": "12px",
+      "cursor": "pointer",
+      "transition": "all 0.2s",
+      "hover": {
+        "background": "#f1f5f9",
+        "border-color": "#cbd5e1"
+      },
+      "expanded": {
+        "border-bottom-left-radius": "0",
+        "border-bottom-right-radius": "0",
+        "border-bottom": "none",
+        "background": "#fff",
+        "border-color": "#FF7101"
+      }
+    },
+    "tasks-habits-title": {
+      "display": "flex",
+      "align-items": "center",
+      "gap": "12px",
+      "font-size": "16px",
+      "font-weight": "600",
+      "color": "#374151"
+    },
+    "tasks-habits-icon": {
+      "font-size": "20px"
+    },
+    "expand-arrow": {
+      "font-size": "14px",
+      "color": "#6b7280",
+      "transition": "transform 0.2s",
+      "expanded": {
+        "transform": "rotate(180deg)"
+      }
+    },
+    "tasks-habits-content": {
+      "display": "none",
+      "border": "2px solid #FF7101",
+      "border-top": "none",
+      "border-radius": "0 0 12px 12px",
+      "padding": "20px",
+      "background": "#fff",
+      "animation": "slideDown 0.3s ease-out",
+      "expanded": {
+        "display": "block"
+      }
+    },
+    "add-buttons": {
+      "display": "flex",
+      "gap": "12px",
+      "margin-bottom": "20px"
+    },
+    "add-btn": {
+      "flex": "1",
+      "padding": "12px 16px",
+      "border": "2px dashed #d1d5db",
+      "border-radius": "8px",
+      "background": "transparent",
+      "cursor": "pointer",
+      "transition": "all 0.2s",
+      "display": "flex",
+      "align-items": "center",
+      "justify-content": "center",
+      "gap": "8px",
+      "font-size": "14px",
+      "font-weight": "500",
+      "color": "#6b7280",
+      "hover": {
+        "border-color": "#FF7101",
+        "color": "#FF7101",
+        "background": "rgba(255, 113, 1, 0.05)"
+      }
+    },
+    "add-btn-icon": {
+      "font-size": "16px"
+    },
+    "items-list": {
+      "display": "flex",
+      "flex-direction": "column",
+      "gap": "12px"
+    },
+    "item-card": {
+      "display": "flex",
+      "align-items": "center",
+      "gap": "12px",
+      "padding": "12px 16px",
+      "background": "#f8fafc",
+      "border": "1px solid #e2e8f0",
+      "border-radius": "8px",
+      "transition": "all 0.2s",
+      "hover": {
+        "background": "#f1f5f9",
+        "border-color": "#cbd5e1"
+      }
+    },
+    "item-icon": {
+      "width": "36px",
+      "height": "36px",
+      "border-radius": "8px",
+      "display": "flex",
+      "align-items": "center",
+      "justify-content": "center",
+      "font-size": "18px",
+      "color": "white",
+      "flex-shrink": "0"
+    },
+    "item-info": {
+      "flex": "1"
+    },
+    "item-name": {
+      "font-size": "14px",
+      "font-weight": "600",
+      "color": "#374151",
+      "margin-bottom": "2px"
+    },
+    "item-type": {
+      "font-size": "12px",
+      "color": "#6b7280"
+    },
+    "item-actions": {
+      "display": "flex",
+      "gap": "8px"
+    },
+    "item-action-btn": {
+      "width": "28px",
+      "height": "28px",
+      "border": "none",
+      "border-radius": "6px",
+      "cursor": "pointer",
+      "display": "flex",
+      "align-items": "center",
+      "justify-content": "center",
+      "font-size": "12px",
+      "transition": "all 0.2s"
+    },
+    "edit-btn": {
+      "background": "#f3f4f6",
+      "color": "#6b7280",
+      "hover": {
+        "background": "#e5e7eb",
+        "color": "#374151"
+      }
+    },
+    "delete-btn": {
+      "background": "#fef2f2",
+      "color": "#ef4444",
+      "hover": {
+        "background": "#fee2e2",
+        "color": "#dc2626"
+      }
+    },
+    "keyframes": {
+      "slideDown": {
+        "from": {
+          "opacity": "0",
+          "transform": "translateY(-10px)"
+        },
+        "to": {
+          "opacity": "1",
+          "transform": "translateY(0)"
+        }
+      }
+    }
+  },
+
+  "javascript_functions": {
+    "toggleTasksHabits": {
+      "description": "Expands/collapses the tasks & habits section",
+      "parameters": [],
+      "implementation": "Toggle 'expanded' class on header and content elements",
+      "code": "function toggleTasksHabits() {\n    const header = document.querySelector('.tasks-habits-header');\n    const content = document.getElementById('tasksHabitsContent');\n    \n    header.classList.toggle('expanded');\n    content.classList.toggle('expanded');\n}"
+    },
+    "showTaskModal": {
+      "description": "Opens the task creation modal",
+      "parameters": [],
+      "implementation": "Show task modal overlay and reset form",
+      "code": "function showTaskModal() {\n    document.getElementById('taskModal').style.display = 'flex';\n    resetTaskForm();\n}"
+    },
+    "showHabitModal": {
+      "description": "Opens the habit creation modal",
+      "parameters": [],
+      "implementation": "Show habit modal overlay and reset form with goal color inheritance",
+      "code": "function showHabitModal() {\n    document.getElementById('habitModal').style.display = 'flex';\n    resetHabitForm();\n    inheritGoalColor();\n}"
+    },
+    "addTask": {
+      "description": "Adds a new task to the items list",
+      "parameters": ["name", "description", "icon", "color"],
+      "implementation": "Validate form, create DOM element, save to database",
+      "code": "function addTask() {\n    const taskData = getTaskFormData();\n    if (validateTaskData(taskData)) {\n        createTaskElement(taskData);\n        saveTaskToDatabase(taskData);\n        closeModal('taskModal');\n    }\n}"
+    },
+    "addHabit": {
+      "description": "Adds a new habit to the items list",
+      "parameters": ["name", "description", "icon", "color", "frequency"],
+      "implementation": "Validate form, create DOM element, save to database",
+      "code": "function addHabit() {\n    const habitData = getHabitFormData();\n    if (validateHabitData(habitData)) {\n        createHabitElement(habitData);\n        saveHabitToDatabase(habitData);\n        closeModal('habitModal');\n    }\n}"
+    },
+    "deleteItem": {
+      "description": "Deletes a task or habit from the list",
+      "parameters": ["button"],
+      "implementation": "Show confirmation, remove from DOM and database",
+      "code": "function deleteItem(button) {\n    if (confirm('Are you sure you want to delete this item?')) {\n        const itemCard = button.closest('.item-card');\n        const itemId = itemCard.dataset.itemId;\n        const itemType = itemCard.dataset.itemType;\n        \n        removeFromDatabase(itemId, itemType);\n        itemCard.remove();\n    }\n}"
+    }
+  },
+
+  "modal_specifications": {
+    "task_modal": {
+      "id": "taskModal",
+      "title": "Add Task",
+      "fields": [
+        {
+          "name": "taskName",
+          "label": "Task Name *",
+          "type": "text",
+          "required": true,
+          "placeholder": "What needs to be done?"
+        },
+        {
+          "name": "taskDescription",
+          "label": "Description",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Additional details...",
+          "rows": 3
+        },
+        {
+          "name": "taskIcon",
+          "label": "Icon",
+          "type": "text",
+          "required": false,
+          "placeholder": "📋",
+          "maxlength": 2
+        },
+        {
+          "name": "taskColor",
+          "label": "Color",
+          "type": "color_picker",
+          "required": true,
+          "default": "#FF7101",
+          "options": ["#FF7101", "#3B82F6", "#22C55E", "#A855F7", "#EF4444", "#F59E0B"]
+        }
+      ],
+      "actions": [
+        {
+          "type": "cancel",
+          "text": "Cancel",
+          "action": "closeModal('taskModal')"
+        },
+        {
+          "type": "submit",
+          "text": "Add Task",
+          "action": "addTask()"
+        }
+      ]
+    },
+    "habit_modal": {
+      "id": "habitModal",
+      "title": "Add Habit",
+      "fields": [
+        {
+          "name": "habitName",
+          "label": "Habit Name *",
+          "type": "text",
+          "required": true,
+          "placeholder": "What habit do you want to build?"
+        },
+        {
+          "name": "habitDescription",
+          "label": "Description",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Why is this habit important?",
+          "rows": 3
+        },
+        {
+          "name": "habitIcon",
+          "label": "Icon",
+          "type": "text",
+          "required": false,
+          "placeholder": "💻",
+          "maxlength": 2
+        },
+        {
+          "name": "habitColor",
+          "label": "Color (inherited from goal)",
+          "type": "color_picker",
+          "required": true,
+          "default": "inherit_from_goal",
+          "options": ["#FF7101", "#3B82F6", "#22C55E", "#A855F7", "#EF4444", "#F59E0B"]
+        }
+      ],
+      "actions": [
+        {
+          "type": "cancel",
+          "text": "Cancel",
+          "action": "closeModal('habitModal')"
+        },
+        {
+          "type": "submit",
+          "text": "Add Habit",
+          "action": "addHabit()"
+        }
+      ]
+    }
+  },
+
+  "database_integration": {
+    "task_creation_endpoint": {
+      "url": "/api/tasks",
+      "method": "POST",
+      "payload": {
+        "name": "string",
+        "description": "string",
+        "icon": "string",
+        "color": "string",
+        "goal_id": "integer",
+        "task_type": "standard"
+      }
+    },
+    "habit_creation_endpoint": {
+      "url": "/api/habits",
+      "method": "POST",
+      "payload": {
+        "name": "string",
+        "description": "string",
+        "icon": "string",
+        "color": "string",
+        "goal_id": "integer",
+        "measurement_type": "simple",
+        "frequency_type": "daily"
+      }
+    },
+    "deletion_endpoint": {
+      "url": "/api/{type}/{id}",
+      "method": "DELETE",
+      "parameters": {
+        "type": "tasks|habits",
+        "id": "integer"
+      }
+    }
+  },
+
+  "form_validation": {
+    "task_validation": {
+      "name": {
+        "required": true,
+        "min_length": 1,
+        "max_length": 255,
+        "error_message": "Task name is required"
+      },
+      "description": {
+        "required": false,
+        "max_length": 500
+      },
+      "icon": {
+        "required": false,
+        "max_length": 2,
+        "default": "📋"
+      },
+      "color": {
+        "required": true,
+        "format": "hex",
+        "default": "#FF7101"
+      }
+    },
+    "habit_validation": {
+      "name": {
+        "required": true,
+        "min_length": 1,
+        "max_length": 255,
+        "error_message": "Habit name is required"
+      },
+      "description": {
+        "required": false,
+        "max_length": 500
+      },
+      "icon": {
+        "required": false,
+        "max_length": 2,
+        "default": "💻"
+      },
+      "color": {
+        "required": true,
+        "format": "hex",
+        "default": "inherit_from_goal"
+      }
+    }
+  },
+
+  "responsive_design": {
+    "mobile_breakpoint": "540px",
+    "changes": {
+      "add_buttons": {
+        "flex-direction": "column"
+      },
+      "add_btn": {
+        "padding": "16px"
+      },
+      "modal": {
+        "width": "95%",
+        "margin": "20px"
+      }
+    }
+  },
+
+  "accessibility": {
+    "aria_labels": {
+      "tasks-habits-header": "aria-label='Expand tasks and habits section'",
+      "add-btn": "aria-label='Add new task/habit'",
+      "item-action-btn": "aria-label='Edit/Delete item'"
+    },
+    "keyboard_navigation": {
+      "tab_order": ["header", "add_task_btn", "add_habit_btn", "item_actions"],
+      "enter_key": "Activates buttons and toggles",
+      "escape_key": "Closes modals"
+    }
+  },
+
+  "integration_notes": {
+    "placement": "Insert between lines 82-83 in create.html (after description, before target completion)",
+    "dependencies": [
+      "Existing habit_modal.css styles",
+      "Goal creation form submission handling",
+      "Database models for Task and Habit",
+      "Goal color inheritance system"
+    ],
+    "testing_considerations": [
+      "Form validation error handling",
+      "Database connection failures",
+      "Color inheritance from goal selection",
+      "Modal accessibility on mobile devices",
+      "JavaScript error handling for DOM manipulation"
+    ]
+  }
+}

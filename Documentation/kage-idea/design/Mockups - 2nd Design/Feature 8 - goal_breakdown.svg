@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1000" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">4:15 PM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1050" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="400" y="195" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Goal Breakdown</text>
+  
+  <!-- Main Container -->
+  <rect x="170" y="230" width="460" height="810" fill="#F6F7FB" rx="15" ry="15" />
+  
+  <!-- Goal Summary Card -->
+  <rect x="190" y="250" width="420" height="100" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="210" y="275" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Learn French for Paris Trip</text>
+  <text x="210" y="300" font-family="Arial" font-size="14" fill="#333333">Target: A2 Level (Elementary)</text>
+  <text x="210" y="325" font-family="Arial" font-size="14" fill="#333333">Timeline: Jun 2025 - Apr 2026 (10 months)</text>
+  
+  <!-- 5 Whys Diagram -->
+  <g>
+    <rect x="190" y="370" width="420" height="510" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+    <text x="210" y="395" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Your 5 Whys Analysis</text>
+    
+    <!-- Goal Statement -->
+    <rect x="230" y="415" width="340" height="50" rx="25" ry="25" fill="#2A3990" />
+    <text x="400" y="445" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Learn French for Paris Trip</text>
+    
+    <!-- Arrow 1 -->
+    <line x1="400" y1="465" x2="400" y2="485" stroke="#333333" stroke-width="2" />
+    <path d="M400 485 L395 475 L405 475 Z" fill="#333333" />
+    <rect x="410" y="465" width="50" height="20" rx="10" ry="10" fill="#F5E3BC" />
+    <text x="435" y="480" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Why?</text>
+    
+    <!-- Why 1 -->
+    <rect x="230" y="485" width="340" height="50" rx="25" ry="25" fill="#E9EDF8" stroke="#2A3990" stroke-width="2" />
+    <text x="400" y="515" font-family="Arial" font-size="13" text-anchor="middle" fill="#333333">To communicate with locals in Paris</text>
+    
+    <!-- Arrow 2 -->
+    <line x1="400" y1="535" x2="400" y2="555" stroke="#333333" stroke-width="2" />
+    <path d="M400 555 L395 545 L405 545 Z" fill="#333333" />
+    <rect x="410" y="535" width="50" height="20" rx="10" ry="10" fill="#F5E3BC" />
+    <text x="435" y="550" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Why?</text>
+    
+    <!-- Why 2 -->
+    <rect x="230" y="555" width="340" height="50" rx="25" ry="25" fill="#E9EDF8" stroke="#2A3990" stroke-width="2" />
+    <text x="400" y="585" font-family="Arial" font-size="13" text-anchor="middle" fill="#333333">To have more authentic experiences</text>
+    
+    <!-- Arrow 3 -->
+    <line x1="400" y1="605" x2="400" y2="625" stroke="#333333" stroke-width="2" />
+    <path d="M400 625 L395 615 L405 615 Z" fill="#333333" />
+    <rect x="410" y="605" width="50" height="20" rx="10" ry="10" fill="#F5E3BC" />
+    <text x="435" y="620" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Why?</text>
+    
+    <!-- Why 3 -->
+    <rect x="230" y="625" width="340" height="50" rx="25" ry="25" fill="#E9EDF8" stroke="#2A3990" stroke-width="2" />
+    <text x="400" y="655" font-family="Arial" font-size="13" text-anchor="middle" fill="#333333">To connect more deeply with the culture</text>
+    
+    <!-- Arrow 4 -->
+    <line x1="400" y1="675" x2="400" y2="695" stroke="#333333" stroke-width="2" />
+    <path d="M400 695 L395 685 L405 685 Z" fill="#333333" />
+    <rect x="410" y="675" width="50" height="20" rx="10" ry="10" fill="#F5E3BC" />
+    <text x="435" y="690" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Why?</text>
+    
+    <!-- Why 4 -->
+    <rect x="230" y="695" width="340" height="50" rx="25" ry="25" fill="#E9EDF8" stroke="#2A3990" stroke-width="2" />
+    <text x="400" y="720" font-family="Arial" font-size="13" text-anchor="middle" fill="#333333">To fulfill my desire for meaningful travel</text>
+    <text x="400" y="740" font-family="Arial" font-size="13" text-anchor="middle" fill="#333333">experiences beyond tourism</text>
+    
+    <!-- Arrow 5 -->
+    <line x1="400" y1="745" x2="400" y2="765" stroke="#333333" stroke-width="2" />
+    <path d="M400 765 L395 755 L405 755 Z" fill="#333333" />
+    <rect x="410" y="745" width="50" height="20" rx="10" ry="10" fill="#F5E3BC" />
+    <text x="435" y="760" font-family="Arial" font-size="12" text-anchor="middle" fill="#333333">Why?</text>
+    
+    <!-- Why 5 -->
+    <rect x="230" y="765" width="340" height="60" rx="30" ry="30" fill="#FCF3D9" stroke="#F5A623" stroke-width="2" />
+    <text x="400" y="790" font-family="Arial" font-size="13" font-weight="bold" text-anchor="middle" fill="#333333">To grow as a person by stepping outside</text>
+    <text x="400" y="810" font-family="Arial" font-size="13" font-weight="bold" text-anchor="middle" fill="#333333">my comfort zone and challenging myself</text>
+    
+    <!-- Root Motivation Label -->
+    <text x="400" y="845" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#F5A623">ROOT MOTIVATION</text>
+  </g>
+  
+  <!-- Action Buttons -->
+  <rect x="190" y="900" width="200" height="50" rx="25" ry="25" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="290" y="930" font-family="Arial" font-size="14" text-anchor="middle" fill="#2A3990">Revise Analysis</text>
+  
+  <rect x="410" y="900" width="200" height="50" rx="25" ry="25" fill="#2A3990" />
+  <text x="510" y="930" font-family="Arial" font-size="14" text-anchor="middle" fill="#FFFFFF">Continue to Sub-Goals</text>
+  
+  <!-- Side Panel: Habit Suggestions -->
+  <g>
+    <rect x="580" y="250" width="200" height="270" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="595" y="275" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Suggested Habits</text>
+    <text x="595" y="295" font-family="Arial" font-size="11" fill="#333333">Based on your 5 Whys analysis</text>
+    
+    <line x1="595" y1="305" x2="765" y2="305" stroke="#E0E2E8" stroke-width="1" />
+    
+    <!-- Habit 1 -->
+    <rect x="595" y="315" width="170" height="50" rx="5" ry="5" fill="#E9EDF8" />
+    <text x="610" y="335" font-family="Arial" font-size="12" font-weight="bold" fill="#2A3990">
+      <tspan x="610" y="335">Daily French Practice</tspan>
+      <tspan x="610" y="355" font-weight="normal" fill="#333333">10 min vocabulary drill</tspan>
+    </text>
+    
+    <!-- Habit 2 -->
+    <rect x="595" y="375" width="170" height="50" rx="5" ry="5" fill="#E9EDF8" />
+    <text x="610" y="395" font-family="Arial" font-size="12" font-weight="bold" fill="#2A3990">
+      <tspan x="610" y="395">French Culture Immersion</tspan>
+      <tspan x="610" y="415" font-weight="normal" fill="#333333">French films weekly</tspan>
+    </text>
+    
+    <!-- Habit 3 -->
+    <rect x="595" y="435" width="170" height="50" rx="5" ry="5" fill="#E9EDF8" />
+    <text x="610" y="455" font-family="Arial" font-size="12" font-weight="bold" fill="#2A3990">
+      <tspan x="610" y="455">Conversation Practice</tspan>
+      <tspan x="610" y="475" font-weight="normal" fill="#333333">Language exchange partner</tspan>
+    </text>
+    
+    <text x="680" y="500" font-family="Arial" font-size="12" text-anchor="middle" fill="#2A3990">+ View All</text>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="1150" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1150">Project Kage - Goal Breakdown using 5 Whys Methodology</tspan>
+    <tspan x="400" y="1175">Feature: Deep Motivation Discovery</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>

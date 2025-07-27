@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1200" fill="#F6F7FB" />
+  
+  <!-- Phone Frame -->
+  <rect x="150" y="100" width="500" height="1000" rx="40" ry="40" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="2" />
+  
+  <!-- Status Bar -->
+  <rect x="150" y="100" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  <text x="430" y="132" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">4:25 PM</text>
+  
+  <!-- Navigation Bar at bottom -->
+  <rect x="150" y="1050" width="500" height="50" rx="40" ry="40" fill="#FFFFFF" />
+  
+  <!-- App Header -->
+  <rect x="150" y="150" width="500" height="70" fill="#2A3990" /> <!-- Deep indigo color -->
+  <text x="400" y="195" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Habit Adjustment</text>
+  
+  <!-- Main Container -->
+  <rect x="170" y="230" width="460" height="810" fill="#F6F7FB" rx="15" ry="15" />
+  
+  <!-- Habit Selection -->
+  <rect x="190" y="250" width="420" height="80" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="210" y="275" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">French Conversation Practice</text>
+  <text x="210" y="300" font-family="Arial" font-size="12" fill="#9A9A9A">Weekly practice with language exchange partner</text>
+  <text x="210" y="320" font-family="Arial" font-size="12" fill="#F5A623">Struggling (4 weeks) • 30 minutes</text>
+  
+  <!-- AI Analysis Card -->
+  <rect x="190" y="350" width="420" height="170" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="210" y="375" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Friction Analysis</text>
+  
+  <!-- AI Insights -->
+  <text x="210" y="400" font-family="Arial" font-size="14" fill="#333333">
+    <tspan x="210" y="400">Based on your feedback and completion data,</tspan>
+    <tspan x="210" y="425">this habit appears to have a high friction level:</tspan>
+  </text>
+  
+  <!-- Friction Points -->
+  <circle cx="225" cy="455" r="5" fill="#E54D42" />
+  <text x="240" y="460" font-family="Arial" font-size="13" fill="#333333">Time commitment (30 min) feels too long</text>
+  <circle cx="225" cy="485" r="5" fill="#E54D42" />
+  <text x="240" y="490" font-family="Arial" font-size="13" fill="#333333">Scheduling conflicts with partner</text>
+  <circle cx="225" cy="515" r="5" fill="#E54D42" />
+  <text x="240" y="520" font-family="Arial" font-size="13" fill="#333333">Anxiety about speaking skills</text>
+  
+  <!-- Difficulty Adjustment Section -->
+  <rect x="190" y="540" width="420" height="220" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="210" y="565" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Suggested Adjustments</text>
+  
+  <!-- Adjustment Option 1 -->
+  <rect x="210" y="585" width="380" height="75" rx="10" ry="10" fill="#FCF3D9" stroke="#F5A623" stroke-width="2" />
+  <text x="230" y="610" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Reduce Duration</text>
+  <text x="230" y="630" font-family="Arial" font-size="12" fill="#333333">Shorten to 15 minutes per session</text>
+  <text x="230" y="650" font-family="Arial" font-size="12" fill="#333333">Predicted success rate: 80%</text>
+  <circle cx="560" cy="625" r="15" fill="#F5A623" />
+  <text x="560" y="630" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">1</text>
+  
+  <!-- Adjustment Option 2 -->
+  <rect x="210" y="670" width="380" height="75" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="230" y="695" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Change Schedule</text>
+  <text x="230" y="715" font-family="Arial" font-size="12" fill="#333333">Switch to bi-weekly with more flexibility</text>
+  <text x="230" y="735" font-family="Arial" font-size="12" fill="#333333">Predicted success rate: 65%</text>
+  <circle cx="560" cy="710" r="15" fill="#E0E2E8" />
+  <text x="560" y="715" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#333333">2</text>
+  
+  <!-- Selected Adjustment Details -->
+  <rect x="190" y="780" width="420" height="250" rx="10" ry="10" fill="#FFFFFF" stroke="#E0E2E8" stroke-width="1" />
+  <text x="210" y="805" font-family="Arial" font-size="16" font-weight="bold" fill="#2A3990">Implementation Plan</text>
+  
+  <!-- Habit Progression Plan -->
+  <text x="210" y="835" font-family="Arial" font-size="14" font-weight="bold" fill="#333333">Progressive Difficulty Plan</text>
+  
+  <!-- Week 1-2 -->
+  <circle cx="225" cy="865" r="15" fill="#DCF7E0" />
+  <text x="225" y="870" font-family="Arial" font-size="12" text-anchor="middle" font-weight="bold" fill="#333333">1</text>
+  <line x1="240" y1="865" x2="265" y2="865" stroke="#DCF7E0" stroke-width="2" />
+  <text x="280" y="870" font-family="Arial" font-size="13" fill="#333333">Week 1-2: 15 min basic conversation</text>
+  
+  <!-- Week 3-4 -->
+  <circle cx="225" cy="905" r="15" fill="#DCF7E0" />
+  <text x="225" y="910" font-family="Arial" font-size="12" text-anchor="middle" font-weight="bold" fill="#333333">2</text>
+  <line x1="240" y1="905" x2="265" y2="905" stroke="#DCF7E0" stroke-width="2" />
+  <text x="280" y="910" font-family="Arial" font-size="13" fill="#333333">Week 3-4: Add specific practice topics</text>
+  
+  <!-- Week 5-6 -->
+  <circle cx="225" cy="945" r="15" fill="#E0E2E8" />
+  <text x="225" y="950" font-family="Arial" font-size="12" text-anchor="middle" font-weight="bold" fill="#333333">3</text>
+  <line x1="240" y1="945" x2="265" y2="945" stroke="#E0E2E8" stroke-width="2" />
+  <text x="280" y="950" font-family="Arial" font-size="13" fill="#333333">Week 5-6: Increase to 20 min if comfortable</text>
+  
+  <!-- Week 7+ -->
+  <circle cx="225" cy="985" r="15" fill="#E0E2E8" />
+  <text x="225" y="990" font-family="Arial" font-size="12" text-anchor="middle" font-weight="bold" fill="#333333">4</text>
+  <line x1="240" y1="985" x2="265" y2="985" stroke="#E0E2E8" stroke-width="2" />
+  <text x="280" y="990" font-family="Arial" font-size="13" fill="#333333">Week 7+: Return to 30 min if consistent</text>
+  
+  <!-- Bottom Buttons -->
+  <rect x="190" y="1050" width="200" height="40" rx="20" ry="20" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" />
+  <text x="290" y="1075" font-family="Arial" font-size="14" text-anchor="middle" fill="#2A3990">Keep Current Settings</text>
+  
+  <rect x="410" y="1050" width="200" height="40" rx="20" ry="20" fill="#2A3990" />
+  <text x="510" y="1075" font-family="Arial" font-size="14" text-anchor="middle" fill="#FFFFFF">Apply Adjustments</text>
+  
+  <!-- Side Card: Difficulty History -->
+  <g>
+    <rect x="580" y="350" width="200" height="300" rx="15" ry="15" fill="#FFFFFF" stroke="#2A3990" stroke-width="2" filter="url(#shadow)" />
+    <text x="600" y="380" font-family="Arial" font-size="14" font-weight="bold" fill="#2A3990">Habit History</text>
+    
+    <line x1="600" y1="390" x2="760" y2="390" stroke="#E0E2E8" stroke-width="1" />
+    
+    <text x="600" y="415" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">
+      <tspan x="600" y="415">Completion Rate by Difficulty:</tspan>
+    </text>
+    
+    <!-- Initial Setup Chart -->
+    <text x="600" y="440" font-family="Arial" font-size="11" fill="#9A9A9A">Initial (30 min weekly)</text>
+    <rect x="600" y="450" width="160" height="15" rx="7.5" ry="7.5" fill="#E0E2E8" />
+    <rect x="600" y="450" width="48" height="15" rx="7.5" ry="7.5" fill="#E54D42" />
+    <text x="770" y="463" font-family="Arial" font-size="11" text-anchor="end" fill="#E54D42">30%</text>
+    
+    <!-- Difficulty Trend -->
+    <text x="600" y="490" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">
+      <tspan x="600" y="490">Difficulty Feedback Trend:</tspan>
+    </text>
+    
+    <!-- Trend Chart -->
+    <rect x="600" y="500" width="160" height="100" rx="5" ry="5" fill="#F6F7FB" />
+    
+    <!-- Chart Axes -->
+    <line x1="610" y1="590" x2="750" y2="590" stroke="#E0E2E8" stroke-width="1" />
+    <line x1="610" y1="590" x2="610" y2="510" stroke="#E0E2E8" stroke-width="1" />
+    
+    <!-- Trend Line -->
+    <polyline points="610,525 630,520 650,540 670,555 690,570 710,560 730,540" fill="none" stroke="#F5A623" stroke-width="2" />
+    
+    <!-- Week Labels -->
+    <text x="610" y="605" font-family="Arial" font-size="8" text-anchor="middle" fill="#9A9A9A">W1</text>
+    <text x="650" y="605" font-family="Arial" font-size="8" text-anchor="middle" fill="#9A9A9A">W2</text>
+    <text x="690" y="605" font-family="Arial" font-size="8" text-anchor="middle" fill="#9A9A9A">W3</text>
+    <text x="730" y="605" font-family="Arial" font-size="8" text-anchor="middle" fill="#9A9A9A">W4</text>
+    
+    <text x="600" y="635" font-family="Arial" font-size="12" fill="#333333">
+      <tspan x="600" y="635">Reported difficulty increased</tspan>
+      <tspan x="600" y="655">after missing two sessions</tspan>
+      <tspan x="600" y="675">in week 3.</tspan>
+    </text>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="1150" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">
+    <tspan x="400" y="1150">Project Kage - Habit Difficulty Adjustment</tspan>
+    <tspan x="400" y="1175">Feature: Dynamic Habit Calibration</tspan>
+  </text>
+  
+  <!-- Drop shadow for panels -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0003" />
+    </filter>
+  </defs>
+</svg>
