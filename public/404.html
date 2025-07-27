@@ -4,20 +4,61 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kage App</title>
-    <script>
-        // GitHub Pages SPA redirect
-        // This script redirects 404s to the main app
-        const path = window.location.pathname.slice(1);
-        if (path && path !== '404.html') {
-            window.location.replace('/kage-app/');
-        } else {
-            window.location.replace('/kage-app/');
+    <style>
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            padding: 20px; 
+            text-align: center; 
+            background: #f5f5f5;
         }
+        .loader { 
+            border: 3px solid #f3f3f3; 
+            border-top: 3px solid #FF7101; 
+            border-radius: 50%; 
+            width: 30px; 
+            height: 30px; 
+            animation: spin 1s linear infinite; 
+            margin: 20px auto; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    <script>
+        // Enhanced PWA routing for GitHub Pages
+        (function() {
+            const currentPath = window.location.pathname;
+            const isKageApp = currentPath.includes('/kage-app');
+            const isPWAContext = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+            
+            console.log('404 Handler:', { currentPath, isKageApp, isPWAContext });
+            
+            // If we're already on the correct path, don't redirect
+            if (currentPath === '/kage-app/' || currentPath === '/kage-app/index.html') {
+                console.log('Already on correct path, not redirecting');
+                return;
+            }
+            
+            // Different handling for PWA vs browser
+            if (isPWAContext) {
+                // PWA context - use replace to avoid back button issues
+                console.log('PWA context detected, redirecting to /kage-app/');
+                window.location.replace('/kage-app/');
+            } else if (!isKageApp) {
+                // Browser context, not on kage-app path
+                console.log('Browser context, redirecting to /kage-app/');
+                window.location.replace('/kage-app/');
+            } else {
+                // We're in kage-app path but got 404, try to load main app
+                console.log('In kage-app path but 404, redirecting to base');
+                window.location.replace('/kage-app/');
+            }
+        })();
     </script>
 </head>
 <body>
     <div id="redirect-notice">
-        <p>Redirecting to Kage App...</p>
+        <h2>Loading Kage App...</h2>
+        <div class="loader"></div>
+        <p>If this page doesn't redirect automatically, <a href="/kage-app/">click here</a>.</p>
     </div>
 </body>
 </html>

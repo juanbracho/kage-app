@@ -20,6 +20,47 @@ function App() {
     initializeSettings()
   }, [])
 
+  // PWA routing detection and handling
+  useEffect(() => {
+    const isPWA = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('action');
+    
+    // Log PWA context for debugging
+    console.log('PWA Detection:', { 
+      isPWA, 
+      currentPath: window.location.pathname,
+      search: window.location.search,
+      action 
+    });
+
+    // Handle URL parameters for PWA shortcuts
+    if (action) {
+      switch (action) {
+        case 'create':
+          // Check which section based on pathname
+          if (window.location.pathname.includes('goals')) {
+            setActiveTab('goals');
+          } else if (window.location.pathname.includes('tasks')) {
+            setActiveTab('tasks');
+          } else if (window.location.pathname.includes('habits')) {
+            setActiveTab('habits');
+          } else if (window.location.pathname.includes('journal')) {
+            setActiveTab('journal');
+          }
+          break;
+        case 'complete':
+          if (window.location.pathname.includes('habits')) {
+            setActiveTab('habits');
+          }
+          break;
+      }
+      
+      // Clean URL after processing
+      window.history.replaceState({}, '', '/kage-app/');
+    }
+  }, [])
+
   // Apply theme changes
   useEffect(() => {
     if (settings.appearance.theme === 'dark') {
