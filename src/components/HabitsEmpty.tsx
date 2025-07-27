@@ -1,8 +1,42 @@
+import { useState, useEffect } from 'react';
+
 interface HabitsEmptyProps {
   onCreateHabit?: () => void;
 }
 
+const inspirationalQuotes = [
+  {
+    text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+    author: "Aristotle"
+  },
+  {
+    text: "The chains of habit are too weak to be felt until they are too strong to be broken.",
+    author: "Samuel Johnson"
+  },
+  {
+    text: "First we make our habits, then our habits make us.",
+    author: "John Dryden"
+  },
+  {
+    text: "Success is the sum of small efforts repeated day in and day out.",
+    author: "Robert Collier"
+  },
+  {
+    text: "You'll never change your life until you change something you do daily.",
+    author: "Mike Murdock"
+  }
+];
+
 export default function HabitsEmpty({ onCreateHabit }: HabitsEmptyProps) {
+  const [currentQuote, setCurrentQuote] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentQuote((prev) => (prev + 1) % inspirationalQuotes.length);
+    }, 4000); // Change quote every 4 seconds
+
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="text-center py-16 px-6 bg-white dark:bg-gray-800 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="relative mb-6">
@@ -47,20 +81,32 @@ export default function HabitsEmpty({ onCreateHabit }: HabitsEmptyProps) {
       </div>
       
       <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl p-5 text-white text-center mb-6">
-        <div className="text-base italic mb-2 opacity-90">
-          "We are what we repeatedly do. Excellence, then, is not an act, but a habit."
+        <div 
+          key={currentQuote}
+          className="text-base italic mb-2 opacity-90 transition-all duration-500 animate-fade-in"
+        >
+          "{inspirationalQuotes[currentQuote].text}"
         </div>
         <div className="text-xs opacity-70">
-          — Aristotle
+          — {inspirationalQuotes[currentQuote].author}
         </div>
       </div>
       
       <div className="flex justify-center gap-2">
-        <div className="w-2 h-2 accent-bg-500 rounded-full"></div>
-        <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-        <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-        <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-        <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+        {inspirationalQuotes.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentQuote(index)}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              index === currentQuote
+                ? 'accent-bg-500 scale-125'
+                : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
+            }`}
+            style={index === currentQuote ? {
+              backgroundColor: 'var(--accent-color, #FF7101)'
+            } : {}}
+          />
+        ))}
       </div>
     </div>
   )
