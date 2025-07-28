@@ -10,6 +10,8 @@ import JournalPage from './components/JournalPage'
 import SettingsPage from './components/SettingsPage'
 import PWAInstallPrompt from './components/PWAInstallPrompt'
 import OfflineIndicator from './components/OfflineIndicator'
+import ErrorBoundary from './components/ErrorBoundary'
+import { logPWAEnvironment, logErrorWithPWAContext } from './utils/pwaDetection'
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -17,7 +19,11 @@ function App() {
 
   // Initialize settings on app startup
   useEffect(() => {
-    initializeSettings()
+    try {
+      // Log PWA environment for debugging
+      logPWAEnvironment();
+      
+      initializeSettings();
     
     // Keyboard shortcuts
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -68,6 +74,9 @@ function App() {
     
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
+    } catch (error) {
+      logErrorWithPWAContext(error, 'App initialization');
+    }
   }, [])
 
   // PWA routing detection and handling
@@ -150,7 +159,8 @@ function App() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto min-h-screen bg-gray-50 dark:bg-gray-900 shadow-xl overflow-hidden flex flex-col">
+    <ErrorBoundary>
+      <div className="w-full max-w-md mx-auto min-h-screen bg-gray-50 dark:bg-gray-900 shadow-xl overflow-hidden flex flex-col">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="px-4 py-3 flex justify-between items-center">
@@ -231,7 +241,8 @@ function App() {
       
       {/* Offline Status Indicator */}
       <OfflineIndicator />
-    </div>
+      </div>
+    </ErrorBoundary>
   )
 }
 

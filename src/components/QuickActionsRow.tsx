@@ -1,3 +1,5 @@
+import { safeDispatchEvent } from '../utils/pwaDetection';
+
 interface QuickActionsRowProps {
   onNavigate: (tab: string) => void;
 }
@@ -34,23 +36,23 @@ export default function QuickActionsRow({ onNavigate }: QuickActionsRowProps) {
     // Always navigate to the page first
     onNavigate(tab);
     
-    // Then dispatch custom event to open creation modal
+    // Then dispatch custom event to open creation modal using safe dispatch
     if (tab === 'goals') {
       // Small delay to ensure page has loaded before opening modal
       setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('openGoalModal'));
+        safeDispatchEvent('openGoalModal');
       }, 100);
     } else if (tab === 'tasks') {
       setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('openTaskModal'));
+        safeDispatchEvent('openTaskModal');
       }, 100);
     } else if (tab === 'habits') {
       setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('openHabitModal'));
+        safeDispatchEvent('openHabitModal');
       }, 100);
     } else if (tab === 'journal') {
       setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('openJournalModal'));
+        safeDispatchEvent('openJournalModal');
       }, 100);
     }
   };

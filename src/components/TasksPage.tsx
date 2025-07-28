@@ -5,6 +5,7 @@ import { useGoalStore } from '../store/goalStore';
 import { TaskFilter } from '../types/task';
 import TaskCreationModal from './TaskCreationModal';
 import TasksEmpty from './TasksEmpty';
+import { safeAddEventListener } from '../utils/pwaDetection';
 
 const FILTER_TABS: { id: TaskFilter; label: string; icon: React.ComponentType<any> }[] = [
   { id: 'today', label: 'Today', icon: Calendar },
@@ -52,8 +53,8 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
       openModal();
     };
 
-    window.addEventListener('openTaskModal', handleOpenTaskModal);
-    return () => window.removeEventListener('openTaskModal', handleOpenTaskModal);
+    const cleanup = safeAddEventListener('openTaskModal', handleOpenTaskModal);
+    return cleanup;
   }, [openModal]);
   const [editingTask, setEditingTask] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
