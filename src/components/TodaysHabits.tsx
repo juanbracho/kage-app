@@ -1,5 +1,7 @@
 import { Habit } from '../types/habit';
 import { formatDateToString } from '../store/habitStore';
+import { useGoalStore } from '../store/goalStore';
+import { GOAL_CATEGORIES } from '../types/goal';
 
 interface TodaysHabitsProps {
   todayHabits: Array<{
@@ -10,6 +12,7 @@ interface TodaysHabitsProps {
 }
 
 export default function TodaysHabits({ todayHabits, onHabitToggle }: TodaysHabitsProps) {
+  const { goals } = useGoalStore();
   const today = formatDateToString(new Date());
 
   if (todayHabits.length === 0) {
@@ -33,11 +36,22 @@ export default function TodaysHabits({ todayHabits, onHabitToggle }: TodaysHabit
   const completedHabits = todayHabits.filter(({ isCompleted }) => isCompleted);
 
   const getCategoryTag = (habit: Habit) => {
-    // Map habit properties to category tags
-    if (habit.name.toLowerCase().includes('meditat') || habit.name.toLowerCase().includes('mindful')) return 'Wellness';
-    if (habit.name.toLowerCase().includes('exercise') || habit.name.toLowerCase().includes('workout') || habit.name.toLowerCase().includes('run')) return 'Fitness';
-    if (habit.name.toLowerCase().includes('read') || habit.name.toLowerCase().includes('learn')) return 'Learning';
-    if (habit.name.toLowerCase().includes('water') || habit.name.toLowerCase().includes('sleep')) return 'Health';
+    // If habit is linked to a goal, use the goal's category
+    if (habit.goalId) {
+      const linkedGoal = goals.find(g => g.id === habit.goalId);
+      if (linkedGoal) {
+        const goalCategory = GOAL_CATEGORIES.find(c => c.id === linkedGoal.category);
+        return goalCategory?.name || 'Personal';
+      }
+    }
+    
+    // If no goal linked, use habit's own category
+    if (habit.category) {
+      const habitCategory = GOAL_CATEGORIES.find(c => c.id === habit.category);
+      return habitCategory?.name || 'Personal';
+    }
+    
+    // Fallback to 'Personal' if no category is set
     return 'Personal';
   };
 

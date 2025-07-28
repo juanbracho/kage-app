@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useHabitStore } from '../store/habitStore';
 import { useGoalStore } from '../store/goalStore';
 import { HabitFormData, Habit } from '../types/habit';
+import { GOAL_CATEGORIES } from '../types/goal';
 
 interface HabitCreationModalProps {
   isOpen: boolean;
@@ -54,6 +55,7 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
     description: '',
     icon: '🎯',
     color: HABIT_COLORS[0],
+    category: undefined,
     measurementType: 'simple',
     frequency: 'daily',
     selectedDays: [],
@@ -73,6 +75,7 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
           description: editingHabit.description || '',
           icon: editingHabit.icon,
           color: editingHabit.color,
+          category: editingHabit.category,
           measurementType: editingHabit.measurementType,
           frequency: editingHabit.frequency,
           selectedDays: editingHabit.selectedDays || [],
@@ -88,11 +91,15 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
         setShowScheduling(editingHabit.calendarIntegration || false);
       } else {
         // Reset form when creating new habit
+        const initialGoalId = defaultGoalId || '';
+        const linkedGoal = initialGoalId ? goals.find(g => g.id === initialGoalId) : undefined;
+        
         setFormData({
           name: '',
           description: '',
           icon: '🎯',
           color: HABIT_COLORS[0],
+          category: linkedGoal?.category,
           measurementType: 'simple',
           frequency: 'daily',
           selectedDays: [],
@@ -100,7 +107,7 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
           targetUnit: 'units',
           startDate: new Date().toISOString().split('T')[0],
           scheduledTime: '09:00',
-          goalId: defaultGoalId || ''
+          goalId: initialGoalId
         });
         setShowScheduling(false);
       }
@@ -110,6 +117,7 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
 
   const isFormValid = () => {
     if (!formData.name.trim()) return false;
+    if (!formData.category) return false; // Category is required
     if (formData.frequency === 'weekly' && formData.selectedDays!.length === 0) return false;
     if (formData.frequency === 'custom' && (!formData.customFrequency?.times || formData.customFrequency.times < 1)) return false;
     return true;
@@ -165,6 +173,15 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
         selectedDays: newSelectedDays
       });
     }
+  };
+
+  const handleGoalChange = (goalId: string) => {
+    const linkedGoal = goalId ? goals.find(g => g.id === goalId) : undefined;
+    setFormData({
+      ...formData,
+      goalId,
+      category: linkedGoal?.category || formData.category
+    });
   };
 
   if (!isOpen) return null;
@@ -257,12 +274,67 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
             </div>
           </div>
 
+          {/* Category Selection - Only show when no goal is selected */}
+          {!formData.goalId && (
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Category *</label>
+              <div className="grid grid-cols-2 gap-3">
+                {GOAL_CATEGORIES.map(category => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, category: category.id })}
+                    className={`p-3 rounded-xl border-2 text-left transition-all hover:scale-105 ${
+                      formData.category === category.id
+                        ? 'border-white shadow-lg'
+                        : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}
+                    style={{ 
+                      background: formData.category === category.id 
+                        ? category.color 
+                        : `${category.color}15`,
+                      color: formData.category === category.id ? 'white' : category.color
+                    }}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{category.icon}</span>
+                      <span className="font-semibold text-sm">{category.name}</span>
+                    </div>
+                    <div className={`text-xs ${
+                      formData.category === category.id 
+                        ? 'text-white opacity-90' 
+                        : 'text-gray-600 dark:text-gray-400'
+                    }`}>
+                      {category.description}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Category Display - Show inherited category when goal is selected */}
+          {formData.goalId && formData.category && (
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Category (Inherited from Goal)</label>
+              <div className="p-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{GOAL_CATEGORIES.find(c => c.id === formData.category)?.icon}</span>
+                  <span className="font-semibold text-sm text-gray-700 dark:text-gray-300">
+                    {GOAL_CATEGORIES.find(c => c.id === formData.category)?.name}
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">Auto-assigned</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Goal Linking */}
           <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Link to Goal</label>
             <select
               value={formData.goalId || ''}
-              onChange={(e) => setFormData({ ...formData, goalId: e.target.value })}
+              onChange={(e) => handleGoalChange(e.target.value)}
               className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus-accent-border transition-colors"
             >
               <option value="">No goal selected</option>

@@ -30,7 +30,6 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
     goalId: defaultGoalId || '',
     estimatedTime: '',
     location: '',
-    reminderTime: '',
     notes: '',
     tags: [] as string[],
     subtasks: [] as string[],
@@ -58,7 +57,6 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
       goalId: defaultGoalId || '',
       estimatedTime: '',
       location: '',
-      reminderTime: '',
       notes: '',
       tags: [],
       subtasks: [],
@@ -83,12 +81,20 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
         name: editingTask.name || '',
         description: editingTask.description || '',
         priority: editingTask.priority || 'medium',
-        dueDate: editingTask.dueDate ? new Date(editingTask.dueDate).toISOString().split('T')[0] : '',
-        dueTime: editingTask.dueDate ? new Date(editingTask.dueDate).toISOString().split('T')[1].substring(0, 5) : '',
+        dueDate: editingTask.dueDate ? (() => {
+          const date = new Date(editingTask.dueDate);
+          return date.getFullYear() + '-' + 
+                 String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+                 String(date.getDate()).padStart(2, '0');
+        })() : '',
+        dueTime: editingTask.dueDate ? (() => {
+          const date = new Date(editingTask.dueDate);
+          return String(date.getHours()).padStart(2, '0') + ':' + 
+                 String(date.getMinutes()).padStart(2, '0');
+        })() : '',
         goalId: editingTask.goalId || '',
         estimatedTime: editingTask.estimatedTime ? editingTask.estimatedTime.toString() : '',
         location: editingTask.location || '',
-        reminderTime: editingTask.reminderTime ? new Date(editingTask.reminderTime).toISOString().split('T')[1].substring(0, 5) : '',
         notes: editingTask.notes || '',
         tags: editingTask.tags || [],
         subtasks: editingTask.subtasks?.length ? editingTask.subtasks.map((st: any) => st.name || '') : [],

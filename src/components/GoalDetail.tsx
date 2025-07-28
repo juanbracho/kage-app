@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Edit, MoreHorizontal, Plus, Trash2, Archive } from 'lucide-react';
+import { ArrowLeft, Edit, MoreHorizontal, Plus, Trash2, Archive, Edit3 } from 'lucide-react';
 import { Goal } from '../types/goal';
 import { useTaskStore } from '../store/taskStore';
 import { useHabitStore } from '../store/habitStore';
@@ -17,8 +17,8 @@ interface GoalDetailProps {
 }
 
 export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDetailProps) {
-  const { getTasksByGoal, addTask } = useTaskStore();
-  const { getHabitsByGoal, getHabitStreak, isHabitCompletedToday } = useHabitStore();
+  const { getTasksByGoal, addTask, toggleTask, deleteTask } = useTaskStore();
+  const { getHabitsByGoal, getHabitStreak, isHabitCompletedToday, toggleDayCompletion, deleteHabit } = useHabitStore();
   const { deleteGoal, toggleGoalCompletion } = useGoalStore();
   const { entries } = useJournalStore();
   
@@ -50,6 +50,10 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showHabitModal, setShowHabitModal] = useState(false);
   const [showJournalModal, setShowJournalModal] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
+  const [editingTask, setEditingTask] = useState<any>(null);
+  const [editingHabit, setEditingHabit] = useState<any>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -118,10 +122,66 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
     setShowHabitModal(true);
   };
 
+  const handleTaskCheckboxClick = (taskId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering parent click handler
+    toggleTask(taskId);
+  };
+
+  const handleHabitCheckboxClick = (habitId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering parent click handler
+    const today = new Date().toISOString().split('T')[0];
+    toggleDayCompletion(habitId, today);
+  };
+
+  const handleTaskItemClick = (taskId: string) => {
+    setSelectedTaskId(selectedTaskId === taskId ? null : taskId);
+  };
+
+  const handleHabitItemClick = (habitId: string) => {
+    setSelectedHabitId(selectedHabitId === habitId ? null : habitId);
+  };
+
+  const handleEditTask = (task: any) => {
+    setEditingTask(task);
+    setShowTaskModal(true);
+    setSelectedTaskId(null);
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    if (confirm('Are you sure you want to delete this task?')) {
+      deleteTask(taskId);
+      setSelectedTaskId(null);
+    }
+  };
+
+  const handleEditHabit = (habit: any) => {
+    setEditingHabit(habit);
+    setShowHabitModal(true);
+    setSelectedHabitId(null);
+  };
+
+  const handleDeleteHabit = (habitId: string) => {
+    if (confirm('Are you sure you want to delete this habit?')) {
+      deleteHabit(habitId);
+      setSelectedHabitId(null);
+    }
+  };
+
   const handleTaskSubmit = (taskData: any) => {
     // Task modal already has goal ID pre-populated via defaultGoalId prop
     addTask(taskData);
     setShowTaskModal(false);
+    setEditingTask(null);
+  };
+
+  const handleTaskModalClose = () => {
+    setShowTaskModal(false);
+    setEditingTask(null);
+  };
+
+  const handleHabitModalClose = () => {
+    setShowHabitModal(false);
+    setEditingHabit(null);
   };
 
 
@@ -320,27 +380,54 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
               </div>
             ) : (
               linkedTasks.map(task => (
-                <div key={task.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-sm transition-shadow cursor-pointer">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      task.status === 'completed'
-                        ? 'bg-green-500 border-green-500 text-white'
-                        : 'border-gray-300'
-                    }`}>
-                      {task.status === 'completed' && <span className="text-xs">✓</span>}
+                <div key={task.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-sm transition-shadow">
+                  <div 
+                    onClick={() => handleTaskItemClick(task.id)}
+                    className="cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <div 
+                        onClick={(e) => handleTaskCheckboxClick(task.id, e)}
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors cursor-pointer hover:scale-110 ${
+                          task.status === 'completed'
+                            ? 'bg-green-500 border-green-500 text-white'
+                            : 'border-gray-300 hover:border-green-300'
+                        }`}
+                      >
+                        {task.status === 'completed' && <span className="text-xs">✓</span>}
+                      </div>
+                      <div className="flex-1 font-semibold text-gray-800 dark:text-white">{task.name}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {task.status === 'completed' 
+                          ? `Completed ${formatDate(typeof task.updatedAt === 'string' ? task.updatedAt : task.updatedAt.toISOString())}` 
+                          : task.dueDate 
+                            ? `Due ${formatDate(typeof task.dueDate === 'string' ? task.dueDate : task.dueDate.toISOString())}`
+                            : 'No due date'
+                        }
+                      </div>
                     </div>
-                    <div className="flex-1 font-semibold text-gray-800 dark:text-white">{task.name}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {task.status === 'completed' 
-                        ? `Completed ${formatDate(typeof task.updatedAt === 'string' ? task.updatedAt : task.updatedAt.toISOString())}` 
-                        : task.dueDate 
-                          ? `Due ${formatDate(typeof task.dueDate === 'string' ? task.dueDate : task.dueDate.toISOString())}`
-                          : 'No due date'
-                      }
-                    </div>
+                    {task.description && (
+                      <p className="text-sm text-gray-600 dark:text-gray-300 ml-8">{task.description}</p>
+                    )}
                   </div>
-                  {task.description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-300 ml-8">{task.description}</p>
+                  
+                  {selectedTaskId === task.id && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-2">
+                      <button
+                        onClick={() => handleEditTask(task)}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTask(task.id)}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete
+                      </button>
+                    </div>
                   )}
                 </div>
               ))
@@ -391,22 +478,49 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
                 const isCompletedToday = isHabitCompletedToday(habit.id);
                 
                 return (
-                  <div key={habit.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-sm transition-shadow cursor-pointer">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        isCompletedToday
-                          ? 'bg-blue-500 border-blue-500 text-white'
-                          : 'border-blue-300'
-                      }`}>
-                        {isCompletedToday && <span className="text-xs">✓</span>}
+                  <div key={habit.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-sm transition-shadow">
+                    <div 
+                      onClick={() => handleHabitItemClick(habit.id)}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <div 
+                          onClick={(e) => handleHabitCheckboxClick(habit.id, e)}
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors cursor-pointer hover:scale-110 ${
+                            isCompletedToday
+                              ? 'bg-blue-500 border-blue-500 text-white'
+                              : 'border-blue-300 hover:border-blue-400'
+                          }`}
+                        >
+                          {isCompletedToday && <span className="text-xs">✓</span>}
+                        </div>
+                        <div className="flex-1 font-semibold text-gray-800 dark:text-white">{habit.name}</div>
+                        <div className="text-xs font-semibold flex items-center gap-1" style={getGoalTextStyle()}>
+                          🔥 {streak} day streak
+                        </div>
                       </div>
-                      <div className="flex-1 font-semibold text-gray-800 dark:text-white">{habit.name}</div>
-                      <div className="text-xs font-semibold flex items-center gap-1" style={getGoalTextStyle()}>
-                        🔥 {streak} day streak
-                      </div>
+                      {habit.description && (
+                        <p className="text-sm text-gray-600 dark:text-gray-300 ml-8">{habit.description}</p>
+                      )}
                     </div>
-                    {habit.description && (
-                      <p className="text-sm text-gray-600 dark:text-gray-300 ml-8">{habit.description}</p>
+                    
+                    {selectedHabitId === habit.id && (
+                      <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-2">
+                        <button
+                          onClick={() => handleEditHabit(habit)}
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteHabit(habit.id)}
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </button>
+                      </div>
                     )}
                   </div>
                 );
@@ -482,17 +596,17 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
       {/* Task Creation Modal */}
       <TaskCreationModal 
         isOpen={showTaskModal}
-        onClose={() => setShowTaskModal(false)}
+        onClose={handleTaskModalClose}
         onSubmit={handleTaskSubmit}
-        editingTask={undefined}
+        editingTask={editingTask}
         defaultGoalId={goal.id}
       />
 
       {/* Habit Creation Modal */}
       <HabitCreationModal 
         isOpen={showHabitModal}
-        onClose={() => setShowHabitModal(false)}
-        editingHabit={null}
+        onClose={handleHabitModalClose}
+        editingHabit={editingHabit}
         defaultGoalId={goal.id}
       />
 

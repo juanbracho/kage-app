@@ -1,4 +1,6 @@
 import { Task } from '../types/task';
+import { useGoalStore } from '../store/goalStore';
+import { GOAL_CATEGORIES } from '../types/goal';
 
 interface UrgentSectionProps {
   urgentTasks: Task[];
@@ -6,20 +8,48 @@ interface UrgentSectionProps {
 }
 
 export default function UrgentSection({ urgentTasks, onTaskToggle }: UrgentSectionProps) {
+  const { goals } = useGoalStore();
+  
   if (urgentTasks.length === 0) {
     return null;
   }
 
   const getCategoryTag = (task: Task) => {
-    // Map task properties to category tags
-    if (task.tags.includes('work') || task.tags.includes('career')) return 'Career';
-    if (task.tags.includes('health') || task.tags.includes('fitness')) return 'Health';
-    if (task.tags.includes('personal')) return 'Personal';
-    if (task.tags.includes('life')) return 'Life';
-    return 'General';
+    // If task is linked to a goal, use the goal's category
+    if (task.goalId) {
+      const linkedGoal = goals.find(g => g.id === task.goalId);
+      if (linkedGoal) {
+        const goalCategory = GOAL_CATEGORIES.find(c => c.id === linkedGoal.category);
+        return goalCategory?.name || 'General';
+      }
+    }
+    
+    // If no goal linked, use task type to determine category
+    switch (task.type) {
+      case 'standard':
+        return 'General';
+      case 'to-buy':
+        return 'Grocery';
+      case 'deadline':
+        return 'Deadline';
+      default:
+        return 'General';
+    }
   };
 
-  const getTaskStatus = (task: Task) => {
+  const formatTime = (task: Task) => {
+    // For deadline tasks, show due date and time in dd/mm/yy format with military time
+    if (task.type === 'deadline' && task.dueDate) {
+      const dueDate = new Date(task.dueDate);
+      const day = dueDate.getDate().toString().padStart(2, '0');
+      const month = (dueDate.getMonth() + 1).toString().padStart(2, '0');
+      const year = dueDate.getFullYear().toString().slice(-2);
+      const hours = dueDate.getHours().toString().padStart(2, '0');
+      const minutes = dueDate.getMinutes().toString().padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
+    
+    // For other task types, show status based on due date
     if (!task.dueDate) return 'No due date';
     
     const today = new Date();
@@ -68,7 +98,7 @@ export default function UrgentSection({ urgentTasks, onTaskToggle }: UrgentSecti
                   {task.name}
                 </h4>
                 <span className="text-xs text-orange-600 dark:text-orange-400 whitespace-nowrap">
-                  {getTaskStatus(task)}
+                  {formatTime(task)}
                 </span>
               </div>
               

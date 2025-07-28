@@ -197,13 +197,13 @@ export const useDashboardStore = create<DashboardStore>(() => ({
     const taskStore = useTaskStore.getState();
     const taskSections = taskStore.getTasksBySection();
     
-    // Get overdue tasks and high/urgent priority tasks due today
+    // Get all urgent priority tasks regardless of due date, plus overdue tasks
     const urgentTasks = [
       ...taskSections.overdue,
-      ...taskSections.today.filter(task => 
-        (task.priority === 'high' || task.priority === 'urgent') && 
-        task.status !== 'completed'
-      )
+      // Get urgent priority tasks from all sections (today, upcoming, noDueDate)
+      ...taskSections.today.filter(task => task.priority === 'urgent'),
+      ...taskSections.upcoming.filter(task => task.priority === 'urgent'),
+      ...taskSections.noDueDate.filter(task => task.priority === 'urgent')
     ];
     
     return urgentTasks.filter(task => task.status !== 'completed');

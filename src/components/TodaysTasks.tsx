@@ -1,4 +1,6 @@
 import { Task } from '../types/task';
+import { useGoalStore } from '../store/goalStore';
+import { GOAL_CATEGORIES } from '../types/goal';
 
 interface TodaysTasksProps {
   todayTasks: Task[];
@@ -6,6 +8,8 @@ interface TodaysTasksProps {
 }
 
 export default function TodaysTasks({ todayTasks, onTaskToggle }: TodaysTasksProps) {
+  const { goals } = useGoalStore();
+  
   if (todayTasks.length === 0) {
     return (
       <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 dark:bg-gray-800 dark:border-gray-700">
@@ -27,12 +31,26 @@ export default function TodaysTasks({ todayTasks, onTaskToggle }: TodaysTasksPro
   const completedTasks = todayTasks.filter(task => task.status === 'completed');
 
   const getCategoryTag = (task: Task) => {
-    // Map task properties to category tags
-    if (task.tags.includes('work') || task.tags.includes('career')) return 'Career';
-    if (task.tags.includes('health') || task.tags.includes('fitness')) return 'Health';
-    if (task.tags.includes('personal')) return 'Personal';
-    if (task.tags.includes('life')) return 'Life';
-    return 'General';
+    // If task is linked to a goal, use the goal's category
+    if (task.goalId) {
+      const linkedGoal = goals.find(g => g.id === task.goalId);
+      if (linkedGoal) {
+        const goalCategory = GOAL_CATEGORIES.find(c => c.id === linkedGoal.category);
+        return goalCategory?.name || 'General';
+      }
+    }
+    
+    // If no goal linked, use task type to determine category
+    switch (task.type) {
+      case 'standard':
+        return 'General';
+      case 'to-buy':
+        return 'Grocery';
+      case 'deadline':
+        return 'Deadline';
+      default:
+        return 'General';
+    }
   };
 
   const formatTime = (task: Task) => {
@@ -50,6 +68,17 @@ export default function TodaysTasks({ todayTasks, onTaskToggle }: TodaysTasksPro
   };
 
   const getTimeCategory = (task: Task) => {
+    // For deadline tasks, show due date and time in dd/mm/yy format with military time
+    if (task.type === 'deadline' && task.dueDate) {
+      const dueDate = new Date(task.dueDate);
+      const day = dueDate.getDate().toString().padStart(2, '0');
+      const month = (dueDate.getMonth() + 1).toString().padStart(2, '0');
+      const year = dueDate.getFullYear().toString().slice(-2);
+      const hours = dueDate.getHours().toString().padStart(2, '0');
+      const minutes = dueDate.getMinutes().toString().padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
+    
     if (task.reminderTime) {
       const hour = new Date(task.reminderTime).getHours();
       if (hour < 12) return 'Morning';
@@ -94,15 +123,22 @@ export default function TodaysTasks({ todayTasks, onTaskToggle }: TodaysTasksPro
                 }`}>
                   {task.name}
                 </h4>
-                <span className="text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
-                  {formatTime(task)}
-                </span>
               </div>
               
               <div className="flex items-center gap-2 mt-1">
                 <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-md dark:bg-blue-900/30 dark:text-blue-300">
                   {getCategoryTag(task)}
                 </span>
+                {task.priority === 'urgent' && (
+                  <span className="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-md dark:bg-red-900/30 dark:text-red-300">
+                    Urgent
+                  </span>
+                )}
+                {task.priority === 'high' && (
+                  <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-md dark:bg-yellow-900/30 dark:text-yellow-300">
+                    High
+                  </span>
+                )}
                 {task.estimatedTime && (
                   <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md dark:bg-gray-700 dark:text-gray-300">
                     {task.estimatedTime}min

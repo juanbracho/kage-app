@@ -1,9 +1,12 @@
+import { GoalCategory } from './goal';
+
 export interface Habit {
   id: string;
   name: string;
   description?: string;
   icon: string;
   color: string;
+  category?: GoalCategory;
   measurementType: 'simple' | 'count' | 'time' | 'custom';
   targetAmount?: number;
   targetUnit?: string;
@@ -49,6 +52,7 @@ export interface HabitFormData {
   description?: string;
   icon: string;
   color: string;
+  category?: GoalCategory;
   measurementType: 'simple' | 'count' | 'time' | 'custom';
   targetAmount?: number;
   targetUnit?: string;
