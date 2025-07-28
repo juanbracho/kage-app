@@ -31,10 +31,24 @@
     
     <!-- Prevent zoom on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <script type="module" crossorigin src="/kage-app/assets/index-mXhK0GI3.js"></script>
-    <link rel="stylesheet" crossorigin href="/kage-app/assets/index-CIbuh6Vx.css">
-  <link rel="manifest" href="/kage-app/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/kage-app/registerSW.js"></script></head>
+    <script type="module" crossorigin src="/kage-app/assets/index-BVLjCN8t.js"></script>
+    <link rel="stylesheet" crossorigin href="/kage-app/assets/index-C-3ewT2K.css">
+  </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/kage-app/sw.js')
+            .then(function(registration) {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function(err) {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

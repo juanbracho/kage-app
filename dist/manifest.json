@@ -3,7 +3,7 @@
   "short_name": "Kage",
   "description": "Revolutionary goal-centric productivity app that connects tasks, habits, and journal entries to meaningful life goals",
   "start_url": "/kage-app/",
-  "display": "standalone", 
+  "display": "standalone",
   "theme_color": "#FF7101",
   "background_color": "#FFFFFF",
   "orientation": "portrait-primary",
