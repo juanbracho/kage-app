@@ -8,7 +8,11 @@
   "background_color": "#FFFFFF",
   "orientation": "portrait-primary",
   "scope": "/kage-app/",
-  "categories": ["productivity", "lifestyle", "utilities"],
+  "categories": [
+    "productivity",
+    "lifestyle",
+    "utilities"
+  ],
   "lang": "en-US",
   "dir": "ltr",
   "icons": [
@@ -91,7 +95,7 @@
       "name": "Create Goal",
       "short_name": "New Goal",
       "description": "Quickly create a new goal",
-      "url": "/kage-app/?tab=goals&action=create",
+      "url": "/kage-app/?action=create",
       "icons": [
         {
           "src": "/kage-app/icons/shortcut-goal.svg",
@@ -104,7 +108,7 @@
       "name": "Add Task",
       "short_name": "New Task",
       "description": "Quickly add a new task",
-      "url": "/kage-app/?tab=tasks&action=create",
+      "url": "/kage-app/?action=create",
       "icons": [
         {
           "src": "/kage-app/icons/shortcut-task.svg",
@@ -117,7 +121,7 @@
       "name": "Track Habit",
       "short_name": "Habit",
       "description": "Mark habit as completed",
-      "url": "/kage-app/?tab=habits&action=complete",
+      "url": "/kage-app/?action=complete",
       "icons": [
         {
           "src": "/kage-app/icons/shortcut-habit.svg",
@@ -130,7 +134,7 @@
       "name": "Write Journal",
       "short_name": "Journal",
       "description": "Create a new journal entry",
-      "url": "/kage-app/?tab=journal&action=create",
+      "url": "/kage-app/?action=create",
       "icons": [
         {
           "src": "/kage-app/icons/shortcut-journal.svg",
