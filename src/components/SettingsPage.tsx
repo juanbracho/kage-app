@@ -17,10 +17,12 @@ import {
   Info,
   Key,
   LogOut,
-  Download
+  Download,
+  PlayCircle
 } from 'lucide-react'
 import { useSettingsStore } from '../store/settingsStore'
 import { useUserStore } from '../store/userStore'
+import { useOnboardingStore } from '../store/onboardingStore'
 import ProfileSection from './ProfileSection'
 import SettingsSection from './SettingsSection'
 import SettingsItem from './SettingsItem'
@@ -37,6 +39,7 @@ export default function SettingsPage() {
   } = useSettingsStore()
   
   const { signOut, isPremiumUser } = useUserStore()
+  const { startOnboarding } = useOnboardingStore()
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
 
   const handleReminderTimeChange = () => {
@@ -64,6 +67,10 @@ export default function SettingsPage() {
 
   const handleSignOut = () => {
     signOut()
+  }
+
+  const handleShowOnboarding = () => {
+    startOnboarding()
   }
 
   const PremiumBadge = () => (
@@ -224,6 +231,15 @@ export default function SettingsPage() {
 
       {/* Support & About */}
       <SettingsSection title="Support & About" icon={<HelpCircle className="w-5 h-5" />}>
+        <SettingsItem
+          icon={<PlayCircle className="w-4 h-4" />}
+          iconBgColor="bg-blue-500"
+          title="Show Onboarding"
+          subtitle="Replay the welcome experience"
+          type="navigate"
+          onClick={handleShowOnboarding}
+        />
+        
         <SettingsItem
           icon={<MessageCircle className="w-4 h-4" />}
           iconBgColor="bg-amber-500"

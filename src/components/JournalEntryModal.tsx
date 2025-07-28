@@ -281,38 +281,30 @@ export default function JournalEntryModal({ isOpen, onClose, defaultGoalId }: Jo
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                 How are you feeling?
               </label>
-              <div className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                <div className="flex gap-4 justify-between items-center">
-                  {MOOD_OPTIONS.map(mood => (
-                    <button
-                      key={mood.id}
-                      type="button"
-                      onClick={() => handleMoodSelect(mood.id)}
-                      className={`flex flex-col items-center gap-2 p-3 rounded-lg transition-all hover:scale-105 ${
-                        formData.mood === mood.id
-                          ? 'bg-accent-100 dark:bg-accent-900/30 shadow-sm'
-                          : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                      }`}
-                      style={formData.mood === mood.id ? {
-                        backgroundColor: 'var(--accent-color-light, #FB923C)',
-                        color: 'var(--accent-color, #FF7101)'
-                      } : {}}
-                    >
-                      <div className={`text-3xl transition-transform ${
-                        formData.mood === mood.id ? 'scale-110' : ''
-                      }`}>
-                        {mood.emoji}
-                      </div>
-                      <div className={`text-xs font-semibold ${
-                        formData.mood === mood.id 
-                          ? 'text-white' 
-                          : 'text-gray-600 dark:text-gray-400'
-                      }`}>
-                        {mood.label}
-                      </div>
-                    </button>
-                  ))}
-                </div>
+              <div className="flex gap-3 justify-between">
+                {MOOD_OPTIONS.map(mood => (
+                  <button
+                    key={mood.id}
+                    type="button"
+                    onClick={() => handleMoodSelect(mood.id)}
+                    className={`flex-1 flex flex-col items-center gap-2 p-3 border-2 rounded-xl transition-all ${
+                      formData.mood === mood.id
+                        ? 'accent-border-500 accent-bg-50 dark:accent-bg-900 shadow-sm'
+                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 hover:-translate-y-0.5'
+                    }`}
+                  >
+                    <div className={`text-2xl transition-transform ${
+                      formData.mood === mood.id ? 'scale-110' : ''
+                    }`}>
+                      {mood.emoji}
+                    </div>
+                    <div className={`text-xs font-semibold ${
+                      formData.mood === mood.id ? 'accent-text-600' : 'text-gray-600'
+                    }`}>
+                      {mood.label}
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Target, CheckSquare, Calendar, BookOpen, BarChart3, Hash, Settings, TrendingUp } from 'lucide-react'
 import { useSettingsStore } from './store/settingsStore'
+import { useOnboardingStore } from './store/onboardingStore'
 import DashboardPage from './components/DashboardPage'
 import GoalsPage from './components/GoalsPage'
 import TasksPage from './components/TasksPage'
@@ -11,11 +12,13 @@ import SettingsPage from './components/SettingsPage'
 import PWAInstallPrompt from './components/PWAInstallPrompt'
 import OfflineIndicator from './components/OfflineIndicator'
 import ErrorBoundary from './components/ErrorBoundary'
+import OnboardingFlow from './components/onboarding/OnboardingFlow'
 import { logPWAEnvironment, logErrorWithPWAContext } from './utils/pwaDetection'
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const { settings, initializeSettings } = useSettingsStore()
+  const { settings, initializeSettings, isOnboardingCompleted } = useSettingsStore()
+  const { isOnboardingActive } = useOnboardingStore()
 
   // Initialize settings on app startup
   useEffect(() => {
@@ -156,6 +159,20 @@ function App() {
       default:
         return <DashboardPage onNavigate={setActiveTab} />
     }
+  }
+
+  const handleOnboardingComplete = () => {
+    // Onboarding flow will handle completing the onboarding in the store
+    // Just refresh the page state by doing nothing - the component will re-render
+  }
+
+  // Show onboarding if it's not completed on first launch or explicitly started
+  if ((!isOnboardingCompleted() && settings.firstLaunch) || isOnboardingActive) {
+    return (
+      <ErrorBoundary>
+        <OnboardingFlow onComplete={handleOnboardingComplete} />
+      </ErrorBoundary>
+    )
   }
 
   return (

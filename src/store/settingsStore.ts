@@ -39,6 +39,11 @@ interface SettingsStore {
   exportSettings: () => string
   importSettings: (settingsJson: string) => boolean
   
+  // Onboarding
+  completeOnboarding: () => void
+  resetOnboarding: () => void
+  isOnboardingCompleted: () => boolean
+  
   // Getters
   getTheme: () => Theme
   getAccentColor: () => AccentColor
@@ -318,6 +323,30 @@ export const useSettingsStore = create<SettingsStore>()(
           console.error('Failed to import settings:', error)
           return false
         }
+      },
+
+      // Onboarding
+      completeOnboarding: () => {
+        set(state => ({
+          settings: {
+            ...state.settings,
+            onboardingCompleted: true,
+            firstLaunch: false
+          }
+        }))
+      },
+
+      resetOnboarding: () => {
+        set(state => ({
+          settings: {
+            ...state.settings,
+            onboardingCompleted: false
+          }
+        }))
+      },
+
+      isOnboardingCompleted: (): boolean => {
+        return get().settings.onboardingCompleted
       },
 
       // Getters
