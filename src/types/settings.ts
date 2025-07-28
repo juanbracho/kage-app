@@ -13,7 +13,6 @@ export interface NotificationSettings {
 export interface AppearanceSettings {
   theme: Theme
   accentColor: AccentColor
-  animations: boolean
   compactMode: boolean
   showProgressRings: boolean
 }

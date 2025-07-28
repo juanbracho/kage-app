@@ -64,6 +64,16 @@ export default function JournalPage() {
     openModal()
   }
 
+  // Listen for custom event to open journal modal from dashboard
+  useEffect(() => {
+    const handleOpenJournalModal = () => {
+      handleCreateEntry();
+    };
+
+    window.addEventListener('openJournalModal', handleOpenJournalModal);
+    return () => window.removeEventListener('openJournalModal', handleOpenJournalModal);
+  }, []);
+
   const handleEditEntry = (entry: any) => {
     selectEntry(entry)
   }

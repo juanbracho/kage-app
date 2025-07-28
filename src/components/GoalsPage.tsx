@@ -31,6 +31,7 @@ export default function GoalsPage({ onNavigate }: GoalsPageProps) {
   // Listen for custom event to open goal modal from dashboard
   useEffect(() => {
     const handleOpenGoalModal = () => {
+      console.log('openGoalModal event received, calling handleCreateGoal');
       handleCreateGoal();
     };
 
@@ -52,8 +53,11 @@ export default function GoalsPage({ onNavigate }: GoalsPageProps) {
   }
 
   const handleCreateGoal = () => {
+    console.log('handleCreateGoal called, opening modal');
+    console.log('modalState before:', modalState);
     setGoalToEdit(null);
     openModal();
+    console.log('openModal called');
   };
 
   const handleGoalClick = (goal: Goal) => {

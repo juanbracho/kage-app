@@ -59,7 +59,6 @@ const defaultSettings: AppSettings = {
   appearance: {
     theme: 'light',
     accentColor: 'orange',
-    animations: true,
     compactMode: false,
     showProgressRings: true
   },

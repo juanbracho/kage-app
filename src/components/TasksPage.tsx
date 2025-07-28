@@ -45,6 +45,16 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
   useEffect(() => {
     cleanupEmptySubtasks();
   }, [cleanupEmptySubtasks]);
+
+  // Listen for custom event to open task modal from dashboard
+  useEffect(() => {
+    const handleOpenTaskModal = () => {
+      openModal();
+    };
+
+    window.addEventListener('openTaskModal', handleOpenTaskModal);
+    return () => window.removeEventListener('openTaskModal', handleOpenTaskModal);
+  }, [openModal]);
   const [editingTask, setEditingTask] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);

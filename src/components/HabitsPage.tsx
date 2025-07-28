@@ -48,6 +48,16 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
     setShowCreationModal(true);
   };
 
+  // Listen for custom event to open habit modal from dashboard
+  useEffect(() => {
+    const handleOpenHabitModal = () => {
+      handleCreateHabit();
+    };
+
+    window.addEventListener('openHabitModal', handleOpenHabitModal);
+    return () => window.removeEventListener('openHabitModal', handleOpenHabitModal);
+  }, []);
+
   // Ensure page is ready before rendering content
   useEffect(() => {
     // Small delay to ensure CSS variables and store hydration are complete

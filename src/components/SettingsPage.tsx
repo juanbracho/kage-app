@@ -156,15 +156,6 @@ export default function SettingsPage() {
           onClick={handleAccentColorChange}
         />
         
-        <SettingsItem
-          icon={<Sparkles className="w-4 h-4" />}
-          iconBgColor="bg-gray-500"
-          title="Animations"
-          subtitle="Enable smooth transitions"
-          type="toggle"
-          checked={settings.appearance.animations}
-          onToggle={(checked) => updateAppearanceSettings({ animations: checked })}
-        />
       </SettingsSection>
 
       {/* Privacy & Data */}

@@ -31,15 +31,27 @@ export default function QuickActionsRow({ onNavigate }: QuickActionsRowProps) {
   ];
 
   const handleActionClick = (tab: string) => {
+    // Always navigate to the page first
+    onNavigate(tab);
+    
+    // Then dispatch custom event to open creation modal
     if (tab === 'goals') {
-      // Dispatch custom event to open goal modal
-      window.dispatchEvent(new CustomEvent('openGoalModal'));
-    } else if (tab === 'tasks' || tab === 'habits') {
-      // Navigate to page which will open modal
-      onNavigate(tab);
-    } else {
-      // Navigate normally for journal
-      onNavigate(tab);
+      // Small delay to ensure page has loaded before opening modal
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('openGoalModal'));
+      }, 100);
+    } else if (tab === 'tasks') {
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('openTaskModal'));
+      }, 100);
+    } else if (tab === 'habits') {
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('openHabitModal'));
+      }, 100);
+    } else if (tab === 'journal') {
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('openJournalModal'));
+      }, 100);
     }
   };
 
