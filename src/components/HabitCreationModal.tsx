@@ -3,6 +3,7 @@ import { useHabitStore } from '../store/habitStore';
 import { useGoalStore } from '../store/goalStore';
 import { HabitFormData, Habit } from '../types/habit';
 import { GOAL_CATEGORIES } from '../types/goal';
+import { useModalSwipe } from '../hooks/useSwipeGesture';
 
 interface HabitCreationModalProps {
   isOpen: boolean;
@@ -184,11 +185,17 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
     });
   };
 
+  // Add swipe-to-close functionality (defined after all functions)
+  const swipeHandlers = useModalSwipe(onClose, !isOpen);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-3 sm:p-4 md:p-5">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[90vh] overflow-hidden text-gray-900 dark:text-white animate-in slide-in-from-bottom-4 duration-300 shadow-2xl flex flex-col">
+      <div 
+        {...swipeHandlers}
+        className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[90vh] overflow-hidden text-gray-900 dark:text-white animate-in slide-in-from-bottom-4 duration-300 shadow-2xl flex flex-col"
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <h2 className="text-2xl font-bold">{editingHabit ? 'Edit Habit' : 'New Habit'}</h2>

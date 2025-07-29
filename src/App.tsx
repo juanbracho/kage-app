@@ -14,11 +14,35 @@ import OfflineIndicator from './components/OfflineIndicator'
 import ErrorBoundary from './components/ErrorBoundary'
 import OnboardingFlow from './components/onboarding/OnboardingFlow'
 import { logPWAEnvironment, logErrorWithPWAContext } from './utils/pwaDetection'
+import { useNavigationSwipe } from './hooks/useSwipeGesture'
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const { settings, initializeSettings, isOnboardingCompleted } = useSettingsStore()
   const { isOnboardingActive } = useOnboardingStore()
+
+  // Tab navigation order for swipe gestures
+  const navigationOrder = ['dashboard', 'goals', 'tasks', 'habits', 'calendar', 'journal', 'settings']
+  
+  // Navigation functions for swipe gestures
+  const navigateToNextTab = () => {
+    const currentIndex = navigationOrder.indexOf(activeTab)
+    const nextIndex = (currentIndex + 1) % navigationOrder.length
+    setActiveTab(navigationOrder[nextIndex])
+  }
+  
+  const navigateToPrevTab = () => {
+    const currentIndex = navigationOrder.indexOf(activeTab)
+    const prevIndex = currentIndex === 0 ? navigationOrder.length - 1 : currentIndex - 1
+    setActiveTab(navigationOrder[prevIndex])
+  }
+  
+  // Add swipe navigation (disabled during onboarding)
+  const navigationSwipes = useNavigationSwipe(
+    navigateToNextTab,
+    navigateToPrevTab,
+    isOnboardingActive
+  )
 
   // Initialize settings on app startup
   useEffect(() => {
@@ -177,7 +201,10 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="w-full max-w-md mx-auto min-h-screen bg-gray-50 dark:bg-gray-900 shadow-xl overflow-hidden flex flex-col">
+      <div 
+        {...navigationSwipes}
+        className="w-full max-w-md mx-auto min-h-screen bg-gray-50 dark:bg-gray-900 shadow-xl overflow-hidden flex flex-col"
+      >
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="px-4 py-3 flex justify-between items-center">

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { X, Clock, ShoppingCart, AlertTriangle, Plus, Trash2 } from 'lucide-react'
 import { useGoalStore } from '../store/goalStore'
 import { useCalendarStore } from '../store/calendarStore'
+import { useModalSwipe } from '../hooks/useSwipeGesture'
 
 interface TaskCreationModalProps {
   isOpen: boolean
@@ -119,6 +120,9 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
     onClose()
   }
 
+  // Add swipe-to-close functionality (defined after handleClose)
+  const swipeHandlers = useModalSwipe(handleClose, !isOpen)
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -226,7 +230,10 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 sm:p-4 md:p-5">
-      <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm sm:max-w-md lg:max-w-lg max-h-[90vh] overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-300 text-gray-900 dark:text-white">
+      <div 
+        {...swipeHandlers}
+        className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm sm:max-w-md lg:max-w-lg max-h-[90vh] overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-300 text-gray-900 dark:text-white"
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{editingTask ? 'Edit Task' : 'New Task'}</h2>
