@@ -14,12 +14,10 @@ interface HabitsPageProps {
 
 export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps) {
   const { habits } = useHabitStore();
-  const { isLoading: settingsLoading } = useSettingsStore();
   const [showCreationModal, setShowCreationModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
-  const [isPageReady, setIsPageReady] = useState(false);
   
   const handleHabitClick = (habitId: string) => {
     const habit = habits.find(h => h.id === habitId);
@@ -58,32 +56,6 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
     return () => window.removeEventListener('openHabitModal', handleOpenHabitModal);
   }, []);
 
-  // Ensure page is ready before rendering content
-  useEffect(() => {
-    // Small delay to ensure CSS variables and store hydration are complete
-    const timer = setTimeout(() => {
-      setIsPageReady(true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Show loading state while page is initializing
-  if (!isPageReady || settingsLoading) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        <div className="flex items-center justify-between">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
-          <div className="w-11 h-11 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-        </div>
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl p-4 h-24"></div>
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   // Show empty state if no habits
   if (habits.length === 0) {
