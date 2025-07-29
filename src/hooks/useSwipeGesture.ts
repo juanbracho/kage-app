@@ -261,7 +261,7 @@ export const useSwipeGesture = ({
 export const useModalSwipe = (onClose: () => void, disabled = false) => {
   return useSwipeGesture({
     onSwipeUp: onClose,
-    threshold: 75,
+    threshold: 40,  // Reduced from 75px for better sensitivity
     preventHorizontal: true,
     disabled
   });
@@ -275,8 +275,17 @@ export const useNavigationSwipe = (
   return useSwipeGesture({
     onSwipeLeft: onNext,
     onSwipeRight: onPrevious,
-    threshold: 100,
+    threshold: 50,  // Reduced from 100px for better sensitivity
     preventVertical: true,
+    disabled
+  });
+};
+
+export const usePageCreationSwipe = (onCreate: () => void, disabled = false) => {
+  return useSwipeGesture({
+    onSwipeUp: onCreate,
+    threshold: 60,  // Slightly higher threshold to avoid conflicts with scrolling
+    preventHorizontal: true,
     disabled
   });
 };

@@ -6,6 +6,7 @@ import { TaskFilter } from '../types/task';
 import TaskCreationModal from './TaskCreationModal';
 import TasksEmpty from './TasksEmpty';
 import { safeAddEventListener } from '../utils/pwaDetection';
+import { usePageCreationSwipe } from '../hooks/useSwipeGesture';
 
 const FILTER_TABS: { id: TaskFilter; label: string; icon: React.ComponentType<any> }[] = [
   { id: 'today', label: 'Today', icon: Calendar },
@@ -306,8 +307,11 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
     );
   };
 
+  // Add swipe up to create task gesture
+  const creationSwipeHandlers = usePageCreationSwipe(openModal);
+
   return (
-    <div className="space-y-6">
+    <div {...creationSwipeHandlers} className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tasks</h1>

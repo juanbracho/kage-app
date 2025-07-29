@@ -7,6 +7,7 @@ import HabitCard from './HabitCard';
 import HabitCreationModal from './HabitCreationModal';
 import HabitDetailModal from './HabitDetailModal';
 import HabitsEmpty from './HabitsEmpty';
+import { usePageCreationSwipe } from '../hooks/useSwipeGesture';
 
 interface HabitsPageProps {
   onNavigate: (tab: string) => void;
@@ -46,6 +47,9 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
     setShowCreationModal(true);
   };
 
+  // Add swipe up to create habit gesture
+  const creationSwipeHandlers = usePageCreationSwipe(handleCreateHabit);
+
   // Listen for custom event to open habit modal from dashboard
   useEffect(() => {
     const handleOpenHabitModal = () => {
@@ -74,7 +78,7 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
   }
 
   return (
-    <div className="space-y-6">
+    <div {...creationSwipeHandlers} className="space-y-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Habits</h1>

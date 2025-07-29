@@ -21,18 +21,32 @@ function App() {
   const { settings, initializeSettings, isOnboardingCompleted } = useSettingsStore()
   const { isOnboardingActive } = useOnboardingStore()
 
-  // Tab navigation order for swipe gestures
-  const navigationOrder = ['dashboard', 'goals', 'tasks', 'habits', 'calendar', 'journal', 'settings']
+  // Tab navigation order for swipe gestures (matches bottom bar sequence)
+  const navigationOrder = ['goals', 'tasks', 'habits', 'calendar', 'journal', 'settings']
   
   // Navigation functions for swipe gestures
   const navigateToNextTab = () => {
     const currentIndex = navigationOrder.indexOf(activeTab)
+    
+    // If on dashboard or not found, go to first tab (goals)
+    if (currentIndex === -1) {
+      setActiveTab(navigationOrder[0])
+      return
+    }
+    
     const nextIndex = (currentIndex + 1) % navigationOrder.length
     setActiveTab(navigationOrder[nextIndex])
   }
   
   const navigateToPrevTab = () => {
     const currentIndex = navigationOrder.indexOf(activeTab)
+    
+    // If on dashboard or not found, go to last tab (settings)
+    if (currentIndex === -1) {
+      setActiveTab(navigationOrder[navigationOrder.length - 1])
+      return
+    }
+    
     const prevIndex = currentIndex === 0 ? navigationOrder.length - 1 : currentIndex - 1
     setActiveTab(navigationOrder[prevIndex])
   }
