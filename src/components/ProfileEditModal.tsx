@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { X, Camera, User } from 'lucide-react'
 import { useUserStore } from '../store/userStore'
+import { useModalSwipe } from '../hooks/useSwipeGesture'
 
 interface ProfileEditModalProps {
   isOpen: boolean
@@ -46,6 +47,8 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
     onClose()
   }
 
+  const swipeHandlers = useModalSwipe(handleClose, !isOpen)
+
   const handleAvatarChange = () => {
     // This would open image picker in a real app
     console.log('Open image picker for avatar')
@@ -55,7 +58,7 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-300 text-gray-900 dark:text-white">
+      <div {...swipeHandlers} className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-300 text-gray-900 dark:text-white">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Profile</h2>

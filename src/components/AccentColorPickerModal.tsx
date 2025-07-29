@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { X, Check } from 'lucide-react'
 import { useSettingsStore } from '../store/settingsStore'
 import type { AccentColor } from '../types/settings'
+import { useModalSwipe } from '../hooks/useSwipeGesture'
 
 interface AccentColorPickerModalProps {
   isOpen: boolean
@@ -83,11 +84,13 @@ export default function AccentColorPickerModal({ isOpen, onClose }: AccentColorP
     onClose()
   }
 
+  const swipeHandlers = useModalSwipe(handleCancel, !isOpen)
+
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 sm:p-4 md:p-5">
-      <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm sm:max-w-md max-h-[85vh] overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-300 text-gray-900 dark:text-white flex flex-col">
+      <div {...swipeHandlers} className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm sm:max-w-md max-h-[85vh] overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-300 text-gray-900 dark:text-white flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">Choose Accent Color</h2>

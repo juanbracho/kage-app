@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { useModalSwipe } from '../hooks/useSwipeGesture';
 
 interface TemporaryHabit {
   id: string;
@@ -150,6 +151,8 @@ export default function HabitCreationMiniModal({
     onClose();
   };
 
+  const swipeHandlers = useModalSwipe(handleClose, !isOpen);
+
   const toggleDay = (dayId: string) => {
     const selectedDays = formData.selectedDays || [];
     if (selectedDays.includes(dayId)) {
@@ -174,7 +177,7 @@ export default function HabitCreationMiniModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div {...swipeHandlers} className="bg-gray-800 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
           <h3 className="text-xl font-bold text-white">
