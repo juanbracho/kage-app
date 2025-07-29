@@ -1,9 +1,9 @@
 // Kage PWA Service Worker
-// Version 1.0.0
+// Version 1.1.0
 
-const CACHE_NAME = 'kage-v1.0.0';
-const STATIC_CACHE_NAME = 'kage-static-v1.0.0';
-const DYNAMIC_CACHE_NAME = 'kage-dynamic-v1.0.0';
+const CACHE_NAME = 'kage-v1.1.0';
+const STATIC_CACHE_NAME = 'kage-static-v1.1.0';
+const DYNAMIC_CACHE_NAME = 'kage-dynamic-v1.1.0';
 
 // Static assets to cache immediately
 const STATIC_ASSETS = [
@@ -70,17 +70,23 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
   
-  // Handle navigation requests (HTML pages)
+  // Handle navigation requests (HTML pages) - Network first for fresh assets
   if (request.mode === 'navigate') {
     event.respondWith(
-      caches.match('/kage-app/')
-        .then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
+      fetch(request)
+        .then((networkResponse) => {
+          // Update cache with fresh HTML
+          if (networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(STATIC_CACHE_NAME)
+              .then((cache) => {
+                cache.put('/kage-app/', responseClone);
+              });
           }
-          return fetch(request);
+          return networkResponse;
         })
         .catch(() => {
+          // Fallback to cached version if network fails
           return caches.match('/kage-app/');
         })
     );
