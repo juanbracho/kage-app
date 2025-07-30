@@ -1,9 +1,9 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 
 interface SwipeGestureConfig {
-  onSwipeLeft?: () => void;      // Navigation forward
-  onSwipeRight?: () => void;     // Navigation backward  
-  onSwipeUp?: () => void;        // Modal close
+  onSwipeLeft?: () => void;      // Custom left swipe action
+  onSwipeRight?: () => void;     // Custom right swipe action  
+  onSwipeUp?: () => void;        // Creation modal or custom up action
   onSwipeDown?: () => void;      // Modal dismiss/minimize
   threshold?: number;            // Minimum distance (default: 50px)
   preventVertical?: boolean;     // Block during horizontal swipes
@@ -258,6 +258,7 @@ export const useSwipeGesture = ({
 };
 
 // Helper hook for common gesture patterns
+// Modal swipe utility function - swipe up to close modals
 export const useModalSwipe = (onClose: () => void, disabled = false) => {
   return useSwipeGesture({
     onSwipeUp: onClose,
@@ -267,20 +268,13 @@ export const useModalSwipe = (onClose: () => void, disabled = false) => {
   });
 };
 
-export const useNavigationSwipe = (
-  onNext: () => void,
-  onPrevious: () => void,
-  disabled = false
-) => {
-  return useSwipeGesture({
-    onSwipeLeft: onNext,
-    onSwipeRight: onPrevious,
-    threshold: 50,  // Reduced from 100px for better sensitivity
-    preventVertical: true,
-    disabled
-  });
-};
+// REMOVED: Navigation swipe functionality
+// Page navigation is now handled exclusively through bottom tab bar
+// This function has been removed to prevent accidental page swipes
+// 
+// export const useNavigationSwipe = (...) => { ... } [DEPRECATED]
 
+// Creation swipe utility function - swipe up to create new items
 export const usePageCreationSwipe = (onCreate: () => void, disabled = false) => {
   return useSwipeGesture({
     onSwipeUp: onCreate,

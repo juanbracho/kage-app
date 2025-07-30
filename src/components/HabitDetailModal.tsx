@@ -26,6 +26,9 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  // Always call the swipe hook before any early returns
+  const swipeHandlers = useModalSwipe(onClose, !isOpen);
+
   if (!isOpen || !habit) return null;
 
   const currentStreak = getHabitStreak(habit.id);
@@ -152,8 +155,6 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
         return 'Daily';
     }
   };
-
-  const swipeHandlers = useModalSwipe(onClose, !isOpen);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">

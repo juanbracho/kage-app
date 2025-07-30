@@ -67,16 +67,5 @@ export interface DayViewData {
   };
 }
 
-export interface WeekViewData {
-  weekStart: string;
-  weekEnd: string;
-  days: DayViewData[];
-}
 
-export interface MonthViewData {
-  year: number;
-  month: number;
-  days: (DayViewData & { dayNumber: number; isCurrentMonth: boolean; isToday: boolean })[];
-}
-
-export type CalendarView = 'day' | 'week' | 'month';
+export type CalendarView = 'day';

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { TimeBlock, CalendarEvent, TimeBlockFormData, CalendarView, DayViewData, WeekViewData, MonthViewData } from '../types/calendar';
+import { TimeBlock, CalendarEvent, TimeBlockFormData, CalendarView, DayViewData } from '../types/calendar';
 
 interface CalendarStore {
   timeBlocks: TimeBlock[];
@@ -9,15 +9,20 @@ interface CalendarStore {
   addTimeBlock: (timeBlockData: TimeBlockFormData) => void;
   updateTimeBlock: (id: string, updates: Partial<TimeBlock>) => void;
   deleteTimeBlock: (id: string) => void;
+  deleteSingleRecurringEvent: (id: string) => void;
+  deleteRecurringSeries: (originalEventId: string) => void;
   toggleTimeBlockCompletion: (id: string) => void;
+  toggleSingleRecurringCompletion: (id: string) => void;
+  toggleRecurringSeriesCompletion: (originalEventId: string, completed: boolean) => void;
+  isRecurringEvent: (id: string) => boolean;
+  getOriginalEventId: (id: string) => string | null;
   setCurrentView: (view: CalendarView) => void;
   setCurrentDate: (date: Date) => void;
   navigateToDay: (date: Date) => void;
   navigatePrevious: () => void;
   navigateNext: () => void;
   getDayViewData: (date: Date) => DayViewData;
-  getWeekViewData: (date: Date) => WeekViewData;
-  getMonthViewData: (date: Date) => MonthViewData;
+  getEventsForDate: (date: Date) => CalendarEvent[];
   getAllEventsForDate: (date: string) => CalendarEvent[];
   checkTimeConflict: (date: string, startTime: string, durationMinutes: number, excludeId?: string) => boolean;
   generateRecurringEvents: (originalEvent: TimeBlock) => void;
@@ -182,40 +187,16 @@ export const useCalendarStore = create<CalendarStore>()(
   },
   
   navigatePrevious: () => {
-    const { currentView, currentDate } = get();
+    const { currentDate } = get();
     const newDate = new Date(currentDate);
-    
-    switch (currentView) {
-      case 'day':
-        newDate.setDate(newDate.getDate() - 1);
-        break;
-      case 'week':
-        newDate.setDate(newDate.getDate() - 7);
-        break;
-      case 'month':
-        newDate.setMonth(newDate.getMonth() - 1);
-        break;
-    }
-    
+    newDate.setDate(newDate.getDate() - 1);
     set({ currentDate: newDate });
   },
   
   navigateNext: () => {
-    const { currentView, currentDate } = get();
+    const { currentDate } = get();
     const newDate = new Date(currentDate);
-    
-    switch (currentView) {
-      case 'day':
-        newDate.setDate(newDate.getDate() + 1);
-        break;
-      case 'week':
-        newDate.setDate(newDate.getDate() + 7);
-        break;
-      case 'month':
-        newDate.setMonth(newDate.getMonth() + 1);
-        break;
-    }
-    
+    newDate.setDate(newDate.getDate() + 1);  
     set({ currentDate: newDate });
   },
   
@@ -267,80 +248,10 @@ export const useCalendarStore = create<CalendarStore>()(
     };
   },
   
-  getWeekViewData: (date: Date) => {
-    const { timeBlocks } = get();
-    
-    const startOfWeek = new Date(date);
-    const day = startOfWeek.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    startOfWeek.setDate(startOfWeek.getDate() - day); // Go back to Sunday
-    
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    
-    console.log('🗓️ getWeekViewData Debug:', {
-      inputDate: date.toISOString(),
-      startOfWeek: startOfWeek.toISOString(),
-      endOfWeek: endOfWeek.toISOString(),
-      totalTimeBlocks: timeBlocks.length,
-      timeBlockDates: timeBlocks.map(b => b.date)
-    });
-    
-    const days: DayViewData[] = [];
-    for (let i = 0; i < 7; i++) {
-      const currentDay = new Date(startOfWeek);
-      currentDay.setDate(startOfWeek.getDate() + i);
-      const dayViewData = get().getDayViewData(currentDay);
-      
-      console.log(`📅 Week Day ${i}:`, {
-        date: formatDateToString(currentDay),
-        eventsFound: dayViewData.events.length
-      });
-      
-      days.push(dayViewData);
-    }
-    
-    return {
-      weekStart: formatDateToString(startOfWeek),
-      weekEnd: formatDateToString(endOfWeek),
-      days
-    };
-  },
   
-  getMonthViewData: (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    
-    // Get first day of month and adjust to start on Sunday
-    const firstDay = new Date(year, month, 1);
-    const startDate = new Date(firstDay);
-    const dayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    startDate.setDate(firstDay.getDate() - dayOfWeek); // Go back to Sunday
-    
-    // Get days to display (usually 42 days - 6 weeks)
-    const days: (DayViewData & { dayNumber: number; isCurrentMonth: boolean; isToday: boolean })[] = [];
-    const today = new Date();
-    
-    for (let i = 0; i < 42; i++) {
-      const currentDay = new Date(startDate);
-      currentDay.setDate(startDate.getDate() + i);
-      
-      const dayData = get().getDayViewData(currentDay);
-      const isCurrentMonth = currentDay.getMonth() === month;
-      const isToday = formatDateToString(currentDay) === formatDateToString(today);
-      
-      days.push({
-        ...dayData,
-        dayNumber: currentDay.getDate(),
-        isCurrentMonth,
-        isToday
-      });
-    }
-    
-    return {
-      year,
-      month,
-      days
-    };
+  getEventsForDate: (date: Date) => {
+    const dateString = formatDateToString(date);
+    return get().getAllEventsForDate(dateString);
   },
   
   getAllEventsForDate: (date: string) => {
@@ -430,6 +341,18 @@ export const useCalendarStore = create<CalendarStore>()(
     set((state) => ({
       timeBlocks: [...state.timeBlocks, ...recurringInstances]
     }));
+  },
+
+  isRecurringEvent: (id: string) => {
+    const { timeBlocks } = get();
+    const block = timeBlocks.find(b => b.id === id);
+    return !!(block?.isRecurring || block?.originalEventId);
+  },
+  
+  getOriginalEventId: (id: string) => {
+    const { timeBlocks } = get();
+    const block = timeBlocks.find(b => b.id === id);
+    return block?.originalEventId || (block?.isRecurring ? id : null);
   },
 
   cleanupRecurringEvents: (originalEventId: string) => {

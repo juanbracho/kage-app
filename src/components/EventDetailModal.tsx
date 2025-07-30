@@ -37,6 +37,9 @@ export default function EventDetailModal({
     }
   }, [event, isOpen]);
 
+  // Always call the swipe hook before any early returns
+  const swipeHandlers = useModalSwipe(onClose, !isOpen);
+
   if (!isOpen || !localEvent) return null;
 
   const handleEdit = () => {
@@ -132,8 +135,6 @@ export default function EventDetailModal({
     
     setShowDeleteConfirm(false);
   };
-
-  const swipeHandlers = useModalSwipe(onClose, !isOpen);
 
   return (
     <>

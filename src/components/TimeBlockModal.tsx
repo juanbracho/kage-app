@@ -139,8 +139,8 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
     if (!formData.startTime) return false;
     if (formData.durationMinutes < 15) return false;
     
-    // Check for time conflicts
-    if (checkTimeConflict(formData.date, formData.startTime, formData.durationMinutes)) {
+    // Check for time conflicts (exclude current time block when editing)
+    if (checkTimeConflict(formData.date, formData.startTime, formData.durationMinutes, editingTimeBlock?.id)) {
       return false;
     }
     
@@ -532,7 +532,7 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
                 </div>
               </div>
             </div>
-            {checkTimeConflict(formData.date, formData.startTime, formData.durationMinutes) && (
+            {checkTimeConflict(formData.date, formData.startTime, formData.durationMinutes, editingTimeBlock?.id) && (
               <div className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
                 <span>⚠️</span>
                 <span>Time conflict detected with existing time block</span>

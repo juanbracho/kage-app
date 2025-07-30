@@ -14,49 +14,15 @@ import OfflineIndicator from './components/OfflineIndicator'
 import ErrorBoundary from './components/ErrorBoundary'
 import OnboardingFlow from './components/onboarding/OnboardingFlow'
 import { logPWAEnvironment, logErrorWithPWAContext } from './utils/pwaDetection'
-import { useNavigationSwipe } from './hooks/useSwipeGesture'
+// Removed navigation swipe import - no longer using page swipes
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const { settings, initializeSettings, isOnboardingCompleted } = useSettingsStore()
   const { isOnboardingActive } = useOnboardingStore()
 
-  // Tab navigation order for swipe gestures (matches bottom bar sequence)
-  const navigationOrder = ['goals', 'tasks', 'habits', 'calendar', 'journal', 'settings']
-  
-  // Navigation functions for swipe gestures
-  const navigateToNextTab = () => {
-    const currentIndex = navigationOrder.indexOf(activeTab)
-    
-    // If on dashboard or not found, go to first tab (goals)
-    if (currentIndex === -1) {
-      setActiveTab(navigationOrder[0])
-      return
-    }
-    
-    const nextIndex = (currentIndex + 1) % navigationOrder.length
-    setActiveTab(navigationOrder[nextIndex])
-  }
-  
-  const navigateToPrevTab = () => {
-    const currentIndex = navigationOrder.indexOf(activeTab)
-    
-    // If on dashboard or not found, go to last tab (settings)
-    if (currentIndex === -1) {
-      setActiveTab(navigationOrder[navigationOrder.length - 1])
-      return
-    }
-    
-    const prevIndex = currentIndex === 0 ? navigationOrder.length - 1 : currentIndex - 1
-    setActiveTab(navigationOrder[prevIndex])
-  }
-  
-  // Add swipe navigation (disabled during onboarding)
-  const navigationSwipes = useNavigationSwipe(
-    navigateToNextTab,
-    navigateToPrevTab,
-    isOnboardingActive
-  )
+  // Removed: Navigation swipe functions and useNavigationSwipe
+  // Page navigation now only works via bottom tab bar
 
   // Initialize settings on app startup
   useEffect(() => {
@@ -216,7 +182,6 @@ function App() {
   return (
     <ErrorBoundary>
       <div 
-        {...navigationSwipes}
         className="w-full max-w-md mx-auto min-h-screen bg-gray-50 dark:bg-gray-900 shadow-xl overflow-hidden flex flex-col"
       >
       {/* Header */}
