@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CalendarEvent } from '../types/calendar';
 import { X, Clock, Calendar, Edit2, Check, Trash2, Loader2 } from 'lucide-react';
-import { useModalSwipe } from '../hooks/useSwipeGesture';
+;
 
 interface EventDetailModalProps {
   event: CalendarEvent | null;
@@ -38,7 +38,6 @@ export default function EventDetailModal({
   }, [event, isOpen]);
 
   // Always call the swipe hook before any early returns
-  const swipeHandlers = useModalSwipe(onClose, !isOpen);
 
   if (!isOpen || !localEvent) return null;
 
@@ -145,7 +144,6 @@ export default function EventDetailModal({
       >
         {/* Modal */}
         <div 
-          {...swipeHandlers}
           className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full max-h-[80vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >

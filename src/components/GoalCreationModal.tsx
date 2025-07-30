@@ -14,7 +14,6 @@ import {
 import TaskHabitExpandableSection from './TaskHabitExpandableSection';
 import TaskCreationMiniModal from './TaskCreationMiniModal';
 import HabitCreationMiniModal from './HabitCreationMiniModal';
-import { useModalSwipe } from '../hooks/useSwipeGesture';
 
 interface GoalCreationModalProps {
   isOpen: boolean;

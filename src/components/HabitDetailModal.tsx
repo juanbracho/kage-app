@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Habit } from '../types/habit';
 import { useHabitStore, formatDateToString } from '../store/habitStore';
 import { X, Edit3, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useModalSwipe } from '../hooks/useSwipeGesture';
 
 interface HabitDetailModalProps {
   habit: Habit | null;
@@ -27,7 +26,6 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
   const [currentDate, setCurrentDate] = useState(new Date());
 
   // Always call the swipe hook before any early returns
-  const swipeHandlers = useModalSwipe(onClose, !isOpen);
 
   if (!isOpen || !habit) return null;
 
@@ -165,7 +163,7 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
       />
       
       {/* Modal */}
-      <div {...swipeHandlers} className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-800 rounded-t-3xl shadow-2xl transform transition-transform max-h-[90vh] overflow-y-auto">
+      <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-800 rounded-t-3xl shadow-2xl transform transition-transform max-h-[90vh] overflow-y-auto">
         {/* Handle bar */}
         <div className="flex justify-center pt-3 pb-2">
           <div className="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></div>

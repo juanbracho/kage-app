@@ -6,7 +6,6 @@ import { useGoalStore } from '../store/goalStore'
 import { useHabitStore } from '../store/habitStore'
 import { MOOD_OPTIONS, LINK_TYPES, type Mood, type JournalFormData } from '../types/journal'
 import LinkingDropdown from './LinkingDropdown'
-import { useModalSwipe } from '../hooks/useSwipeGesture'
 
 interface JournalEntryModalProps {
   isOpen: boolean
@@ -237,14 +236,12 @@ export default function JournalEntryModal({ isOpen, onClose, defaultGoalId }: Jo
   const canSave = characterCount >= 10
 
   // Add swipe-to-close functionality (defined after all functions)
-  const swipeHandlers = useModalSwipe(onClose, !isOpen)
 
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 sm:p-4 md:p-5">
       <div 
-        {...swipeHandlers}
         className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm sm:max-w-md md:max-w-lg max-h-[90vh] overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-300 text-gray-900 dark:text-white"
       >
         {/* Header */}

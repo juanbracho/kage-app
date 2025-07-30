@@ -258,15 +258,6 @@ export const useSwipeGesture = ({
 };
 
 // Helper hook for common gesture patterns
-// Modal swipe utility function - swipe up to close modals
-export const useModalSwipe = (onClose: () => void, disabled = false) => {
-  return useSwipeGesture({
-    onSwipeUp: onClose,
-    threshold: 40,  // Reduced from 75px for better sensitivity
-    preventHorizontal: true,
-    disabled
-  });
-};
 
 // REMOVED: Navigation swipe functionality
 // Page navigation is now handled exclusively through bottom tab bar
