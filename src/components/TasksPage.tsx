@@ -41,6 +41,9 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
   const { goals } = useGoalStore();
   
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [editingTask, setEditingTask] = useState<any>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
   // Cleanup empty subtasks on component mount
   useEffect(() => {
@@ -56,19 +59,11 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
     const cleanup = safeAddEventListener('openTaskModal', handleOpenTaskModal);
     return cleanup;
   }, [openModal]);
-  const [editingTask, setEditingTask] = useState<any>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
   
   // Get filtered tasks and organize by sections
   const filteredTasks = getFilteredTasks();
   const { today, overdue, upcoming, noDueDate } = getTasksBySection();
   const taskCounts = getTaskCounts();
-  
-  // Show empty state if no tasks exist
-  if (tasks.length === 0) {
-    return <TasksEmpty onNavigate={onNavigate} />;
-  }
   
   const toggleExpanded = (taskId: string) => {
     setExpandedTasks(prev => {
@@ -110,6 +105,11 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
     setTaskToDelete(null);
     setShowDeleteConfirm(false);
   };
+  
+  // Show empty state if no tasks exist
+  if (tasks.length === 0) {
+    return <TasksEmpty onNavigate={onNavigate} />;
+  }
 
   const renderTaskCard = (task: any) => {
     const isExpanded = expandedTasks.has(task.id);

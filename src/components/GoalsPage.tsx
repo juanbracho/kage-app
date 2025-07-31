@@ -28,6 +28,14 @@ export default function GoalsPage({ onNavigate }: GoalsPageProps) {
 
   const filteredGoals = getFilteredGoals();
 
+  const handleCreateGoal = () => {
+    console.log('handleCreateGoal called, opening modal');
+    console.log('modalState before:', modalState);
+    setGoalToEdit(null);
+    openModal();
+    console.log('openModal called');
+  };
+
   // Listen for custom event to open goal modal from dashboard
   useEffect(() => {
     const handleOpenGoalModal = () => {
@@ -46,19 +54,6 @@ export default function GoalsPage({ onNavigate }: GoalsPageProps) {
       recalculateAllGoalProgress();
     }
   }, [goals.length, recalculateAllGoalProgress]);
-
-  // Show empty state if no goals exist
-  if (goals.length === 0) {
-    return <GoalsEmpty />;
-  }
-
-  const handleCreateGoal = () => {
-    console.log('handleCreateGoal called, opening modal');
-    console.log('modalState before:', modalState);
-    setGoalToEdit(null);
-    openModal();
-    console.log('openModal called');
-  };
 
   const handleGoalClick = (goal: Goal) => {
     setSelectedGoal(goal);
@@ -81,6 +76,10 @@ export default function GoalsPage({ onNavigate }: GoalsPageProps) {
     closeModal();
   };
 
+  // Show empty state if no goals exist
+  if (goals.length === 0) {
+    return <GoalsEmpty />;
+  }
 
   // Show detail view if goal is selected
   if (showDetail && selectedGoal) {

@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/kage-app/',
+  // Use relative paths for Capacitor/mobile builds, absolute for web deployment
+  base: process.env.CAPACITOR ? './' : '/kage-app/',
   plugins: [
     react()
   ],

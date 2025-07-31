@@ -8,7 +8,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const BASE_PATH = '/kage-app';
+const BASE_PATH = process.env.CAPACITOR ? '.' : '/kage-app';
 const DIST_DIR = 'dist';
 const MANIFEST_PATH = path.join(DIST_DIR, 'manifest.json');
 
@@ -91,6 +91,18 @@ ${cacheControlMeta}`
     );
   } else {
     console.log('⏭️  Cache headers already present, skipping');
+  }
+  
+  // Fix hardcoded paths for Capacitor builds
+  if (process.env.CAPACITOR) {
+    console.log('📱 Fixing asset paths for Capacitor...');
+    
+    // Replace hardcoded /kage-app/ paths with relative paths
+    indexContent = indexContent.replace(/href="\/kage-app\//g, 'href="./');
+    indexContent = indexContent.replace(/content="\/kage-app\//g, 'content="./');
+    indexContent = indexContent.replace(/register\('\/kage-app\//g, "register('./");
+    
+    console.log('✅ Asset paths fixed for Capacitor');
   }
   
   fs.writeFileSync(indexPath, indexContent);
