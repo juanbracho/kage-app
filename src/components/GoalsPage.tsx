@@ -6,7 +6,6 @@ import GoalsEmpty from './GoalsEmpty';
 import GoalCard from './GoalCard';
 import GoalCreationModal from './GoalCreationModal';
 import GoalDetail from './GoalDetail';
-import { usePageCreationSwipe } from '../hooks/useSwipeGesture';
 
 
 interface GoalsPageProps {
@@ -82,8 +81,6 @@ export default function GoalsPage({ onNavigate }: GoalsPageProps) {
     closeModal();
   };
 
-  // Add swipe up to create goal gesture
-  const creationSwipeHandlers = usePageCreationSwipe(handleCreateGoal);
 
   // Show detail view if goal is selected
   if (showDetail && selectedGoal) {
@@ -98,7 +95,7 @@ export default function GoalsPage({ onNavigate }: GoalsPageProps) {
   }
 
   return (
-    <div {...creationSwipeHandlers} className="space-y-6">
+    <div className="space-y-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>

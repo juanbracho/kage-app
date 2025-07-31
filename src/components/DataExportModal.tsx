@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { X, Download, FileJson, Calendar, CheckCircle, AlertCircle, Archive } from 'lucide-react';
-import { useModalSwipe } from '../hooks/useSwipeGesture';
 import { useHabitStore } from '../store/habitStore';
 import { useTaskStore } from '../store/taskStore';
 import { useGoalStore } from '../store/goalStore';
@@ -13,7 +12,7 @@ interface DataExportModalProps {
   onClose: () => void;
 }
 
-type ExportFormat = 'kage-full' | 'kage-habits' | 'habitkit-compatible';
+type ExportFormat = 'kage-full' | 'kage-habits';
 
 interface ExportProgress {
   stage: 'idle' | 'preparing' | 'generating' | 'completed' | 'error';
@@ -46,7 +45,6 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
   const { timeBlocks } = useCalendarStore();
   const { user } = useUserStore();
 
-  const swipeHandlers = useModalSwipe(onClose, !isOpen);
 
   if (!isOpen) return null;
 
@@ -106,37 +104,6 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
     return JSON.stringify(exportData, null, 2);
   };
 
-  const generateHabitKitCompatibleExport = () => {
-    // Convert Kage habits to HabitKit format for compatibility
-    const habitKitHabits = habits.map(habit => ({
-      id: habit.id,
-      name: habit.name,
-      description: habit.description || null,
-      icon: 'default', // HabitKit uses string icons, we use emojis
-      color: habit.color.replace('#', '').toLowerCase(),
-      archived: false,
-      orderIndex: habits.indexOf(habit),
-      createdAt: habit.createdAt,
-      isInverse: false,
-      emoji: habit.icon
-    }));
-
-    const habitKitCompletions = completions.map(completion => ({
-      id: completion.id,
-      date: new Date(completion.date + 'T06:00:00.000Z').toISOString(),
-      habitId: completion.habitId,
-      timezoneOffsetInMinutes: -360, // Default timezone offset
-      amountOfCompletions: completion.completed ? 1 : 0,
-      note: completion.notes || null
-    }));
-
-    const exportData = {
-      habits: habitKitHabits,
-      completions: habitKitCompletions
-    };
-
-    return JSON.stringify(exportData, null, 2);
-  };
 
   const downloadFile = (content: string, filename: string, contentType: string) => {
     const blob = new Blob([content], { type: contentType });
@@ -168,9 +135,6 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
           totalItems = stats.habits + stats.tasks + stats.goals + stats.journalEntries + stats.timeBlocks + stats.habitCompletions;
           break;
         case 'kage-habits':
-          totalItems = stats.habits + stats.habitCompletions;
-          break;
-        case 'habitkit-compatible':
           totalItems = stats.habits + stats.habitCompletions;
           break;
       }
@@ -218,12 +182,6 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
           filename = `kage-habits-export-${timestamp}.json`;
           break;
 
-        case 'habitkit-compatible':
-          await updateProgress(stats.habits, 'Converting habits...');
-          await updateProgress(stats.habitCompletions, 'Converting completions...');
-          exportContent = generateHabitKitCompatibleExport();
-          filename = `habitkit-compatible-${timestamp}.json`;
-          break;
 
         default:
           throw new Error('Invalid export format selected');
@@ -282,19 +240,11 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
       icon: <Calendar className="w-5 h-5 text-green-500" />,
       stats: `${stats.habits} habits, ${stats.habitCompletions} completions`
     },
-    {
-      id: 'habitkit-compatible' as ExportFormat,
-      title: 'HabitKit Compatible',
-      description: 'Export in HabitKit format for compatibility',
-      icon: <FileJson className="w-5 h-5 text-purple-500" />,
-      stats: `${stats.habits} habits (HabitKit format)`
-    }
   ];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div 
-        {...swipeHandlers}
         className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden"
       >
         {/* Header */}

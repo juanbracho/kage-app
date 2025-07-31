@@ -6,7 +6,6 @@ import { useSettingsStore } from '../store/settingsStore';
 import { Task } from '../types/task';
 import { Habit } from '../types/habit';
 import { createQuickAddOptions, createCalendarEventFromTask, createCalendarEventsFromHabit } from '../utils/calendarMapping';
-import { useSwipeGesture } from '../hooks/useSwipeGesture';
 import { getAccentColorValue } from '../utils/accentColors';
 import TimeBlockModal from './TimeBlockModal';
 
@@ -107,11 +106,6 @@ export default function CalendarQuickAddModal({
     onClose();
   };
 
-  const modalSwipe = useSwipeGesture({
-    onSwipeUp: onClose,
-    threshold: 75,
-    preventHorizontal: true
-  });
 
   if (!isOpen) return null;
 
@@ -121,7 +115,6 @@ export default function CalendarQuickAddModal({
         <div
           className="bg-gray-800 w-full max-w-md rounded-t-2xl p-6 transform transition-transform max-h-[80vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
-          {...modalSwipe.swipeHandlers}
         >
           {/* Handle Bar */}
           <div className="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6" />

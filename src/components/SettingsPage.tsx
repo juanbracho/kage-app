@@ -18,6 +18,7 @@ import {
   Key,
   LogOut,
   Download,
+  Upload,
   PlayCircle
 } from 'lucide-react'
 import { useSettingsStore } from '../store/settingsStore'
@@ -28,6 +29,7 @@ import SettingsSection from './SettingsSection'
 import SettingsItem from './SettingsItem'
 import AccentColorPickerModal from './AccentColorPickerModal'
 import DataExportModal from './DataExportModal'
+import HabitKitImportModal from './HabitKitImportModal'
 
 export default function SettingsPage() {
   const { 
@@ -43,6 +45,7 @@ export default function SettingsPage() {
   const { startOnboarding } = useOnboardingStore()
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
   const handleReminderTimeChange = () => {
     // This would open a time picker modal
@@ -65,6 +68,10 @@ export default function SettingsPage() {
 
   const handleDataExport = () => {
     setIsExportModalOpen(true)
+  }
+
+  const handleDataImport = () => {
+    setIsImportModalOpen(true)
   }
 
   const handleSignOut = () => {
@@ -176,6 +183,15 @@ export default function SettingsPage() {
           subtitle="How we protect your data"
           type="navigate"
           onClick={() => console.log('Open privacy policy')}
+        />
+        
+        <SettingsItem
+          icon={<Upload className="w-4 h-4" />}
+          iconBgColor="bg-blue-500"
+          title="Import Data"
+          subtitle="Import habits from other apps"
+          type="navigate"
+          onClick={handleDataImport}
         />
         
         <SettingsItem
@@ -307,6 +323,12 @@ export default function SettingsPage() {
       <DataExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
+      />
+
+      {/* Data Import Modal */}
+      <HabitKitImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
       />
     </div>
   )

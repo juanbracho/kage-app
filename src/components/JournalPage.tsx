@@ -5,7 +5,6 @@ import { useTaskStore } from '../store/taskStore'
 import { MOOD_OPTIONS, type JournalFilter } from '../types/journal'
 import JournalEmpty from './JournalEmpty'
 import JournalEntryModal from './JournalEntryModal'
-import { usePageCreationSwipe } from '../hooks/useSwipeGesture'
 
 export default function JournalPage() {
   const { 
@@ -65,8 +64,6 @@ export default function JournalPage() {
     openModal()
   }
 
-  // Add swipe up to create journal entry gesture
-  const creationSwipeHandlers = usePageCreationSwipe(handleCreateEntry);
 
   // Listen for custom event to open journal modal from dashboard
   useEffect(() => {
@@ -185,7 +182,7 @@ export default function JournalPage() {
   }
 
   return (
-    <div {...creationSwipeHandlers} className="space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Journal</h1>

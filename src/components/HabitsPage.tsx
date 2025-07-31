@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Download } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useHabitStore } from '../store/habitStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { Habit } from '../types/habit';
@@ -7,8 +7,6 @@ import HabitRow from './HabitRow';
 import HabitCreationModal from './HabitCreationModal';
 import HabitDetailModal from './HabitDetailModal';
 import HabitsEmpty from './HabitsEmpty';
-import HabitKitImportModal from './HabitKitImportModal';
-import { usePageCreationSwipe } from '../hooks/useSwipeGesture';
 
 interface HabitsPageProps {
   onNavigate: (tab: string) => void;
@@ -21,7 +19,6 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showImportModal, setShowImportModal] = useState(false);
   
   const handleHabitClick = (habitId: string) => {
     const habit = habits.find(h => h.id === habitId);
@@ -50,16 +47,7 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
     setShowCreationModal(true);
   };
 
-  const handleImportData = () => {
-    setShowImportModal(true);
-  };
 
-  const handleCloseImportModal = () => {
-    setShowImportModal(false);
-  };
-
-  // Add swipe up to create habit gesture
-  const creationSwipeHandlers = usePageCreationSwipe(handleCreateHabit);
 
   // Listen for custom event to open habit modal from dashboard
   useEffect(() => {
@@ -75,10 +63,8 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
   // Show empty state if no habits
   if (habits.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
-        <div className="p-6">
-          <HabitsEmpty onCreateHabit={handleCreateHabit} />
-        </div>
+      <>
+        <HabitsEmpty onCreateHabit={handleCreateHabit} />
         {showCreationModal && (
           <HabitCreationModal 
             isOpen={showCreationModal}
@@ -86,7 +72,7 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
             editingHabit={editingHabit}
           />
         )}
-      </div>
+      </>
     );
   }
 
@@ -128,33 +114,24 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
   const currentDateString = getCurrentDateString();
 
   return (
-    <div {...creationSwipeHandlers} className="min-h-screen bg-gray-900 text-white space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="px-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Habits</h1>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleImportData}
-              className="bg-gray-600 hover:bg-gray-500 text-white px-3 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors text-sm"
-            >
-              <Download className="w-4 h-4" />
-              Import
-            </button>
-            <button
-              onClick={handleCreateHabit}
-              className="accent-bg-500 hover-accent-bg-dark text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Add Habit
-            </button>
-          </div>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Habits</h1>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleCreateHabit}
+            className="accent-bg-500 hover-accent-bg-dark text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Habit
+          </button>
         </div>
       </div>
 
       {/* Calendar Section */}
-      <div className="px-6 pb-5 text-center">
-        <div className="text-lg font-medium mb-4 text-white">
+      <div className="text-center">
+        <div className="text-lg font-medium mb-4 text-gray-900 dark:text-white">
           {currentDateString}
         </div>
         
@@ -182,7 +159,7 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
       </div>
 
       {/* Habits List Section */}
-      <div className="px-6">
+      <div>
         
         {/* Habits List */}
         <div className="space-y-3">
@@ -215,11 +192,6 @@ export default function HabitsPage({ onNavigate: _onNavigate }: HabitsPageProps)
         onEdit={handleEditHabit}
       />
 
-      {/* Import Modal */}
-      <HabitKitImportModal
-        isOpen={showImportModal}
-        onClose={handleCloseImportModal}
-      />
     </div>
   );
 }

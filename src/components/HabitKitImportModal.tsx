@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { X, Upload, FileText, CheckCircle, AlertCircle, Download } from 'lucide-react';
 import { useHabitStore } from '../store/habitStore';
-import { useModalSwipe } from '../hooks/useSwipeGesture';
 import { Habit, HabitCompletion } from '../types/habit';
 
 interface HabitKitImportModalProps {
@@ -82,7 +81,6 @@ export default function HabitKitImportModal({ isOpen, onClose }: HabitKitImportM
   });
 
   const { addHabit, addHabitCompletion } = useHabitStore();
-  const swipeHandlers = useModalSwipe(onClose, !isOpen);
 
   if (!isOpen) return null;
 
@@ -157,8 +155,27 @@ export default function HabitKitImportModal({ isOpen, onClose }: HabitKitImportM
   };
 
   const mapCompletionToKage = (completion: HabitKitData['completions'][0]): HabitCompletion => {
-    const date = new Date(completion.date);
-    const dateString = date.toISOString().split('T')[0];
+    // Convert HabitKit date to the correct local date
+    // HabitKit exports contain UTC timestamps with timezone offset information
+    const utcDate = new Date(completion.date);
+    const offsetMinutes = completion.timezoneOffsetInMinutes || 0;
+    
+    // The timezone offset tells us how many minutes ahead/behind UTC the user's timezone was
+    // To get the local date, we apply this offset to the UTC time
+    const localDate = new Date(utcDate.getTime() + (offsetMinutes * 60000));
+    const dateString = localDate.toISOString().split('T')[0];
+    
+    // Debug logging for the first few completions
+    if (Math.random() < 0.01) { // Log ~1% of completions for debugging
+      console.log('HabitKit Import Debug:', {
+        originalDate: completion.date,
+        offsetMinutes: offsetMinutes,
+        utcDate: utcDate.toISOString(),
+        localDate: localDate.toISOString(),
+        finalDate: dateString,
+        completed: completion.amountOfCompletions > 0
+      });
+    }
     
     return {
       id: completion.id,
@@ -227,10 +244,24 @@ export default function HabitKitImportModal({ isOpen, onClose }: HabitKitImportM
       // Import completions for active habits
       const activeHabitIds = new Set(activeHabits.map(h => h.id));
       const relevantCompletions = completions.filter(c => activeHabitIds.has(c.habitId));
+      
+      // Track processed completions to avoid duplicates
+      const processedCompletions = new Set<string>();
 
       for (const completion of relevantCompletions) {
         try {
           const kageCompletion = mapCompletionToKage(completion);
+          
+          // Create a unique key for this completion (habitId + date)
+          const completionKey = `${kageCompletion.habitId}-${kageCompletion.date}`;
+          
+          // Skip if we already processed a completion for this habit on this date
+          if (processedCompletions.has(completionKey)) {
+            console.warn(`Skipping duplicate completion for habit ${kageCompletion.habitId} on date ${kageCompletion.date}`);
+            continue;
+          }
+          
+          processedCompletions.add(completionKey);
           addHabitCompletion(kageCompletion);
           completionsProcessed++;
           
@@ -291,7 +322,6 @@ export default function HabitKitImportModal({ isOpen, onClose }: HabitKitImportM
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div 
-        {...swipeHandlers}
         className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden"
       >
         {/* Header */}

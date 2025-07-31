@@ -10,7 +10,6 @@ import {
   TaskSchedulingOptions,
   HabitSchedulingOptions
 } from '../utils/calendarMapping';
-import { useSwipeGesture } from '../hooks/useSwipeGesture';
 
 interface CalendarSchedulerModalProps {
   isOpen: boolean;
@@ -90,11 +89,6 @@ export default function CalendarSchedulerModal({
     onClose();
   };
 
-  const modalSwipe = useSwipeGesture({
-    onSwipeUp: onClose,
-    threshold: 75,
-    preventHorizontal: true
-  });
 
   if (!isOpen) return null;
 
@@ -103,7 +97,6 @@ export default function CalendarSchedulerModal({
       <div
         className="bg-gray-800 w-full max-w-md rounded-t-2xl p-6 transform transition-transform"
         onClick={(e) => e.stopPropagation()}
-        {...modalSwipe.swipeHandlers}
       >
         {/* Handle Bar */}
         <div className="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-6" />

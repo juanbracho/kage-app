@@ -9,7 +9,6 @@ import { Habit } from '../types/habit';
 import TimeBlockModal from './TimeBlockModal';
 import CalendarQuickAddModal from './CalendarQuickAddModal';
 import RecurringEventActionModal from './RecurringEventActionModal';
-import { useSwipeGesture } from '../hooks/useSwipeGesture';
 import { useCalendarEventGestures } from '../hooks/useCalendarEventGestures';
 import { getAccentColorValue } from '../utils/accentColors';
 
@@ -179,19 +178,9 @@ export default function DailyTimelineView({
     return '';
   };
 
-  // Swipe gesture for quick add
-  const { swipeHandlers } = useSwipeGesture({
-    onSwipeUp: () => {
-      // Quick add at current time
-      const currentHour = new Date().getHours();
-      handleEmptySlotClick(currentHour);
-    },
-    threshold: 60,
-    preventHorizontal: true
-  });
 
   return (
-    <div className="flex flex-col h-full bg-gray-900" {...swipeHandlers}>
+    <div className="flex flex-col h-full bg-gray-900">
       {/* Compact Date Header with Navigation */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         <div className="flex items-center gap-3">
