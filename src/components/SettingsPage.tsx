@@ -29,7 +29,7 @@ import SettingsSection from './SettingsSection'
 import SettingsItem from './SettingsItem'
 import AccentColorPickerModal from './AccentColorPickerModal'
 import DataExportModal from './DataExportModal'
-import HabitKitImportModal from './HabitKitImportModal'
+import DataImportModal from './DataImportModal'
 
 export default function SettingsPage() {
   const { 
@@ -189,7 +189,7 @@ export default function SettingsPage() {
           icon={<Upload className="w-4 h-4" />}
           iconBgColor="bg-blue-500"
           title="Import Data"
-          subtitle="Import habits from other apps"
+          subtitle="Import from Kage backups or HabitKit"
           type="navigate"
           onClick={handleDataImport}
         />
@@ -326,7 +326,7 @@ export default function SettingsPage() {
       />
 
       {/* Data Import Modal */}
-      <HabitKitImportModal
+      <DataImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
       />
