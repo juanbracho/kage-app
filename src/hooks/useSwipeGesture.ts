@@ -274,3 +274,13 @@ export const usePageCreationSwipe = (onCreate: () => void, disabled = false) => 
     disabled
   });
 };
+
+// Modal swipe utility function - swipe up to close modals
+export const useModalSwipe = (onClose: () => void, disabled = false) => {
+  return useSwipeGesture({
+    onSwipeUp: onClose,
+    threshold: 75,  // Standard threshold for modal dismissal
+    preventHorizontal: true,
+    disabled
+  });
+};

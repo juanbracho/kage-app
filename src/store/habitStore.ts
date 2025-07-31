@@ -8,7 +8,8 @@ interface HabitStore {
   habits: Habit[];
   completions: HabitCompletion[];
   viewMode: 'grid' | 'list';
-  addHabit: (habitData: HabitFormData) => string;
+  addHabit: (habitData: HabitFormData | Omit<Habit, 'completions'>) => string;
+  addHabitCompletion: (completion: HabitCompletion) => void;
   updateHabit: (id: string, updates: Partial<Habit>) => void;
   deleteHabit: (id: string) => void;
   toggleCompletion: (habitId: string, date: string) => void;
@@ -309,11 +310,16 @@ export const useHabitStore = create<HabitStore>()(
   completions: [],
   viewMode: 'list',
   
-  addHabit: (habitData: HabitFormData): string => {
-    const habitId = generateId();
-    const newHabit: Habit = {
+  addHabit: (habitData: HabitFormData | Omit<Habit, 'completions'>): string => {
+    const isFullHabit = 'createdAt' in habitData;
+    const habitId = isFullHabit ? habitData.id : generateId();
+    
+    const newHabit: Habit = isFullHabit ? {
+      ...habitData as Omit<Habit, 'completions'>,
+      completions: []
+    } : {
       id: habitId,
-      ...habitData,
+      ...habitData as HabitFormData,
       streak: 0,
       completions: [],
       createdAt: new Date().toISOString(),
@@ -341,6 +347,12 @@ export const useHabitStore = create<HabitStore>()(
     }
     
     return habitId;
+  },
+
+  addHabitCompletion: (completion: HabitCompletion) => {
+    set((state) => ({
+      completions: [...state.completions, completion]
+    }));
   },
   
   updateHabit: (id: string, updates: Partial<Habit>) => {

@@ -27,6 +27,7 @@ import ProfileSection from './ProfileSection'
 import SettingsSection from './SettingsSection'
 import SettingsItem from './SettingsItem'
 import AccentColorPickerModal from './AccentColorPickerModal'
+import DataExportModal from './DataExportModal'
 
 export default function SettingsPage() {
   const { 
@@ -41,6 +42,7 @@ export default function SettingsPage() {
   const { signOut, isPremiumUser } = useUserStore()
   const { startOnboarding } = useOnboardingStore()
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false)
 
   const handleReminderTimeChange = () => {
     // This would open a time picker modal
@@ -62,7 +64,7 @@ export default function SettingsPage() {
   }
 
   const handleDataExport = () => {
-    console.log('Export data')
+    setIsExportModalOpen(true)
   }
 
   const handleSignOut = () => {
@@ -299,6 +301,12 @@ export default function SettingsPage() {
       <AccentColorPickerModal 
         isOpen={isColorPickerOpen}
         onClose={() => setIsColorPickerOpen(false)}
+      />
+
+      {/* Data Export Modal */}
+      <DataExportModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
       />
     </div>
   )
