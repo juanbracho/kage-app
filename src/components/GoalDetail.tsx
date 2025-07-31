@@ -17,7 +17,7 @@ interface GoalDetailProps {
 }
 
 export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDetailProps) {
-  const { getTasksByGoal, addTask, toggleTask, deleteTask } = useTaskStore();
+  const { getTasksByGoal, addTask, updateTask, toggleTask, deleteTask } = useTaskStore();
   const { getHabitsByGoal, getHabitStreak, isHabitCompletedToday, toggleDayCompletion, deleteHabit } = useHabitStore();
   const { deleteGoal, toggleGoalCompletion } = useGoalStore();
   const { entries } = useJournalStore();
@@ -168,8 +168,13 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
   };
 
   const handleTaskSubmit = (taskData: any) => {
-    // Task modal already has goal ID pre-populated via defaultGoalId prop
-    addTask(taskData);
+    if (editingTask) {
+      // Update existing task
+      updateTask(editingTask.id, taskData);
+    } else {
+      // Create new task - modal already has goal ID pre-populated via defaultGoalId prop
+      addTask(taskData);
+    }
     setShowTaskModal(false);
     setEditingTask(null);
   };
