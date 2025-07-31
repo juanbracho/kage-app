@@ -331,10 +331,14 @@ export default function DailyTimelineView({
                       const isEventStarting = eventStartHour === slot.hour;
                       
                       // Calculate total duration for display
-                      let durationHours = eventEndHour - eventStartHour;
-                      if (eventEndMinutes > 0) {
-                        durationHours += eventEndMinutes / 60;
-                      }
+                      const eventStartMinutes = parseInt(event.startTime.split(':')[1]);
+                      
+                      // Convert times to total minutes for accurate calculation
+                      const startTotalMinutes = eventStartHour * 60 + eventStartMinutes;
+                      const endTotalMinutes = eventEndHour * 60 + eventEndMinutes;
+                      
+                      // Calculate duration in hours
+                      const durationHours = (endTotalMinutes - startTotalMinutes) / 60;
                       
                       // Only apply gestures to the starting hour to avoid duplication
                       const gestureProps = isEventStarting ? eventGestures.getEventHandlers(event) : {};
