@@ -130,11 +130,36 @@ Following successful APK installation and testing on user's Android device, comp
 - **Task 5.1**: Fix Dashboard High Priority Task Display (CRITICAL - 2-3 hours)
 - **Task 5.3**: Fix Goal Task Editing Duplication Bug (CRITICAL - 2-3 hours)
 
-### ✅ Session 31 Pre-Work Completed
+### ✅ Session 31 Work Completed
 - Updated `Documentation/task.md` with Phase 5-7 roadmap
-- Updated `Documentation/session.md` with device testing results
+- Updated `Documentation/session.md` with device testing results  
 - All feedback organized and prioritized in `next_steps.md`
-- Ready for Git commit and bug fix implementation
+- **CRITICAL BUG FIXES COMPLETED**:
+
+#### 🐛 Task 5.1: Dashboard High Priority Task Display Bug ✅ FIXED
+**Problem**: High priority tasks were not appearing in dashboard at all
+**Root Cause**: Dashboard logic excluded both `high` and `urgent` priority tasks from Today's Tasks, while only including `urgent` in Urgent section
+**Solution**: Modified `getUrgentTasks()` to include both `urgent` AND `high` priority tasks, and `getTodayTasks()` to only exclude `urgent` priority tasks
+**Result**: High priority tasks now properly display in dashboard
+
+#### 🐛 Task 5.3: Goal Task Editing Duplication Bug ✅ FIXED  
+**Problem**: Editing tasks in goal details modal created duplicates instead of updating existing tasks
+**Root Cause**: `handleTaskSubmit()` always called `addTask()` regardless of edit vs create mode
+**Solution**: Added conditional logic to use `updateTask(editingTask.id, taskData)` when editing, `addTask(taskData)` when creating
+**Result**: Task editing now updates existing tasks instead of duplicating
+
+#### 🐛 Dashboard Duplicate Tasks Bug ✅ FIXED
+**Problem**: Tasks appeared in BOTH Urgent and Today's Tasks sections (user feedback from screenshot)
+**Root Cause**: No deduplication between urgent and today's task sections
+**Solution**: 
+- Refined `getUrgentTasks()` to only include truly urgent items (overdue, urgent priority, imminent deadlines)
+- Updated `getTodayTasks()` to exclude any task IDs already in urgent section
+- Added Set-based deduplication to prevent task duplicates
+**Result**: Clean dashboard with proper task separation - each task appears in exactly one section
+
+### 🚧 Session 31 Incomplete Tasks
+- **APK Generation**: Updated APK with bug fixes blocked by Android Studio build error (OneDrive sync issue)
+- **Status**: Code fixes complete and committed, APK generation pending for Session 32
 
 ---
 
