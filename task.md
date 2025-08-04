@@ -44,7 +44,7 @@ Kage is a comprehensive personal productivity PWA that integrates habits, tasks,
 - [x] Task 5.2: Fix subtask editing bug preserving completion states during task updates
 - [x] Task 5.3: Fix task modal auto-opening on app startup with proper initialization
 - [x] Task 5.4: Implement complete archive goals functionality with Settings management
-- [ ] Task 5.5: Fix mobile autocorrect not working in app input fields
+- [x] Task 5.5: Fix mobile autocorrect not working in app input fields
 
 ## Milestone 6: Performance & Polish
 

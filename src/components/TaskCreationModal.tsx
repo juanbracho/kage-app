@@ -320,6 +320,10 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                 required
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                autoComplete="on"
+                autoCorrect="on"
+                autoCapitalize="sentences"
+                spellCheck="true"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus-accent-ring focus-accent-border outline-none transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="What needs to be done?"
               />
@@ -332,6 +336,10 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
+                autoComplete="on"
+                autoCorrect="on"
+                autoCapitalize="sentences"
+                spellCheck="true"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus-accent-ring focus-accent-border outline-none transition-colors resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Add more details..."
               />
@@ -443,6 +451,10 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                           value={item.name}
                           onChange={(e) => updateShoppingItem(index, 'name', e.target.value)}
                           placeholder="Item name"
+                          autoComplete="on"
+                          autoCorrect="on"
+                          autoCapitalize="words"
+                          spellCheck="true"
                           className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus-accent-ring focus-accent-border outline-none text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
                         {formData.shoppingItems.length > 1 && (
@@ -488,6 +500,10 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                           value={subtask}
                           onChange={(e) => updateSubtask(index, e.target.value)}
                           placeholder={`Subtask ${index + 1}`}
+                          autoComplete="on"
+                          autoCorrect="on"
+                          autoCapitalize="sentences"
+                          spellCheck="true"
                           className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus-accent-ring focus-accent-border outline-none text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
                         <button

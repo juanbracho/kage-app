@@ -306,6 +306,10 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="What will you work on?"
+              autoComplete="on"
+              autoCorrect="on"
+              autoCapitalize="sentences"
+              spellCheck="true"
               className="w-full p-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus-accent-border transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
             />
           </div>
@@ -318,6 +322,10 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Add details about this time block..."
               rows={3}
+              autoComplete="on"
+              autoCorrect="on"
+              autoCapitalize="sentences"
+              spellCheck="true"
               className="w-full p-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus-accent-border transition-colors resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
             />
           </div>

@@ -497,6 +497,10 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="What do you want to achieve?"
                   maxLength={100}
+                  autoComplete="on"
+                  autoCorrect="on"
+                  autoCapitalize="sentences"
+                  spellCheck="true"
                   className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors"
                 />
               </div>
@@ -510,6 +514,10 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                   placeholder="Describe your goal and why it matters to you..."
                   maxLength={500}
                   rows={3}
+                  autoComplete="on"
+                  autoCorrect="on"
+                  autoCapitalize="sentences"
+                  spellCheck="true"
                   className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors resize-none"
                 />
               </div>
@@ -650,6 +658,10 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                   placeholder="How will achieving this goal change your life? What impact will it have on you and others?"
                   maxLength={300}
                   rows={3}
+                  autoComplete="on"
+                  autoCorrect="on"
+                  autoCapitalize="sentences"
+                  spellCheck="true"
                   className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors resize-none"
                 />
               </div>

@@ -2,12 +2,12 @@
   "name": "Kage - Goal-Centric Productivity",
   "short_name": "Kage",
   "description": "Revolutionary goal-centric productivity app that connects tasks, habits, and journal entries to meaningful life goals",
-  "start_url": "./",
+  "start_url": "/kage-app/",
   "display": "standalone",
   "theme_color": "#FF7101",
   "background_color": "#FFFFFF",
   "orientation": "portrait-primary",
-  "scope": "./",
+  "scope": "/kage-app/",
   "categories": [
     "productivity",
     "lifestyle",
@@ -17,49 +17,49 @@
   "dir": "ltr",
   "icons": [
     {
-      "src": "./kage-app/icons/icon-72x72.svg",
+      "src": "/kage-app/icons/icon-72x72.svg",
       "sizes": "72x72",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "./kage-app/icons/icon-96x96.svg",
+      "src": "/kage-app/icons/icon-96x96.svg",
       "sizes": "96x96",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "./kage-app/icons/icon-128x128.svg",
+      "src": "/kage-app/icons/icon-128x128.svg",
       "sizes": "128x128",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "./kage-app/icons/icon-144x144.svg",
+      "src": "/kage-app/icons/icon-144x144.svg",
       "sizes": "144x144",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "./kage-app/icons/icon-152x152.svg",
+      "src": "/kage-app/icons/icon-152x152.svg",
       "sizes": "152x152",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "./kage-app/icons/icon-192x192.svg",
+      "src": "/kage-app/icons/icon-192x192.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "./kage-app/icons/icon-384x384.svg",
+      "src": "/kage-app/icons/icon-384x384.svg",
       "sizes": "384x384",
       "type": "image/svg+xml",
       "purpose": "maskable any"
     },
     {
-      "src": "./kage-app/icons/icon-512x512.svg",
+      "src": "/kage-app/icons/icon-512x512.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "maskable any"
@@ -67,13 +67,13 @@
   ],
   "screenshots": [
     {
-      "src": "./screenshots/dashboard.png",
+      "src": "/kage-app/screenshots/dashboard.png",
       "type": "image/png",
       "sizes": "1170x2532",
       "form_factor": "narrow"
     },
     {
-      "src": "./screenshots/goals.png",
+      "src": "/kage-app/screenshots/goals.png",
       "type": "image/png",
       "sizes": "1170x2532",
       "form_factor": "narrow"
@@ -95,10 +95,10 @@
       "name": "Create Goal",
       "short_name": "New Goal",
       "description": "Quickly create a new goal",
-      "url": "./?action=create",
+      "url": "/kage-app/?action=create",
       "icons": [
         {
-          "src": "./kage-app/icons/shortcut-goal.svg",
+          "src": "/kage-app/icons/shortcut-goal.svg",
           "sizes": "96x96",
           "type": "image/svg+xml"
         }
@@ -108,10 +108,10 @@
       "name": "Add Task",
       "short_name": "New Task",
       "description": "Quickly add a new task",
-      "url": "./?action=create",
+      "url": "/kage-app/?action=create",
       "icons": [
         {
-          "src": "./kage-app/icons/shortcut-task.svg",
+          "src": "/kage-app/icons/shortcut-task.svg",
           "sizes": "96x96",
           "type": "image/svg+xml"
         }
@@ -121,10 +121,10 @@
       "name": "Track Habit",
       "short_name": "Habit",
       "description": "Mark habit as completed",
-      "url": "./?action=complete",
+      "url": "/kage-app/?action=complete",
       "icons": [
         {
-          "src": "./kage-app/icons/shortcut-habit.svg",
+          "src": "/kage-app/icons/shortcut-habit.svg",
           "sizes": "96x96",
           "type": "image/svg+xml"
         }
@@ -134,10 +134,10 @@
       "name": "Write Journal",
       "short_name": "Journal",
       "description": "Create a new journal entry",
-      "url": "./?action=create",
+      "url": "/kage-app/?action=create",
       "icons": [
         {
-          "src": "./kage-app/icons/shortcut-journal.svg",
+          "src": "/kage-app/icons/shortcut-journal.svg",
           "sizes": "96x96",
           "type": "image/svg+xml"
         }
