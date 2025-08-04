@@ -21,6 +21,7 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
   
   const [taskType, setTaskType] = useState<TaskType>('standard')
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false)
+  const [originalSubtasks, setOriginalSubtasks] = useState<any[]>([])
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -77,6 +78,8 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
   useEffect(() => {
     if (isOpen && editingTask) {
       setTaskType(editingTask.type || 'standard')
+      // Store original subtasks to preserve completion states
+      setOriginalSubtasks(editingTask.subtasks || [])
       setFormData({
         name: editingTask.name || '',
         description: editingTask.description || '',
@@ -97,7 +100,10 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
         location: editingTask.location || '',
         notes: editingTask.notes || '',
         tags: editingTask.tags || [],
-        subtasks: editingTask.subtasks?.length ? editingTask.subtasks.map((st: any) => st.name || '') : [],
+        subtasks: editingTask.subtasks?.length ? editingTask.subtasks.map((st: any) => {
+          if (typeof st === 'string') return st;
+          return st.name || '';
+        }) : [],
         shoppingItems: editingTask.shoppingItems?.length ? editingTask.shoppingItems : [{ name: '', quantity: '' }],
         isRecurring: editingTask.isRecurring || false,
         recurrenceType: editingTask.recurrenceType || 'weekly',
@@ -110,6 +116,7 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
         calendarDate: editingTask.calendarDate || ''
       })
     } else if (isOpen && !editingTask) {
+      setOriginalSubtasks([])
       resetForm()
     }
   }, [isOpen, editingTask])
@@ -133,11 +140,40 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
       dueDate = new Date(formData.recurrenceStartDate)
     }
     
+    // Preserve subtask completion states when editing
+    let processedSubtasks = formData.subtasks.filter(s => s && s.trim() !== '').map(s => s.trim());
+    
+    if (editingTask && originalSubtasks.length > 0) {
+      // Merge new subtask names with original completion states
+      processedSubtasks = processedSubtasks.map((subtaskName, index) => {
+        const originalSubtask = originalSubtasks.find(orig => 
+          (typeof orig === 'string' ? orig : orig.name) === subtaskName
+        );
+        
+        if (originalSubtask && typeof originalSubtask === 'object') {
+          // Preserve the original subtask object with its completion state
+          return {
+            ...originalSubtask,
+            name: subtaskName  // Update name in case it was modified
+          };
+        } else if (originalSubtasks[index] && typeof originalSubtasks[index] === 'object') {
+          // Use original subtask but update the name
+          return {
+            ...originalSubtasks[index],
+            name: subtaskName
+          };
+        }
+        
+        // New subtask - return as string (will be converted by store)
+        return subtaskName;
+      });
+    }
+
     const taskData = {
       ...formData,
       type: taskType,
       dueDate,
-      subtasks: formData.subtasks.filter(s => s && s.trim() !== '').map(s => s.trim()),
+      subtasks: processedSubtasks,
       shoppingItems: taskType === 'to-buy' ? formData.shoppingItems.filter(item => item.name && item.name.trim() !== '') : []
     }
 

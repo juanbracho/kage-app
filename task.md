@@ -29,13 +29,22 @@ Kage is a comprehensive personal productivity PWA that integrates habits, tasks,
 - [ ] Task 3.4: Implement custom themes and personalization
 - [ ] Task 3.5: Add export/import for additional formats
 
-## Milestone 4: Performance & Polish
+## Milestone 4: Data Persistence & User Account System
 
-- [ ] Task 4.1: Optimize bundle size and loading performance
-- [ ] Task 4.2: Implement progressive loading for large datasets
-- [ ] Task 4.3: Add comprehensive error boundaries and fallbacks
-- [ ] Task 4.4: Implement automated testing coverage
-- [ ] Task 4.5: Add accessibility improvements
+- [x] Task 4.1: Enhanced IndexedDB with installation tracking and device ID generation
+- [x] Task 4.2: Version migration system for schema changes with automatic backup
+- [x] Task 4.3: Auto-backup system for data protection across APK updates  
+- [x] Task 4.4: User store enhancement with timezone auto-detection
+- [ ] Task 4.5: Profile creation flow during onboarding integration
+- [ ] Task 4.6: APK update data preservation testing (IN PROGRESS - blocked by build issues)
+
+## Milestone 5: Performance & Polish
+
+- [ ] Task 5.1: Optimize bundle size and loading performance
+- [ ] Task 5.2: Implement progressive loading for large datasets
+- [ ] Task 5.3: Add comprehensive error boundaries and fallbacks
+- [ ] Task 5.4: Implement automated testing coverage
+- [ ] Task 5.5: Add accessibility improvements
 
 ## Features Checklist
 

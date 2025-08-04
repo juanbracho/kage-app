@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Target, CheckSquare, Calendar, BookOpen, BarChart3, Hash, Settings, TrendingUp } from 'lucide-react'
 import { useSettingsStore } from './store/settingsStore'
 import { useOnboardingStore } from './store/onboardingStore'
+import { useUserStore } from './store/userStore'
 import DashboardPage from './components/DashboardPage'
 import GoalsPage from './components/GoalsPage'
 import TasksPage from './components/TasksPage'
@@ -20,6 +21,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const { settings, initializeSettings, isOnboardingCompleted } = useSettingsStore()
   const { isOnboardingActive } = useOnboardingStore()
+  const { initializeApp } = useUserStore()
 
   // Removed: Navigation swipe functions and useNavigationSwipe
   // Page navigation now only works via bottom tab bar
@@ -31,6 +33,9 @@ function App() {
       logPWAEnvironment();
       
       initializeSettings();
+      
+      // Initialize app with IndexedDB metadata tracking
+      initializeApp();
     
     // Keyboard shortcuts
     const handleKeyDown = (e: KeyboardEvent) => {

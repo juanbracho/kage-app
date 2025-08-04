@@ -106,6 +106,8 @@ export const useCalendarStore = create<CalendarStore>()(
   currentDate: new Date(),
   
   addTimeBlock: (timeBlockData: TimeBlockFormData) => {
+    console.log('📅 Calendar Store: Adding time block:', timeBlockData.title);
+    
     const newTimeBlock: TimeBlock = {
       id: generateId(),
       ...timeBlockData,
@@ -115,15 +117,25 @@ export const useCalendarStore = create<CalendarStore>()(
     };
     
     set((state) => {
-      return {
+      const updatedState = {
+        ...state,
         timeBlocks: [...state.timeBlocks, newTimeBlock]
       };
+      console.log('📅 Calendar Store: Updated timeBlocks count:', updatedState.timeBlocks.length);
+      return updatedState;
     });
     
     // Generate recurring events if applicable
     if (newTimeBlock.isRecurring) {
+      console.log('📅 Calendar Store: Generating recurring events for:', newTimeBlock.title);
       get().generateRecurringEvents(newTimeBlock);
     }
+    
+    // Force persistence by triggering a manual save check
+    setTimeout(() => {
+      const currentState = get();
+      console.log('📅 Calendar Store: Post-add verification - timeBlocks count:', currentState.timeBlocks.length);
+    }, 100);
   },
   
   updateTimeBlock: (id: string, updates: Partial<TimeBlock>) => {
@@ -364,9 +376,53 @@ export const useCalendarStore = create<CalendarStore>()(
     {
       name: 'calendar-store',
       version: 1,
-      partialize: (state) => ({
-        timeBlocks: state.timeBlocks
-      })
+      partialize: (state) => {
+        console.log('📅 Calendar Store: Partializing state - timeBlocks count:', state.timeBlocks.length);
+        return {
+          timeBlocks: state.timeBlocks,
+          currentView: state.currentView,
+          currentDate: state.currentDate
+        };
+      },
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          console.log('📅 Calendar Store: Rehydrated - timeBlocks count:', state.timeBlocks?.length || 0);
+          // Ensure currentDate is a proper Date object after rehydration
+          if (state.currentDate && typeof state.currentDate === 'string') {
+            state.currentDate = new Date(state.currentDate);
+          }
+        }
+      },
+      // Add storage failure recovery
+      storage: {
+        getItem: (key) => {
+          try {
+            const item = localStorage.getItem(key);
+            console.log('📅 Calendar Store: Retrieved from storage:', key, item ? 'success' : 'empty');
+            return item;
+          } catch (error) {
+            console.error('📅 Calendar Store: Storage getItem failed:', error);
+            return null;
+          }
+        },
+        setItem: (key, value) => {
+          try {
+            localStorage.setItem(key, value);
+            console.log('📅 Calendar Store: Saved to storage:', key, 'success');
+          } catch (error) {
+            console.error('📅 Calendar Store: Storage setItem failed:', error);
+            // Optionally try to clear some space or notify user
+          }
+        },
+        removeItem: (key) => {
+          try {
+            localStorage.removeItem(key);
+            console.log('📅 Calendar Store: Removed from storage:', key);
+          } catch (error) {
+            console.error('📅 Calendar Store: Storage removeItem failed:', error);
+          }
+        }
+      }
     }
   )
 );

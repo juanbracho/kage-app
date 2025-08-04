@@ -44,21 +44,26 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
   const [editingTask, setEditingTask] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Cleanup empty subtasks on component mount
+  // Cleanup empty subtasks on component mount and mark as initialized
   useEffect(() => {
     cleanupEmptySubtasks();
+    setHasInitialized(true);
   }, [cleanupEmptySubtasks]);
 
-  // Listen for custom event to open task modal from dashboard
+  // Listen for custom event to open task modal from dashboard (only after initialization)
   useEffect(() => {
+    if (!hasInitialized) return;
+    
     const handleOpenTaskModal = () => {
+      console.log('📋 TasksPage: Opening modal from custom event');
       openModal();
     };
 
     const cleanup = safeAddEventListener('openTaskModal', handleOpenTaskModal);
     return cleanup;
-  }, [openModal]);
+  }, [openModal, hasInitialized]);
   
   // Get filtered tasks and organize by sections
   const filteredTasks = getFilteredTasks();

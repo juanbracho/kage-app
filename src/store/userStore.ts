@@ -23,6 +23,7 @@ interface UserStore {
   addAchievement: (achievement: UserAchievement) => void
   signIn: (profile: UserProfile) => void
   signOut: () => void
+  initializeApp: () => Promise<void>
   
   // Computed stats from other stores
   calculateStats: () => UserStats
@@ -43,7 +44,7 @@ const defaultProfile: UserProfile = {
   email: 'alex.chen@example.com',
   isPremium: false,
   memberSince: new Date(),
-  timezone: 'UTC',
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC', // Auto-detect timezone
   language: 'en'
 }
 
@@ -180,6 +181,43 @@ export const useUserStore = create<UserStore>()(
       getTotalCompletedItems: (): number => {
         const { stats } = get()
         return stats.completedGoals + stats.completedTasks + stats.journalEntries
+      },
+
+      initializeApp: async (): Promise<void> => {
+        try {
+          const { indexedDB } = await import('../utils/indexedDB')
+          const metadata = await indexedDB.initializeAppMetadata('1.0.0')
+          
+          // Update profile with device info if first run
+          if (metadata.isFirstRun) {
+            const currentProfile = get().profile
+            if (currentProfile) {
+              set({
+                profile: {
+                  ...currentProfile,
+                  id: metadata.installationId,
+                  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+                }
+              })
+            }
+          }
+          
+          // Create auto-backup on app updates or periodically
+          if (metadata.isUpdate || metadata.isFirstRun) {
+            setTimeout(() => {
+              indexedDB.createAutoBackup().catch(console.warn)
+            }, 2000) // Delay to avoid blocking app startup
+          }
+          
+          console.log('📱 App initialized:', {
+            isFirstRun: metadata.isFirstRun,
+            isUpdate: metadata.isUpdate,
+            migrationNeeded: metadata.migrationNeeded,
+            installationId: metadata.installationId
+          })
+        } catch (error) {
+          console.error('Failed to initialize app:', error)
+        }
       }
     }),
     {

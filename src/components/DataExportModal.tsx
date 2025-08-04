@@ -58,15 +58,64 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
   });
 
   const generateKageFullExport = () => {
+    console.log('📤 Export: Generating full backup with relationship preservation');
+    
+    // Build relationship maps
+    const goalTaskMap = new Map<string, string[]>();
+    const goalHabitMap = new Map<string, string[]>();
+    const taskTimeBlockMap = new Map<string, string[]>();
+    const habitTimeTimeBlockMap = new Map<string, string[]>();
+    
+    // Map tasks to goals
+    tasks.forEach(task => {
+      if (task.goalId) {
+        if (!goalTaskMap.has(task.goalId)) {
+          goalTaskMap.set(task.goalId, []);
+        }
+        goalTaskMap.get(task.goalId)!.push(task.id);
+      }
+    });
+    
+    // Map habits to goals (assuming habits can be linked to goals via goalId)
+    habits.forEach(habit => {
+      if ((habit as any).goalId) {
+        if (!goalHabitMap.has((habit as any).goalId)) {
+          goalHabitMap.set((habit as any).goalId, []);
+        }
+        goalHabitMap.get((habit as any).goalId)!.push(habit.id);
+      }
+    });
+    
+    // Map time blocks to tasks and habits
+    timeBlocks.forEach(block => {
+      if (block.linkedItemType === 'task' && block.linkedItemId) {
+        if (!taskTimeBlockMap.has(block.linkedItemId)) {
+          taskTimeBlockMap.set(block.linkedItemId, []);
+        }
+        taskTimeBlockMap.get(block.linkedItemId)!.push(block.id);
+      } else if (block.linkedItemType === 'habit' && block.linkedItemId) {
+        if (!habitTimeTimeBlockMap.has(block.linkedItemId)) {
+          habitTimeTimeBlockMap.set(block.linkedItemId, []);
+        }
+        habitTimeTimeBlockMap.get(block.linkedItemId)!.push(block.id);
+      }
+    });
+
     const exportData = {
       exportInfo: {
-        version: '1.0.0',
+        version: '1.1.0', // Increment version for relationship support
         exportDate: new Date().toISOString(),
         appVersion: 'Kage Beta',
         format: 'kage-full',
         userProfile: {
           name: user?.name || 'Unknown User',
           email: user?.email || 'unknown@example.com'
+        },
+        relationshipMetadata: {
+          goalTaskMap: Object.fromEntries(goalTaskMap),
+          goalHabitMap: Object.fromEntries(goalHabitMap),
+          taskTimeBlockMap: Object.fromEntries(taskTimeBlockMap),
+          habitTimeBlockMap: Object.fromEntries(habitTimeTimeBlockMap)
         }
       },
       habits: habits.map(habit => ({
@@ -80,6 +129,7 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
       statistics: getExportStats()
     };
 
+    console.log('📤 Export: Relationship metadata:', exportData.exportInfo.relationshipMetadata);
     return JSON.stringify(exportData, null, 2);
   };
 
@@ -105,16 +155,23 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
   };
 
 
-  const downloadFile = (content: string, filename: string, contentType: string) => {
-    const blob = new Blob([content], { type: contentType });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  const downloadFile = async (content: string, filename: string, contentType: string) => {
+    try {
+      // Use browser download API - works on both web and mobile browsers
+      const blob = new Blob([content], { type: contentType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      return true;
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      throw new Error('Failed to download file');
+    }
   };
 
   const handleExport = async () => {
@@ -196,11 +253,11 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
       await new Promise(resolve => setTimeout(resolve, 300));
 
       // Download the file
-      downloadFile(exportContent, filename, 'application/json');
+      await downloadFile(exportContent, filename, 'application/json');
 
       setProgress({
         stage: 'completed',
-        message: `Export completed! Downloaded: ${filename}`,
+        message: `Export completed! File downloaded: ${filename}`,
         progress: 100
       });
 

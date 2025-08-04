@@ -26,12 +26,19 @@ interface KageBackupData {
       name: string;
       email: string;
     };
+    relationshipMetadata?: {
+      goalTaskMap: Record<string, string[]>;
+      goalHabitMap: Record<string, string[]>;
+      taskTimeBlockMap: Record<string, string[]>;
+      habitTimeBlockMap: Record<string, string[]>;
+    };
   };
   habits?: Habit[];
   tasks?: Task[];
   goals?: Goal[];
   journalEntries?: JournalEntry[];
   calendarEvents?: CalendarEvent[];
+  timeBlocks?: any[];
 }
 
 interface HabitKitData {
@@ -209,14 +216,45 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
     let totalItems = 0;
     let processedItems = 0;
 
-    // Count total items
+    // Count total items including time blocks
     if (data.habits) totalItems += data.habits.length;
     if (data.tasks) totalItems += data.tasks.length;
     if (data.goals) totalItems += data.goals.length;
     if (data.journalEntries) totalItems += data.journalEntries.length;
     if (data.calendarEvents) totalItems += data.calendarEvents.length;
+    if (data.timeBlocks) totalItems += data.timeBlocks.length;
 
-    setProgress(prev => ({ ...prev, totalItems, stage: 'processing', message: 'Importing Kage backup data...' }));
+    setProgress(prev => ({ 
+      ...prev, 
+      totalItems, 
+      stage: 'processing', 
+      message: 'Creating backup and validating import data...' 
+    }));
+
+    console.log('📤 Import: Starting relationship-aware import');
+    console.log('📤 Import: Relationship metadata:', data.exportInfo.relationshipMetadata);
+    
+    // CREATE BACKUP BEFORE IMPORT
+    const preImportBackup = {
+      habits: habitStore.habits,
+      tasks: taskStore.tasks,
+      goals: goalStore.goals,
+      journalEntries: journalStore.entries,
+      timeBlocks: calendarStore.timeBlocks
+    };
+    
+    console.log('📤 Import: Created pre-import backup');
+    
+    // Store old IDs to new IDs mapping for relationship reconstruction
+    const idMapping = new Map<string, string>();
+    const importSummary = {
+      goals: { imported: 0, failed: 0 },
+      habits: { imported: 0, failed: 0 },
+      tasks: { imported: 0, failed: 0 },
+      journalEntries: { imported: 0, failed: 0 },
+      timeBlocks: { imported: 0, failed: 0 },
+      relationships: { preserved: 0, failed: 0 }
+    };
 
     // Validation helper
     const validateData = (item: any, type: string, requiredFields: string[]) => {
@@ -228,8 +266,38 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
     };
 
     try {
-      // Import habits
+      // PHASE 1: Import Goals first (no dependencies)
+      if (data.goals) {
+        console.log('📤 Import: Phase 1 - Importing goals');
+        setProgress(prev => ({ ...prev, message: 'Importing goals...' }));
+        
+        for (const goal of data.goals) {
+          try {
+            validateData(goal, 'goal', ['id', 'name']);
+            
+            await new Promise(resolve => setTimeout(resolve, 10));
+            const oldId = goal.id;
+            const newGoal = goalStore.addGoal(goal);
+            // Store ID mapping if the store generates new IDs
+            if (newGoal && newGoal !== oldId) {
+              idMapping.set(oldId, newGoal);
+            } else {
+              idMapping.set(oldId, oldId);
+            }
+            
+            importSummary.goals.imported++;
+            processedItems++;
+            setProgress(prev => ({ ...prev, itemsProcessed: processedItems }));
+          } catch (error) {
+            console.error(`Error importing goal ${goal.name || 'unknown'}:`, error);
+            importSummary.goals.failed++;
+          }
+        }
+      }
+
+      // PHASE 2: Import Habits (may depend on goals)
       if (data.habits) {
+        console.log('📤 Import: Phase 2 - Importing habits');
         for (const habit of data.habits) {
           try {
             validateData(habit, 'habit', ['id', 'name']);
@@ -237,13 +305,26 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
             await new Promise(resolve => setTimeout(resolve, 10));
             // Remove completions from habit object as addHabit expects Omit<Habit, 'completions'>
             const { completions, ...habitWithoutCompletions } = habit;
-            habitStore.addHabit(habitWithoutCompletions);
+            
+            // Update goalId if it exists and we have a mapping
+            if (habitWithoutCompletions.goalId && idMapping.has(habitWithoutCompletions.goalId)) {
+              (habitWithoutCompletions as any).goalId = idMapping.get(habitWithoutCompletions.goalId);
+            }
+            
+            const oldId = habit.id;
+            const newHabitId = habitStore.addHabit(habitWithoutCompletions);
+            idMapping.set(oldId, newHabitId || oldId);
             
             // Add completions separately if they exist
             if (completions && completions.length > 0) {
               for (const completion of completions) {
                 validateData(completion, 'habit completion', ['id', 'habitId', 'date']);
-                habitStore.addHabitCompletion(completion);
+                // Update habitId to new ID
+                const updatedCompletion = {
+                  ...completion,
+                  habitId: idMapping.get(completion.habitId) || completion.habitId
+                };
+                habitStore.addHabitCompletion(updatedCompletion);
               }
             }
             
@@ -251,13 +332,13 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
             setProgress(prev => ({ ...prev, itemsProcessed: processedItems }));
           } catch (error) {
             console.error(`Error importing habit ${habit.name || 'unknown'}:`, error);
-            // Continue with next habit instead of failing entire import
           }
         }
       }
 
-      // Import tasks
+      // PHASE 3: Import Tasks (may depend on goals)
       if (data.tasks) {
+        console.log('📤 Import: Phase 3 - Importing tasks');
         for (const task of data.tasks) {
           try {
             validateData(task, 'task', ['id', 'name']);
@@ -267,6 +348,8 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
             // Transform task data to match store expectations
             const transformedTask = {
               ...task,
+              // Update goalId if it exists and we have a mapping
+              goalId: task.goalId && idMapping.has(task.goalId) ? idMapping.get(task.goalId) : task.goalId,
               // Convert subtasks from objects to strings for addTask method
               subtasks: task.subtasks?.map(subtask => {
                 if (typeof subtask === 'string') return subtask;
@@ -281,35 +364,21 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
               ) || []
             };
             
-            taskStore.addTask(transformedTask);
+            const oldId = task.id;
+            const newTaskId = taskStore.addTask(transformedTask);
+            idMapping.set(oldId, newTaskId || oldId);
+            
             processedItems++;
             setProgress(prev => ({ ...prev, itemsProcessed: processedItems }));
           } catch (error) {
             console.error(`Error importing task ${task.name || 'unknown'}:`, error);
-            // Continue with next task instead of failing entire import
           }
         }
       }
 
-      // Import goals
-      if (data.goals) {
-        for (const goal of data.goals) {
-          try {
-            validateData(goal, 'goal', ['id', 'name']);
-            
-            await new Promise(resolve => setTimeout(resolve, 10));
-            goalStore.addGoal(goal);
-            processedItems++;
-            setProgress(prev => ({ ...prev, itemsProcessed: processedItems }));
-          } catch (error) {
-            console.error(`Error importing goal ${goal.name || 'unknown'}:`, error);
-            // Continue with next goal instead of failing entire import
-          }
-        }
-      }
-
-      // Import journal entries
+      // PHASE 4: Import Journal Entries (no dependencies)
       if (data.journalEntries) {
+        console.log('📤 Import: Phase 4 - Importing journal entries');
         for (const entry of data.journalEntries) {
           try {
             validateData(entry, 'journal entry', ['id', 'content']);
@@ -320,13 +389,41 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
             setProgress(prev => ({ ...prev, itemsProcessed: processedItems }));
           } catch (error) {
             console.error(`Error importing journal entry ${entry.id || 'unknown'}:`, error);
-            // Continue with next entry instead of failing entire import
           }
         }
       }
 
-      // Import calendar events
+      // PHASE 5: Import Time Blocks (may depend on tasks and habits)
+      if (data.timeBlocks) {
+        console.log('📤 Import: Phase 5 - Importing time blocks');
+        for (const block of data.timeBlocks) {
+          try {
+            validateData(block, 'time block', ['id', 'title']);
+            
+            await new Promise(resolve => setTimeout(resolve, 10));
+            
+            // Update linked item IDs if they exist and we have mappings
+            const updatedBlock = { ...block };
+            if (block.linkedItemId && block.linkedItemType) {
+              if (block.linkedItemType === 'task' && idMapping.has(block.linkedItemId)) {
+                updatedBlock.linkedItemId = idMapping.get(block.linkedItemId);
+              } else if (block.linkedItemType === 'habit' && idMapping.has(block.linkedItemId)) {
+                updatedBlock.linkedItemId = idMapping.get(block.linkedItemId);
+              }
+            }
+            
+            calendarStore.addTimeBlock(updatedBlock);
+            processedItems++;
+            setProgress(prev => ({ ...prev, itemsProcessed: processedItems }));
+          } catch (error) {
+            console.error(`Error importing time block ${block.title || 'unknown'}:`, error);
+          }
+        }
+      }
+
+      // Import legacy calendar events (for backward compatibility)
       if (data.calendarEvents) {
+        console.log('📤 Import: Importing legacy calendar events');
         for (const event of data.calendarEvents) {
           try {
             validateData(event, 'calendar event', ['id', 'title']);
@@ -337,15 +434,61 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
             setProgress(prev => ({ ...prev, itemsProcessed: processedItems }));
           } catch (error) {
             console.error(`Error importing calendar event ${event.title || 'unknown'}:`, error);
-            // Continue with next event instead of failing entire import
           }
         }
       }
 
+      console.log('📤 Import: Completed relationship-aware import');
+      console.log('📤 Import: ID mappings created:', Object.fromEntries(idMapping));
+      console.log('📤 Import: Summary:', importSummary);
+      
+      // Validate relationships if metadata was available
+      if (data.exportInfo.relationshipMetadata) {
+        console.log('📤 Import: Validating relationships...');
+        
+        // Check goal-task relationships
+        const goalTaskMeta = data.exportInfo.relationshipMetadata.goalTaskMap;
+        Object.entries(goalTaskMeta).forEach(([goalId, taskIds]) => {
+          const mappedGoalId = idMapping.get(goalId);
+          if (mappedGoalId) {
+            taskIds.forEach(taskId => {
+              const mappedTaskId = idMapping.get(taskId);
+              if (mappedTaskId) {
+                importSummary.relationships.preserved++;
+              } else {
+                importSummary.relationships.failed++;
+              }
+            });
+          }
+        });
+      }
+      
+      const totalImported = Object.values(importSummary).reduce((sum, category) => {
+        if (typeof category === 'object' && 'imported' in category) {
+          return sum + category.imported;
+        }
+        return sum;
+      }, 0);
+      
+      const totalFailed = Object.values(importSummary).reduce((sum, category) => {
+        if (typeof category === 'object' && 'failed' in category) {
+          return sum + category.failed;
+        }
+        return sum;
+      }, 0);
+      
+      let statusMessage = `Successfully imported ${totalImported} items`;
+      if (totalFailed > 0) {
+        statusMessage += ` (${totalFailed} failed)`;
+      }
+      if (importSummary.relationships.preserved > 0) {
+        statusMessage += ` with ${importSummary.relationships.preserved} relationships preserved`;
+      }
+      
       setProgress(prev => ({
         ...prev,
         stage: 'completed',
-        message: `Successfully imported ${processedItems} items from Kage backup`
+        message: statusMessage
       }));
 
     } catch (error) {

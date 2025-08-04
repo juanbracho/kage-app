@@ -152,18 +152,48 @@ export const useTaskStore = create<TaskStore>()(
       },
 
       updateTask: (id: string, updates: Partial<Task>) => {
+        console.log('📋 Task Store: Updating task', id, updates);
+        
         const currentTask = get().tasks.find(task => task.id === id);
-        const updatedTask = currentTask ? { ...currentTask, ...updates, updatedAt: new Date() } : null;
         
         set(state => ({
-          tasks: state.tasks.map(task =>
-            task.id === id
-              ? { ...task, ...updates, updatedAt: new Date() }
-              : task
-          )
-        }))
+          tasks: state.tasks.map(task => {
+            if (task.id === id) {
+              const updatedTask = { ...task, ...updates, updatedAt: new Date() };
+              
+              // If subtasks are being updated, ensure they maintain proper object structure
+              if (updates.subtasks) {
+                updatedTask.subtasks = updates.subtasks.map((subtask: any, index: number) => {
+                  if (typeof subtask === 'string') {
+                    // Convert string to proper subtask object
+                    return {
+                      id: `${id}-${index}`,
+                      name: subtask,
+                      completed: false,
+                      createdAt: new Date()
+                    };
+                  } else if (subtask && typeof subtask === 'object') {
+                    // Ensure existing object has all required properties
+                    return {
+                      id: subtask.id || `${id}-${index}`,
+                      name: subtask.name,
+                      completed: subtask.completed || false,
+                      createdAt: subtask.createdAt || new Date()
+                    };
+                  }
+                  return subtask;
+                });
+              }
+              
+              console.log('📋 Task Store: Updated task structure', updatedTask);
+              return updatedTask;
+            }
+            return task;
+          })
+        }));
         
         // Update goal progress if task was/is linked to a goal
+        const updatedTask = get().tasks.find(task => task.id === id);
         if (updatedTask) {
           const goalIds = new Set([currentTask?.goalId, updatedTask.goalId].filter(Boolean));
           goalIds.forEach(goalId => {
@@ -222,22 +252,47 @@ export const useTaskStore = create<TaskStore>()(
       },
 
       toggleSubtask: (taskId: string, subtaskId: string) => {
+        console.log('📋 Task Store: Toggling subtask', { taskId, subtaskId });
+        
         set(state => ({
           tasks: state.tasks.map(task => {
             if (task.id === taskId) {
+              const updatedSubtasks = task.subtasks.map(subtask => {
+                // Handle both string and object subtasks
+                if (typeof subtask === 'string') {
+                  // Convert string subtask to object if it matches the ID pattern
+                  const tempId = `${taskId}-${task.subtasks.indexOf(subtask)}`;
+                  if (tempId === subtaskId) {
+                    return {
+                      id: tempId,
+                      name: subtask,
+                      completed: true,
+                      createdAt: new Date()
+                    };
+                  }
+                  return {
+                    id: tempId,
+                    name: subtask,
+                    completed: false,
+                    createdAt: new Date()
+                  };
+                } else if (subtask.id === subtaskId) {
+                  return { ...subtask, completed: !subtask.completed };
+                }
+                return subtask;
+              });
+
+              console.log('📋 Task Store: Updated subtasks for task', taskId, updatedSubtasks);
+              
               return {
                 ...task,
-                subtasks: task.subtasks.map(subtask =>
-                  subtask.id === subtaskId
-                    ? { ...subtask, completed: !subtask.completed }
-                    : subtask
-                ),
+                subtasks: updatedSubtasks,
                 updatedAt: new Date()
-              }
+              };
             }
-            return task
+            return task;
           })
-        }))
+        }));
       },
 
       toggleShoppingItem: (taskId: string, itemId: string) => {
