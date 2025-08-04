@@ -101,6 +101,7 @@ ${cacheControlMeta}`
     indexContent = indexContent.replace(/href="\/kage-app\//g, 'href="./');
     indexContent = indexContent.replace(/content="\/kage-app\//g, 'content="./');
     indexContent = indexContent.replace(/register\('\/kage-app\//g, "register('./");
+    indexContent = indexContent.replace(/src="\/kage-app\//g, 'src="./');
     
     console.log('✅ Asset paths fixed for Capacitor');
   }

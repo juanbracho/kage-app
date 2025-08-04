@@ -203,6 +203,8 @@ export interface GoalStore {
   updateGoal: (id: string, updates: Partial<Goal>) => void;
   deleteGoal: (id: string) => void;
   toggleGoalCompletion: (id: string) => void;
+  archiveGoal: (id: string) => void;
+  unarchiveGoal: (id: string) => void;
   
   // Progress and linking
   updateGoalProgress: (id: string) => Promise<void>;
@@ -219,6 +221,8 @@ export interface GoalStore {
   setFilter: (filter: Partial<GoalFilter>) => void;
   setViewMode: (mode: GoalViewMode) => void;
   getFilteredGoals: () => Goal[];
+  getActiveGoals: () => Goal[];
+  getArchivedGoals: () => Goal[];
   
   // Modal management
   openModal: (mode?: 'template' | 'custom') => void;

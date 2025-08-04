@@ -216,6 +216,22 @@ export const useGoalStore = create<GoalStore>()(
         get().updateGoal(id, updates);
       },
 
+      archiveGoal: (id: string) => {
+        console.log('🗃️ Goal Store: Archiving goal:', id);
+        get().updateGoal(id, {
+          isArchived: true,
+          updatedAt: new Date().toISOString()
+        });
+      },
+
+      unarchiveGoal: (id: string) => {
+        console.log('📂 Goal Store: Unarchiving goal:', id);
+        get().updateGoal(id, {
+          isArchived: false,
+          updatedAt: new Date().toISOString()
+        });
+      },
+
       // Progress and linking
       updateGoalProgress: async (id: string) => {
         const goal = get().goals.find(g => g.id === id);
@@ -415,6 +431,11 @@ export const useGoalStore = create<GoalStore>()(
         const { goals, currentFilter } = get();
         
         return goals.filter(goal => {
+          // Always exclude archived goals unless specifically viewing archived status
+          if (currentFilter.status !== 'archived' && goal.isArchived) {
+            return false;
+          }
+          
           if (currentFilter.category !== 'all' && goal.category !== currentFilter.category) {
             return false;
           }
@@ -424,11 +445,13 @@ export const useGoalStore = create<GoalStore>()(
               case 'active':
                 return !goal.isCompleted && !goal.isArchived;
               case 'completed':
-                return goal.isCompleted;
+                return goal.isCompleted && !goal.isArchived;
+              case 'archived':
+                return goal.isArchived;
               case 'overdue':
-                return !goal.isCompleted && goal.targetDate && new Date(goal.targetDate) < new Date();
+                return !goal.isCompleted && !goal.isArchived && goal.targetDate && new Date(goal.targetDate) < new Date();
               default:
-                return true;
+                return !goal.isArchived; // Default excludes archived
             }
           }
           
@@ -438,6 +461,16 @@ export const useGoalStore = create<GoalStore>()(
           
           return true;
         });
+      },
+
+      getActiveGoals: () => {
+        const { goals } = get();
+        return goals.filter(goal => !goal.isArchived);
+      },
+
+      getArchivedGoals: () => {
+        const { goals } = get();
+        return goals.filter(goal => goal.isArchived);
       },
 
       // Modal management
@@ -545,11 +578,6 @@ export const useGoalStore = create<GoalStore>()(
       getGoalProgress: (id: string): GoalProgress | undefined => {
         const goal = get().goals.find(g => g.id === id);
         return goal?.progress;
-      },
-
-      // Computed getters
-      getActiveGoals: () => {
-        return get().goals.filter(goal => !goal.isCompleted && !goal.isArchived);
       },
 
       getCompletedGoals: () => {

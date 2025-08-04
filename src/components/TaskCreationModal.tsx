@@ -144,27 +144,30 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
     let processedSubtasks = formData.subtasks.filter(s => s && s.trim() !== '').map(s => s.trim());
     
     if (editingTask && originalSubtasks.length > 0) {
-      // Merge new subtask names with original completion states
+      // Use index-based preservation to maintain completion states
       processedSubtasks = processedSubtasks.map((subtaskName, index) => {
-        const originalSubtask = originalSubtasks.find(orig => 
-          (typeof orig === 'string' ? orig : orig.name) === subtaskName
-        );
-        
-        if (originalSubtask && typeof originalSubtask === 'object') {
-          // Preserve the original subtask object with its completion state
-          return {
-            ...originalSubtask,
-            name: subtaskName  // Update name in case it was modified
-          };
-        } else if (originalSubtasks[index] && typeof originalSubtasks[index] === 'object') {
-          // Use original subtask but update the name
-          return {
-            ...originalSubtasks[index],
-            name: subtaskName
-          };
+        // If we have an original subtask at this index, preserve its state
+        if (index < originalSubtasks.length) {
+          const originalSubtask = originalSubtasks[index];
+          
+          if (typeof originalSubtask === 'object' && originalSubtask.id) {
+            // Preserve the original subtask object with its completion state
+            return {
+              ...originalSubtask,
+              name: subtaskName  // Update name in case it was modified
+            };
+          } else if (typeof originalSubtask === 'string') {
+            // Convert string to object while preserving it as incomplete
+            return {
+              id: `temp-${index}`,
+              name: subtaskName,
+              completed: false,
+              createdAt: new Date()
+            };
+          }
         }
         
-        // New subtask - return as string (will be converted by store)
+        // New subtask beyond original array length - return as string (will be converted by store)
         return subtaskName;
       });
     }

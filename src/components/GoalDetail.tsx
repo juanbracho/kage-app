@@ -19,7 +19,7 @@ interface GoalDetailProps {
 export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDetailProps) {
   const { getTasksByGoal, addTask, updateTask, toggleTask, deleteTask } = useTaskStore();
   const { getHabitsByGoal, getHabitStreak, isHabitCompletedToday, toggleDayCompletion, deleteHabit } = useHabitStore();
-  const { deleteGoal, toggleGoalCompletion } = useGoalStore();
+  const { deleteGoal, toggleGoalCompletion, archiveGoal } = useGoalStore();
   const { entries } = useJournalStore();
   
   // Goal color utilities for consistent styling
@@ -103,6 +103,13 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
   const handleToggleCompletion = () => {
     toggleGoalCompletion(goal.id);
     setShowDropdown(false);
+  };
+
+  const handleArchive = () => {
+    if (confirm('Are you sure you want to archive this goal? You can unarchive it later from Settings.')) {
+      archiveGoal(goal.id);
+      onBack();
+    }
   };
 
   // Filter journal entries for this specific goal
@@ -255,7 +262,7 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
                 <button
                   onClick={() => {
                     setShowDropdown(false);
-                    // TODO: Implement archive functionality
+                    handleArchive();
                   }}
                   className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
                 >

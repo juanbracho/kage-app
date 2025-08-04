@@ -45,25 +45,34 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [isAppStartup, setIsAppStartup] = useState(true);
 
   // Cleanup empty subtasks on component mount and mark as initialized
   useEffect(() => {
     cleanupEmptySubtasks();
-    setHasInitialized(true);
+    
+    // Mark as initialized after a delay to prevent startup modal opening
+    setTimeout(() => {
+      setHasInitialized(true);
+      // Clear startup flag after sufficient time for proper initialization
+      setTimeout(() => {
+        setIsAppStartup(false);
+      }, 1000);
+    }, 500);
   }, [cleanupEmptySubtasks]);
 
-  // Listen for custom event to open task modal from dashboard (only after initialization)
+  // Listen for custom event to open task modal from dashboard (only after full initialization)
   useEffect(() => {
-    if (!hasInitialized) return;
+    if (!hasInitialized || isAppStartup) return;
     
     const handleOpenTaskModal = () => {
-      console.log('📋 TasksPage: Opening modal from custom event');
+      console.log('📋 TasksPage: Opening modal from custom event (post-startup)');
       openModal();
     };
 
     const cleanup = safeAddEventListener('openTaskModal', handleOpenTaskModal);
     return cleanup;
-  }, [openModal, hasInitialized]);
+  }, [openModal, hasInitialized, isAppStartup]);
   
   // Get filtered tasks and organize by sections
   const filteredTasks = getFilteredTasks();

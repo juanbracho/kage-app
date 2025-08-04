@@ -33,27 +33,27 @@ export default function QuickActionsRow({ onNavigate }: QuickActionsRowProps) {
   ];
 
   const handleActionClick = (tab: string) => {
-    // Always navigate to the page first
+    // Navigate to the page first
     onNavigate(tab);
     
-    // Then dispatch custom event to open creation modal using safe dispatch
+    // Only dispatch modal events when user explicitly wants to create something
+    // Add a longer delay to ensure page is fully loaded and initialized
     if (tab === 'goals') {
-      // Small delay to ensure page has loaded before opening modal
       setTimeout(() => {
         safeDispatchEvent('openGoalModal');
-      }, 100);
+      }, 300);
     } else if (tab === 'tasks') {
       setTimeout(() => {
         safeDispatchEvent('openTaskModal');
-      }, 100);
+      }, 300);
     } else if (tab === 'habits') {
       setTimeout(() => {
         safeDispatchEvent('openHabitModal');
-      }, 100);
+      }, 300);
     } else if (tab === 'journal') {
       setTimeout(() => {
         safeDispatchEvent('openJournalModal');
-      }, 100);
+      }, 300);
     }
   };
 

@@ -165,19 +165,19 @@ export const useTaskStore = create<TaskStore>()(
               if (updates.subtasks) {
                 updatedTask.subtasks = updates.subtasks.map((subtask: any, index: number) => {
                   if (typeof subtask === 'string') {
-                    // Convert string to proper subtask object
+                    // Convert string to proper subtask object (new subtask)
                     return {
-                      id: `${id}-${index}`,
+                      id: `${id}-${index}-${Date.now()}`,
                       name: subtask,
                       completed: false,
                       createdAt: new Date()
                     };
                   } else if (subtask && typeof subtask === 'object') {
-                    // Ensure existing object has all required properties
+                    // Preserve existing object with all its properties, especially completion state
                     return {
-                      id: subtask.id || `${id}-${index}`,
+                      id: subtask.id || `${id}-${index}-${Date.now()}`,
                       name: subtask.name,
-                      completed: subtask.completed || false,
+                      completed: subtask.completed !== undefined ? subtask.completed : false,
                       createdAt: subtask.createdAt || new Date()
                     };
                   }

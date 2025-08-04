@@ -19,11 +19,15 @@ import {
   LogOut,
   Download,
   Upload,
-  PlayCircle
+  PlayCircle,
+  Archive,
+  RotateCcw,
+  Trash2
 } from 'lucide-react'
 import { useSettingsStore } from '../store/settingsStore'
 import { useUserStore } from '../store/userStore'
 import { useOnboardingStore } from '../store/onboardingStore'
+import { useGoalStore } from '../store/goalStore'
 import ProfileSection from './ProfileSection'
 import SettingsSection from './SettingsSection'
 import SettingsItem from './SettingsItem'
@@ -43,9 +47,11 @@ export default function SettingsPage() {
   
   const { signOut, isPremiumUser } = useUserStore()
   const { startOnboarding } = useOnboardingStore()
+  const { getArchivedGoals, unarchiveGoal, deleteGoal } = useGoalStore()
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
+  const [expandedArchive, setExpandedArchive] = useState(false)
 
   const handleReminderTimeChange = () => {
     // This would open a time picker modal
@@ -81,6 +87,22 @@ export default function SettingsPage() {
   const handleShowOnboarding = () => {
     startOnboarding()
   }
+
+  const handleUnarchiveGoal = (goalId: string, goalName: string) => {
+    if (confirm(`Are you sure you want to unarchive "${goalName}"? It will be restored to your active goals.`)) {
+      console.log('🗃️ Settings: Unarchiving goal:', goalId);
+      unarchiveGoal(goalId);
+    }
+  }
+
+  const handleDeleteArchivedGoal = (goalId: string, goalName: string) => {
+    if (confirm(`Are you sure you want to permanently delete "${goalName}"? This action cannot be undone.`)) {
+      console.log('🗑️ Settings: Permanently deleting archived goal:', goalId);
+      deleteGoal(goalId);
+    }
+  }
+
+  const archivedGoals = getArchivedGoals()
 
   const PremiumBadge = () => (
     <span className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs px-2 py-1 rounded-md font-semibold">
@@ -212,6 +234,76 @@ export default function SettingsPage() {
           checked={settings.privacy.analytics}
           onToggle={() => togglePrivacySetting('analytics')}
         />
+      </SettingsSection>
+
+      {/* Archive Management */}
+      <SettingsSection title="Archive Management" icon={<Archive className="w-5 h-5" />}>
+        <SettingsItem
+          icon={<Archive className="w-4 h-4" />}
+          iconBgColor="bg-gray-500"
+          title="Archived Goals"
+          subtitle={archivedGoals.length > 0 ? `${archivedGoals.length} archived goal${archivedGoals.length !== 1 ? 's' : ''}` : "No archived goals"}
+          type="navigate"
+          onClick={() => setExpandedArchive(!expandedArchive)}
+        />
+        
+        {expandedArchive && archivedGoals.length > 0 && (
+          <div className="mt-4 space-y-3 bg-gray-50 dark:bg-gray-900 rounded-xl p-4">
+            <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+              Archived Goals ({archivedGoals.length})
+            </div>
+            {archivedGoals.map(goal => (
+              <div key={goal.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3 flex-1">
+                    <div 
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                      style={{ backgroundColor: goal.color }}
+                    >
+                      {goal.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-gray-900 dark:text-white text-sm mb-1">
+                        {goal.name}
+                      </h4>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
+                        {goal.description}
+                      </p>
+                      <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                        Archived {new Date(goal.updatedAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-1 ml-2">
+                    <button
+                      onClick={() => handleUnarchiveGoal(goal.id, goal.name)}
+                      className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                      title="Unarchive goal"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteArchivedGoal(goal.id, goal.name)}
+                      className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                      title="Permanently delete goal"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            {archivedGoals.length === 0 && (
+              <div className="text-center py-6 text-gray-500 dark:text-gray-400">
+                <Archive className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No archived goals yet.</p>
+                <p className="text-xs opacity-75">Archive goals from the Goals page to manage them here.</p>
+              </div>
+            )}
+          </div>
+        )}
       </SettingsSection>
 
       {/* Premium Features */}

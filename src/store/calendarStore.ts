@@ -6,8 +6,8 @@ interface CalendarStore {
   timeBlocks: TimeBlock[];
   currentView: CalendarView;
   currentDate: Date;
-  addTimeBlock: (timeBlockData: TimeBlockFormData) => void;
-  updateTimeBlock: (id: string, updates: Partial<TimeBlock>) => void;
+  addTimeBlock: (timeBlockData: TimeBlockFormData) => Promise<void>;
+  updateTimeBlock: (id: string, updates: Partial<TimeBlock>) => Promise<void>;
   deleteTimeBlock: (id: string) => void;
   deleteSingleRecurringEvent: (id: string) => void;
   deleteRecurringSeries: (originalEventId: string) => void;
@@ -43,6 +43,60 @@ const formatDateToString = (date: Date) => {
 // const formatTimeString = (date: Date) => {
 //   return date.toTimeString().slice(0, 5);
 // };
+
+// Save verification and retry helpers
+const verifySave = async (storeName: string, expectedCount?: number, timeoutMs = 2000): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const startTime = Date.now();
+    const checkInterval = setInterval(() => {
+      try {
+        const item = localStorage.getItem(storeName);
+        if (item) {
+          const parsed = JSON.parse(item);
+          const actualCount = parsed?.state?.timeBlocks?.length || 0;
+          
+          if (expectedCount === undefined || actualCount >= expectedCount) {
+            console.log('📅 Calendar Store: Save verification successful:', actualCount, 'timeBlocks');
+            clearInterval(checkInterval);
+            resolve(true);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('📅 Calendar Store: Save verification error:', error);
+      }
+      
+      if (Date.now() - startTime >= timeoutMs) {
+        console.warn('📅 Calendar Store: Save verification timeout');
+        clearInterval(checkInterval);
+        resolve(false);
+      }
+    }, 100);
+  });
+};
+
+const retryOperation = async <T>(
+  operation: () => Promise<T>,
+  maxRetries = 3,
+  delayMs = 500
+): Promise<T> => {
+  let lastError: Error | null = null;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Unknown error');
+      console.warn(`📅 Calendar Store: Operation failed (attempt ${attempt}/${maxRetries}):`, lastError.message);
+      
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
+      }
+    }
+  }
+  
+  throw lastError || new Error('Operation failed after retries');
+};
 
 const addMinutesToTime = (timeStr: string, minutes: number): string => {
   const [hours, mins] = timeStr.split(':').map(Number);
@@ -105,7 +159,7 @@ export const useCalendarStore = create<CalendarStore>()(
   currentView: 'day',
   currentDate: new Date(),
   
-  addTimeBlock: (timeBlockData: TimeBlockFormData) => {
+  addTimeBlock: async (timeBlockData: TimeBlockFormData) => {
     console.log('📅 Calendar Store: Adding time block:', timeBlockData.title);
     
     const newTimeBlock: TimeBlock = {
@@ -116,36 +170,61 @@ export const useCalendarStore = create<CalendarStore>()(
       updatedAt: new Date().toISOString()
     };
     
-    set((state) => {
-      const updatedState = {
-        ...state,
-        timeBlocks: [...state.timeBlocks, newTimeBlock]
-      };
-      console.log('📅 Calendar Store: Updated timeBlocks count:', updatedState.timeBlocks.length);
-      return updatedState;
+    // Use retry mechanism for the entire operation
+    await retryOperation(async () => {
+      // Get current count for verification
+      const currentCount = get().timeBlocks.length;
+      const expectedCount = currentCount + 1;
+      
+      // Perform the state update
+      set((state) => {
+        const updatedState = {
+          ...state,
+          timeBlocks: [...state.timeBlocks, newTimeBlock]
+        };
+        console.log('📅 Calendar Store: Updated timeBlocks count:', updatedState.timeBlocks.length);
+        return updatedState;
+      });
+      
+      // Verify the save was persisted
+      const saveVerified = await verifySave('calendar-store', expectedCount, 3000);
+      if (!saveVerified) {
+        throw new Error('Failed to verify timeblock save to storage');
+      }
+      
+      // Generate recurring events if applicable
+      if (newTimeBlock.isRecurring) {
+        console.log('📅 Calendar Store: Generating recurring events for:', newTimeBlock.title);
+        get().generateRecurringEvents(newTimeBlock);
+      }
+      
+      console.log('📅 Calendar Store: Successfully added and verified timeblock:', newTimeBlock.title);
     });
-    
-    // Generate recurring events if applicable
-    if (newTimeBlock.isRecurring) {
-      console.log('📅 Calendar Store: Generating recurring events for:', newTimeBlock.title);
-      get().generateRecurringEvents(newTimeBlock);
-    }
-    
-    // Force persistence by triggering a manual save check
-    setTimeout(() => {
-      const currentState = get();
-      console.log('📅 Calendar Store: Post-add verification - timeBlocks count:', currentState.timeBlocks.length);
-    }, 100);
   },
   
-  updateTimeBlock: (id: string, updates: Partial<TimeBlock>) => {
-    set((state) => ({
-      timeBlocks: state.timeBlocks.map(block =>
-        block.id === id
-          ? { ...block, ...updates, updatedAt: new Date().toISOString() }
-          : block
-      )
-    }));
+  updateTimeBlock: async (id: string, updates: Partial<TimeBlock>) => {
+    console.log('📅 Calendar Store: Updating time block:', id);
+    
+    await retryOperation(async () => {
+      const currentCount = get().timeBlocks.length;
+      
+      // Perform the state update
+      set((state) => ({
+        timeBlocks: state.timeBlocks.map(block =>
+          block.id === id
+            ? { ...block, ...updates, updatedAt: new Date().toISOString() }
+            : block
+        )
+      }));
+      
+      // Verify the update was persisted (same count but content changed)
+      const saveVerified = await verifySave('calendar-store', currentCount, 2000);
+      if (!saveVerified) {
+        throw new Error('Failed to verify timeblock update to storage');
+      }
+      
+      console.log('📅 Calendar Store: Successfully updated and verified timeblock:', id);
+    });
   },
   
   deleteTimeBlock: (id: string) => {

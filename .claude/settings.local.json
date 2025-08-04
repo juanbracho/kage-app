@@ -19,7 +19,21 @@
       "Bash(timeout 10s npm run dev:*)",
       "Bash(kill:*)",
       "Bash(npm run type-check:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(chmod:*)",
+      "Bash(./install-and-run.sh)",
+      "Bash(./run-dev.sh)",
+      "Bash(export NVM_DIR=\"$HOME/.nvm\")",
+      "Bash([ -s \"$NVM_DIR/nvm.sh\" ])",
+      "Bash(. \"$NVM_DIR/nvm.sh\")",
+      "Bash(nvm use:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(ssh:*)",
+      "Bash(git push:*)",
+      "Bash(git fetch:*)"
     ],
     "deny": []
   }

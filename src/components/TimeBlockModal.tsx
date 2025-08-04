@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useCalendarStore } from '../store/calendarStore';
 import { TimeBlockFormData, TimeBlock } from '../types/calendar';
 
@@ -68,6 +68,20 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
 
   const [customDuration, setCustomDuration] = useState('');
   const [useCustomDuration, setUseCustomDuration] = useState(false);
+  
+  // Save status states
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [saveError, setSaveError] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Reset form states when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSaveStatus('idle');
+      setSaveError('');
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -146,19 +160,39 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
     return true;
   };
 
-  const handleSave = () => {
-    if (!isFormValid()) return;
+  // Debounced save handler to prevent rapid multiple saves
+  const handleSave = useCallback(async () => {
+    if (!isFormValid() || isSubmitting) return;
     
-    if (editingTimeBlock) {
-      // Update existing time block
-      updateTimeBlock(editingTimeBlock.id, formData);
-    } else {
-      // Create new time block
-      addTimeBlock(formData);
+    setIsSubmitting(true);
+    setSaveStatus('saving');
+    setSaveError('');
+    
+    try {
+      if (editingTimeBlock) {
+        // Update existing time block
+        await updateTimeBlock(editingTimeBlock.id, formData);
+      } else {
+        // Create new time block
+        await addTimeBlock(formData);
+      }
+      
+      setSaveStatus('saved');
+      
+      // Auto-close after successful save with brief delay to show success
+      setTimeout(() => {
+        onClose();
+        setSaveStatus('idle');
+        setIsSubmitting(false);
+      }, 800);
+      
+    } catch (error) {
+      console.error('TimeBlockModal: Save failed:', error);
+      setSaveStatus('error');
+      setSaveError(error instanceof Error ? error.message : 'Failed to save timeblock. Please try again.');
+      setIsSubmitting(false);
     }
-    
-    onClose();
-  };
+  }, [formData, editingTimeBlock, isFormValid, addTimeBlock, updateTimeBlock, onClose, isSubmitting]);
 
   const handleBlockTypeSelect = (blockType: string) => {
     const selectedType = BLOCK_TYPES.find(type => type.id === blockType);
@@ -538,6 +572,15 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
             )}
           </div>
 
+          {/* Error Message */}
+          {saveError && (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-red-600 dark:text-red-400 text-sm font-medium">
+                {saveError}
+              </p>
+            </div>
+          )}
+
           {/* Footer - Now part of scrollable content */}
           <div className="flex gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
             <button
@@ -548,14 +591,21 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
             </button>
             <button
               onClick={handleSave}
-              disabled={!isFormValid()}
+              disabled={!isFormValid() || saveStatus === 'saving' || isSubmitting}
               className={`flex-1 p-3 rounded-lg font-semibold transition-all ${
-                isFormValid()
-                  ? 'accent-bg-500 hover-accent-bg-dark text-white hover:-translate-y-0.5 shadow-lg'
+                isFormValid() && saveStatus !== 'saving'
+                  ? saveStatus === 'saved'
+                    ? 'bg-green-500 hover:bg-green-600 text-white'
+                    : saveStatus === 'error'
+                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                    : 'accent-bg-500 hover-accent-bg-dark text-white hover:-translate-y-0.5 shadow-lg'
                   : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
               }`}
             >
-              {editingTimeBlock ? '💾 Update Time Block' : '✨ Create Time Block'}
+              {saveStatus === 'saving' && '⏳ Saving...'}
+              {saveStatus === 'saved' && '✅ Saved!'}
+              {saveStatus === 'error' && '❌ Try Again'}
+              {saveStatus === 'idle' && (editingTimeBlock ? '💾 Update Time Block' : '✨ Create Time Block')}
             </button>
           </div>
         </div>
