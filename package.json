@@ -15,6 +15,7 @@
     "@capacitor/android": "^7.4.2",
     "@capacitor/cli": "^7.4.2",
     "@capacitor/core": "^7.4.2",
+    "@capacitor/filesystem": "^7.1.4",
     "date-fns": "^2.30.0",
     "lucide-react": "^0.263.1",
     "playwright": "^1.54.1",

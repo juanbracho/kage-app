@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { X, Download, FileJson, Calendar, CheckCircle, AlertCircle, Archive } from 'lucide-react';
+import { X, Download, FileJson, Calendar, CheckCircle, AlertCircle, Archive, Smartphone } from 'lucide-react';
 import { useHabitStore } from '../store/habitStore';
 import { useTaskStore } from '../store/taskStore';
 import { useGoalStore } from '../store/goalStore';
 import { useJournalStore } from '../store/journalStore';
 import { useCalendarStore } from '../store/calendarStore';
 import { useUserStore } from '../store/userStore';
+// Capacitor modules will be loaded dynamically when needed
 
 interface DataExportModalProps {
   isOpen: boolean;
@@ -157,21 +158,99 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
 
   const downloadFile = async (content: string, filename: string, contentType: string) => {
     try {
-      // Use browser download API - works on both web and mobile browsers
-      const blob = new Blob([content], { type: contentType });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      return true;
+      // Ensure we're on the main thread for WebView operations
+      if (typeof window !== 'undefined' && window.requestIdleCallback) {
+        // Use requestIdleCallback to ensure main thread execution
+        return new Promise((resolve, reject) => {
+          window.requestIdleCallback(async () => {
+            try {
+              const result = await performDownload(content, filename, contentType);
+              resolve(result);
+            } catch (error) {
+              reject(error);
+            }
+          });
+        });
+      } else {
+        // Fallback: use setTimeout to ensure main thread
+        return new Promise((resolve, reject) => {
+          setTimeout(async () => {
+            try {
+              const result = await performDownload(content, filename, contentType);
+              resolve(result);
+            } catch (error) {
+              reject(error);
+            }
+          }, 0);
+        });
+      }
     } catch (error) {
-      console.error('Error downloading file:', error);
-      throw new Error('Failed to download file');
+      console.error('Error downloading/saving file:', error);
+      throw new Error(`Failed to save file: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+  };
+
+  const performDownload = async (content: string, filename: string, contentType: string) => {
+    // This function runs guaranteed on main thread
+    if (typeof window !== 'undefined') {
+      try {
+        console.log('🔍 Attempting to load Capacitor modules on main thread...');
+        
+        // Check if we're on native platform first (synchronous check)
+        let isNative = false;
+        try {
+          // Try to access Capacitor synchronously if already loaded
+          if ((window as any).Capacitor) {
+            isNative = (window as any).Capacitor.isNativePlatform();
+          }
+        } catch (e) {
+          // Capacitor not loaded yet
+        }
+        
+        if (isNative) {
+          console.log('📱 Native platform detected, loading Filesystem module...');
+          
+          // Load Filesystem module on main thread
+          const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem');
+          
+          // Execute file write on main thread
+          const result = await Filesystem.writeFile({
+            path: filename,
+            data: content,
+            directory: Directory.Documents,
+            encoding: Encoding.UTF8
+          });
+          
+          console.log('✅ File saved to Documents directory:', result.uri);
+          
+          return {
+            success: true,
+            path: result.uri,
+            message: `File saved to Documents folder as ${filename}`
+          };
+        }
+      } catch (capacitorError) {
+        console.log('📄 Capacitor modules not available, falling back to web download:', capacitorError);
+      }
+    }
+    
+    // Fallback to web browser download API (also on main thread)
+    console.log('🌐 Using browser download API');
+    const blob = new Blob([content], { type: contentType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    return {
+      success: true,
+      path: 'Downloads folder',
+      message: `File downloaded to your browser's Downloads folder as ${filename}`
+    };
   };
 
   const handleExport = async () => {
@@ -252,12 +331,12 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
 
       await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Download the file
-      await downloadFile(exportContent, filename, 'application/json');
+      // Download/save the file
+      const result = await downloadFile(exportContent, filename, 'application/json');
 
       setProgress({
         stage: 'completed',
-        message: `Export completed! File downloaded: ${filename}`,
+        message: result.message,
         progress: 100
       });
 

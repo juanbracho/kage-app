@@ -56,6 +56,16 @@ export interface GoalTemplate {
   tags: string[];
   isPopular: boolean;
   userCount?: number;
+  
+  // Enhanced validation for real-world effectiveness
+  realWorldValidation?: {
+    expertValidated: boolean;
+    basedOnProgram?: string;
+    prerequisites: string[];
+    successRate: string;
+    averageCompletionTime: string;
+    difficultyJustification: string;
+  };
 }
 
 export interface TemplateTask {
@@ -66,6 +76,10 @@ export interface TemplateTask {
   priority: GoalPriority;
   dependsOn?: string[]; // Other template task IDs
   category?: string;
+  
+  // Enhanced fields for structured templates
+  weekNumber?: number; // For training programs
+  details?: string; // Additional implementation details
 }
 
 export interface TemplateHabit {
@@ -76,7 +90,42 @@ export interface TemplateHabit {
   measurementType: 'simple' | 'count' | 'time' | 'custom';
   frequency: 'daily' | 'weekly' | 'custom';
   targetAmount?: number;
+  targetUnit?: string;
   category?: string;
+  priority?: GoalPriority;
+  
+  // Enhanced frequency configuration
+  customFrequency?: {
+    times: number;
+    period: 'day' | 'week' | 'month';
+  };
+  selectedDays?: string[]; // For weekly habits
+}
+
+// JSON Template System Interfaces
+export interface TemplateCollection {
+  templates: GoalTemplate[];
+  metadata: {
+    version: string;
+    lastUpdated: string;
+    totalTemplates: number;
+    categories: string[];
+    expertValidation?: Record<string, any>;
+  };
+}
+
+export interface TemplateValidationResult {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+export interface TemplateCreationResult {
+  success: boolean;
+  goalId?: string;
+  taskIds: string[];
+  habitIds: string[];
+  error?: string;
 }
 
 export interface GoalFormData {
@@ -213,9 +262,12 @@ export interface GoalStore {
   linkHabitToGoal: (goalId: string, habitId: string) => void;
   unlinkHabitFromGoal: (goalId: string, habitId: string) => void;
   
-  // Templates
-  createGoalFromTemplate: (templateId: string, customData?: Partial<GoalFormData>) => void;
-  getTemplatesByCategory: (category: GoalCategory) => GoalTemplate[];
+  // Templates - Enhanced with JSON system
+  createGoalFromTemplate: (templateId: string, customData?: Partial<GoalFormData>) => Promise<TemplateCreationResult>;
+  getTemplatesByCategory: (category: GoalCategory) => Promise<GoalTemplate[]>;
+  getAllTemplates: () => Promise<GoalTemplate[]>;
+  getTemplateById: (templateId: string) => Promise<GoalTemplate | undefined>;
+  refreshTemplates: () => Promise<void>;
   
   // Filtering and views
   setFilter: (filter: Partial<GoalFilter>) => void;

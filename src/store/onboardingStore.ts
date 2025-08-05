@@ -15,7 +15,7 @@ interface OnboardingStore {
   setUserInfo: (name: string, email: string) => void
   setSkipAI: (skip: boolean) => void
   startOnboarding: () => void
-  completeOnboarding: () => void
+  completeOnboarding: () => Promise<void>
   resetOnboarding: () => void
   nextStep: () => void
   previousStep: () => void
@@ -500,16 +500,66 @@ export const useOnboardingStore = create<OnboardingStore>()(
           currentStep: 'welcome' 
         }),
       
-      completeOnboarding: () => {
-        // Mark onboarding as completed in settings
-        import('./settingsStore').then(({ useSettingsStore }) => {
-          useSettingsStore.getState().completeOnboarding()
-        }).catch(console.warn)
+      completeOnboarding: async () => {
+        const state = get();
         
+        try {
+          // If user selected a template during onboarding, create the goal from it
+          if (state.onboardingData.selectedTemplate) {
+            console.log('🎯 Creating goal from onboarding template:', state.onboardingData.selectedTemplate.name);
+            
+            // Import goalStore dynamically to avoid circular dependencies
+            const { useGoalStore } = await import('./goalStore');
+            const goalStore = useGoalStore.getState();
+            
+            // Create goal from the selected template
+            const result = await goalStore.createGoalFromTemplate(
+              state.onboardingData.selectedTemplate.id,
+              {
+                // Use user's name in goal if provided
+                name: state.onboardingData.userName ? 
+                  `${state.onboardingData.selectedTemplate.name} - ${state.onboardingData.userName}` :
+                  state.onboardingData.selectedTemplate.name
+              }
+            );
+            
+            if (result.success) {
+              console.log('✅ Successfully created goal from onboarding template');
+              console.log(`📊 Created: ${result.tasksCreated} tasks, ${result.habitsCreated} habits`);
+            } else {
+              console.error('❌ Failed to create goal from onboarding template:', result.error);
+              // Continue with onboarding completion even if template creation fails
+            }
+          } else {
+            console.log('📝 No template selected during onboarding, skipping goal creation');
+          }
+        } catch (error) {
+          console.error('❌ Error during onboarding template processing:', error);
+          // Continue with onboarding completion even if there's an error
+        }
+        
+        // Mark onboarding as completed in settings
+        try {
+          const { useSettingsStore } = await import('./settingsStore');
+          useSettingsStore.getState().completeOnboarding();
+        } catch (error) {
+          console.warn('⚠️ Could not complete onboarding in settings store:', error);
+        }
+        
+        // Reset onboarding state
         set({ 
           isOnboardingActive: false,
-          currentStep: 'welcome' // Reset for next time
-        })
+          currentStep: 'welcome', // Reset for next time
+          onboardingData: {
+            selectedCategory: null,
+            selectedTemplate: null,
+            userName: '',
+            userEmail: '',
+            skipAI: false
+          }
+        });
+        
+        console.log('🎉 Onboarding completed successfully');
       },
       
       resetOnboarding: () =>

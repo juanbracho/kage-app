@@ -185,6 +185,22 @@ export const useTaskStore = create<TaskStore>()(
                 });
               }
               
+              // If shopping items are being updated, ensure they maintain proper object structure
+              if (updates.shoppingItems) {
+                updatedTask.shoppingItems = updates.shoppingItems.map((item: any, index: number) => {
+                  if (item && typeof item === 'object') {
+                    // Preserve existing shopping item with its completion state
+                    return {
+                      id: item.id || `${id}-shop-${index}-${Date.now()}`,
+                      name: item.name,
+                      quantity: item.quantity || '1',
+                      completed: item.completed !== undefined ? item.completed : false
+                    };
+                  }
+                  return item;
+                });
+              }
+              
               console.log('📋 Task Store: Updated task structure', updatedTask);
               return updatedTask;
             }
@@ -476,7 +492,40 @@ export const useTaskStore = create<TaskStore>()(
         
         // Generate recurring instances
         while (currentDate <= endDate) {
-          // Move to next occurrence
+          // Skip if date is in exceptions BEFORE creating instance
+          const dateString = formatDateToString(currentDate);
+          if (!originalTask.recurrenceExceptions?.includes(dateString)) {
+            // Create recurring instance for current date
+            const recurringInstance: Task = {
+              ...originalTask,
+              id: generateId(),
+              dueDate: new Date(currentDate),
+              originalTaskId: originalTask.id,
+              isRecurring: false, // Individual instances are not recurring
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              // Reset subtasks completion status for each instance
+              subtasks: originalTask.subtasks.map(subtask => ({
+                ...subtask,
+                id: generateId(),
+                completed: false,
+                createdAt: new Date()
+              })),
+              // Reset shopping items completion status for each instance
+              shoppingItems: originalTask.shoppingItems?.map(item => ({
+                ...item,
+                id: generateId(),
+                completed: false
+              })) || []
+            };
+            
+            recurringInstances.push(recurringInstance);
+            
+            // Limit to prevent infinite generation (max 100 instances)
+            if (recurringInstances.length >= 100) break;
+          }
+          
+          // Move to next occurrence AFTER processing current date
           if (originalTask.recurrenceType === 'daily') {
             currentDate.setDate(currentDate.getDate() + (originalTask.recurrenceInterval || 1));
           } else if (originalTask.recurrenceType === 'weekly') {
@@ -484,41 +533,6 @@ export const useTaskStore = create<TaskStore>()(
           } else if (originalTask.recurrenceType === 'monthly') {
             currentDate.setMonth(currentDate.getMonth() + (originalTask.recurrenceInterval || 1));
           }
-          
-          if (currentDate > endDate) break;
-          
-          // Skip if date is in exceptions
-          const dateString = formatDateToString(currentDate);
-          if (originalTask.recurrenceExceptions?.includes(dateString)) continue;
-          
-          // Create recurring instance
-          const recurringInstance: Task = {
-            ...originalTask,
-            id: generateId(),
-            dueDate: new Date(currentDate),
-            originalTaskId: originalTask.id,
-            isRecurring: false, // Individual instances are not recurring
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            // Reset subtasks completion status for each instance
-            subtasks: originalTask.subtasks.map(subtask => ({
-              ...subtask,
-              id: generateId(),
-              completed: false,
-              createdAt: new Date()
-            })),
-            // Reset shopping items completion status for each instance
-            shoppingItems: originalTask.shoppingItems?.map(item => ({
-              ...item,
-              id: generateId(),
-              completed: false
-            })) || []
-          };
-          
-          recurringInstances.push(recurringInstance);
-          
-          // Limit to prevent infinite generation (max 100 instances)
-          if (recurringInstances.length >= 100) break;
         }
         
         // Add all recurring instances to the store

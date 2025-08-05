@@ -15,6 +15,7 @@ interface DashboardStore {
   getUrgentTasks: () => any[];
   getTodayTasks: () => any[];
   getTodayHabits: () => Array<{ habit: any; isCompleted: boolean }>;
+  getGroceryTasks: () => any[];
 }
 
 const formatDate = (date: Date): string => {
@@ -304,5 +305,17 @@ export const useDashboardStore = create<DashboardStore>(() => ({
       habit,
       isCompleted: habitStore.isHabitCompletedToday(habit.id)
     }));
+  },
+
+  getGroceryTasks: () => {
+    const taskStore = useTaskStore.getState();
+    // Get all active to-buy tasks that have shopping items
+    return taskStore.tasks.filter(task => 
+      task.type === 'to-buy' && 
+      task.status !== 'completed' &&
+      task.shoppingItems && 
+      task.shoppingItems.length > 0 &&
+      task.shoppingItems.some(item => item.name && item.name.trim() !== '')
+    );
   }
 }));

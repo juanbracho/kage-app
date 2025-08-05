@@ -4,6 +4,7 @@ import { useHabitStore } from '../store/habitStore';
 import DashboardEmpty from './DashboardEmpty';
 import QuickActionsRow from './QuickActionsRow';
 import TodaysFocus from './TodaysFocus';
+import GroceryListCard from './GroceryListCard';
 
 interface DashboardPageProps {
   onNavigate: (tab: string) => void;
@@ -16,7 +17,8 @@ export default function DashboardPage({ onNavigate }: DashboardPageProps) {
     getCurrentDate,
     getUrgentTasks,
     getTodayTasks,
-    getTodayHabits
+    getTodayHabits,
+    getGroceryTasks
   } = useDashboardStore();
   
   const { toggleTask } = useTaskStore();
@@ -33,6 +35,7 @@ export default function DashboardPage({ onNavigate }: DashboardPageProps) {
   const urgentTasks = getUrgentTasks();
   const todayTasks = getTodayTasks();
   const todayHabits = getTodayHabits();
+  const groceryTasks = getGroceryTasks();
 
   const handleTaskToggle = (taskId: string) => {
     toggleTask(taskId);
@@ -40,6 +43,25 @@ export default function DashboardPage({ onNavigate }: DashboardPageProps) {
 
   const handleHabitToggle = (habitId: string, date: string) => {
     toggleDayCompletion(habitId, date);
+  };
+
+  const handleGroceryTaskClick = (taskId: string) => {
+    // Navigate to tasks page - the task modal will open automatically
+    onNavigate('tasks');
+  };
+
+  const handleGroceryItemToggle = (taskId: string, itemIndex: number) => {
+    // Toggle shopping item completion
+    const { updateTask, tasks } = useTaskStore.getState();
+    const task = tasks.find(t => t.id === taskId);
+    if (task && task.shoppingItems && task.shoppingItems[itemIndex]) {
+      const updatedShoppingItems = [...task.shoppingItems];
+      updatedShoppingItems[itemIndex] = {
+        ...updatedShoppingItems[itemIndex],
+        completed: !updatedShoppingItems[itemIndex].completed
+      };
+      updateTask(taskId, { shoppingItems: updatedShoppingItems });
+    }
   };
   
   return (
@@ -52,6 +74,13 @@ export default function DashboardPage({ onNavigate }: DashboardPageProps) {
       
       {/* Quick Actions Row */}
       <QuickActionsRow onNavigate={onNavigate} />
+      
+      {/* Grocery Lists Card */}
+      <GroceryListCard 
+        groceryTasks={groceryTasks}
+        onTaskClick={handleGroceryTaskClick}
+        onItemToggle={handleGroceryItemToggle}
+      />
       
       {/* Today's Focus */}
       <TodaysFocus 

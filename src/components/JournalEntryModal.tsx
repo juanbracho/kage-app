@@ -269,10 +269,7 @@ export default function JournalEntryModal({ isOpen, onClose, defaultGoalId }: Jo
                 value={formData.content}
                 onChange={(e) => handleContentChange(e.target.value)}
                 placeholder="What's on your mind? Reflect on your progress, share your thoughts, or write about your day..."
-                autoComplete="on"
-                autoCorrect="on"
-                autoCapitalize="sentences"
-                spellCheck="true"
+                inputMode="text"
                 className="w-full min-h-[120px] p-4 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 focus-accent-border focus:ring-2 focus-accent-ring outline-none transition-all resize-y placeholder-gray-500 dark:placeholder-gray-400"
                 style={{ lineHeight: '1.5' }}
               />

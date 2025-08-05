@@ -130,6 +130,12 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
+    // Validate recurring task requirements
+    if (formData.isRecurring && !formData.recurrenceStartDate) {
+      alert('Please provide a start date for recurring tasks');
+      return;
+    }
+    
     // Combine date and time for deadline tasks, and set dueDate for recurring tasks
     let dueDate: Date | undefined = undefined
     if (taskType === 'deadline' && formData.dueDate) {
@@ -172,12 +178,36 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
       });
     }
 
+    // Process shopping items similar to subtasks to preserve completion states
+    let processedShoppingItems: any[] = [];
+    if (taskType === 'to-buy') {
+      processedShoppingItems = formData.shoppingItems
+        .filter(item => item.name && item.name.trim() !== '')
+        .map((item, index) => {
+          // If editing task, try to preserve existing shopping item structure
+          if (editingTask && editingTask.shoppingItems && editingTask.shoppingItems[index]) {
+            const originalItem = editingTask.shoppingItems[index];
+            return {
+              id: originalItem.id || `shop-${index}-${Date.now()}`,
+              name: item.name.trim(),
+              quantity: item.quantity || '1',
+              completed: originalItem.completed || false
+            };
+          }
+          // New shopping item
+          return {
+            name: item.name.trim(),
+            quantity: item.quantity || '1'
+          };
+        });
+    }
+
     const taskData = {
       ...formData,
       type: taskType,
       dueDate,
       subtasks: processedSubtasks,
-      shoppingItems: taskType === 'to-buy' ? formData.shoppingItems.filter(item => item.name && item.name.trim() !== '') : []
+      shoppingItems: processedShoppingItems
     }
 
     console.log('📋 TaskCreationModal: Submitting task data:', {
@@ -242,7 +272,7 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
   const addShoppingItem = () => {
     setFormData(prev => ({
       ...prev,
-      shoppingItems: [...prev.shoppingItems, { name: '', quantity: '' }]
+      shoppingItems: [...prev.shoppingItems, { name: '', quantity: '1' }]
     }))
   }
 
@@ -320,10 +350,7 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                 required
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                autoComplete="on"
-                autoCorrect="on"
-                autoCapitalize="sentences"
-                spellCheck="true"
+                inputMode="text"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus-accent-ring focus-accent-border outline-none transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="What needs to be done?"
               />
@@ -336,10 +363,7 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
-                autoComplete="on"
-                autoCorrect="on"
-                autoCapitalize="sentences"
-                spellCheck="true"
+                inputMode="text"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus-accent-ring focus-accent-border outline-none transition-colors resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Add more details..."
               />
@@ -424,26 +448,16 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
             {/* Shopping Items - Only for To-Buy tasks */}
             {taskType === 'to-buy' && (
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">Shopping Items</label>
-                  <button
-                    type="button"
-                    onClick={addShoppingItem}
-                    className="accent-text-600 hover-accent-text-dark text-sm font-medium flex items-center gap-1"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add Item
-                  </button>
-                </div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Shopping Items</label>
                 <div className="space-y-3">
                   {formData.shoppingItems.map((item, index) => (
                     <div key={index} className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl">
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
-                          value={item.quantity}
+                          value={item.quantity || '1'}
                           onChange={(e) => updateShoppingItem(index, 'quantity', e.target.value)}
-                          placeholder="Qty"
+                          placeholder="1"
                           className="w-16 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus-accent-ring focus-accent-border outline-none text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
                         <input
@@ -451,10 +465,7 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                           value={item.name}
                           onChange={(e) => updateShoppingItem(index, 'name', e.target.value)}
                           placeholder="Item name"
-                          autoComplete="on"
-                          autoCorrect="on"
-                          autoCapitalize="words"
-                          spellCheck="true"
+                          inputMode="text"
                           className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus-accent-ring focus-accent-border outline-none text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
                         {formData.shoppingItems.length > 1 && (
@@ -470,23 +481,22 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                     </div>
                   ))}
                 </div>
+                {/* Add Item Button - Now at the bottom */}
+                <button
+                  type="button"
+                  onClick={addShoppingItem}
+                  className="w-full mt-3 py-2 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg accent-text-600 hover-accent-text-dark text-sm font-medium flex items-center justify-center gap-2 hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Item
+                </button>
               </div>
             )}
 
             {/* Subtasks - For Standard and Deadline tasks */}
             {taskType !== 'to-buy' && (
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">Subtasks</label>
-                  <button
-                    type="button"
-                    onClick={addSubtask}
-                    className="accent-text-600 hover-accent-text-dark text-sm font-medium flex items-center gap-1"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add Subtask
-                  </button>
-                </div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Subtasks</label>
                 <div className="space-y-2">
                   {formData.subtasks.length === 0 ? (
                     <div className="text-sm text-gray-500 dark:text-gray-400 text-center py-2">
@@ -500,10 +510,7 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                           value={subtask}
                           onChange={(e) => updateSubtask(index, e.target.value)}
                           placeholder={`Subtask ${index + 1}`}
-                          autoComplete="on"
-                          autoCorrect="on"
-                          autoCapitalize="sentences"
-                          spellCheck="true"
+                          inputMode="text"
                           className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus-accent-ring focus-accent-border outline-none text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
                         <button
@@ -517,6 +524,15 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                     ))
                   )}
                 </div>
+                {/* Add Subtask Button - Now at the bottom */}
+                <button
+                  type="button"
+                  onClick={addSubtask}
+                  className="w-full mt-3 py-2 px-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg accent-text-600 hover-accent-text-dark text-sm font-medium flex items-center justify-center gap-2 hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Subtask
+                </button>
               </div>
             )}
 
@@ -616,9 +632,10 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                         {/* Date Range */}
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-semibold text-orange-700 dark:text-orange-300 mb-2">Start Date</label>
+                            <label className="block text-sm font-semibold text-orange-700 dark:text-orange-300 mb-2">Start Date *</label>
                             <input
                               type="date"
+                              required={formData.isRecurring}
                               value={formData.recurrenceStartDate}
                               onChange={(e) => setFormData(prev => ({ 
                                 ...prev, 
@@ -626,6 +643,9 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                               }))}
                               className="w-full px-3 py-2 border border-orange-300 dark:border-orange-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                             />
+                            {!formData.recurrenceStartDate && (
+                              <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">Start date is required for recurring tasks</p>
+                            )}
                           </div>
                           <div>
                             <label className="block text-sm font-semibold text-orange-700 dark:text-orange-300 mb-2">End Date (Optional)</label>

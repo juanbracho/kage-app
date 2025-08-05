@@ -11,14 +11,14 @@ interface HabitRowProps {
 export default function HabitRow({ habit, selectedDate, onClick }: HabitRowProps) {
   const { toggleDayCompletion, isHabitCompletedOnDate, isRequiredDay } = useHabitStore();
 
-  // Get the 5-day window centered around selected date (or today if not provided)
+  // Get the 5-day window showing last 4 days + current day
   const getFiveDayWindow = () => {
     const centerDate = selectedDate || new Date();
     const today = new Date();
     const days = [];
     
-    // Create 5-day window: 2 days before center, center day, 2 days after
-    for (let i = -2; i <= 2; i++) {
+    // Create 5-day window: 4 days before current, then current day (last 4 days + current)
+    for (let i = -4; i <= 0; i++) {
       const day = new Date(centerDate);
       day.setDate(centerDate.getDate() + i);
       

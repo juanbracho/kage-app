@@ -188,6 +188,7 @@ function App() {
     <ErrorBoundary>
       <div 
         className="w-full max-w-md mx-auto min-h-screen bg-gray-50 dark:bg-gray-900 shadow-xl overflow-hidden flex flex-col"
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">

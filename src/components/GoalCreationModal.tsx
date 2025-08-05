@@ -61,6 +61,7 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
     addGoal, 
     createGoalFromTemplate,
     getTemplatesByCategory,
+    getAllTemplates,
     updateGoal,
     linkTaskToGoal,
     linkHabitToGoal
@@ -74,6 +75,8 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
   const [selectedCategory, setSelectedCategory] = useState<GoalCategory | null>(null);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [showIconGrid, setShowIconGrid] = useState(false);
+  const [loadedTemplates, setLoadedTemplates] = useState<GoalTemplate[]>([]);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   
   // Temporary linked items state
   const [linkedTasks, setLinkedTasks] = useState<TemporaryTask[]>([]);
@@ -157,14 +160,25 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
     setSelectedTemplateId(null);
   };
 
-  const handleCategorySelect = (category: GoalCategory) => {
+  const handleCategorySelect = async (category: GoalCategory) => {
     setSelectedCategory(category);
     setCurrentView('templates');
+    setIsLoadingTemplates(true);
+    
+    try {
+      const categoryTemplates = await getTemplatesByCategory(category);
+      setLoadedTemplates(categoryTemplates);
+    } catch (error) {
+      console.error('Error loading templates for category:', error);
+      setLoadedTemplates([]);
+    } finally {
+      setIsLoadingTemplates(false);
+    }
   };
 
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplateId(templateId);
-    const template = templates.find(t => t.id === templateId);
+    const template = loadedTemplates.find(t => t.id === templateId);
     if (template) {
       setFormData({
         ...formData,
@@ -177,10 +191,23 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
     }
   };
 
-  const handleCreateFromTemplate = () => {
+  const handleCreateFromTemplate = async () => {
     if (selectedTemplateId) {
-      createGoalFromTemplate(selectedTemplateId, formData);
-      handleClose();
+      try {
+        console.log('Creating goal from template:', selectedTemplateId);
+        const result = await createGoalFromTemplate(selectedTemplateId, formData);
+        
+        if (result.success) {
+          console.log('Goal created successfully:', result);
+          handleClose();
+        } else {
+          console.error('Failed to create goal from template:', result.error);
+          // TODO: Show error message to user
+        }
+      } catch (error) {
+        console.error('Error creating goal from template:', error);
+        // TODO: Show error message to user
+      }
     }
   };
 
@@ -327,7 +354,7 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
 
   if (!isOpen) return null;
 
-  const categoryTemplates = selectedCategory ? getTemplatesByCategory(selectedCategory) : [];
+  const categoryTemplates = loadedTemplates;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-3 sm:p-4 md:p-5">
@@ -417,7 +444,26 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                     </h3>
                   </div>
                   
-                  {categoryTemplates.map(template => (
+                  {isLoadingTemplates && (
+                    <div className="text-center py-8">
+                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                      <p className="mt-2 text-gray-400">Loading templates...</p>
+                    </div>
+                  )}
+                  
+                  {!isLoadingTemplates && categoryTemplates.length === 0 && (
+                    <div className="text-center py-8">
+                      <p className="text-gray-400">No templates available for this category yet.</p>
+                      <button
+                        onClick={() => setCurrentView('custom')}
+                        className="mt-4 text-orange-500 hover:text-orange-400 underline"
+                      >
+                        Create Custom Goal Instead
+                      </button>
+                    </div>
+                  )}
+                  
+                  {!isLoadingTemplates && categoryTemplates.map(template => (
                     <div
                       key={template.id}
                       className={`bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 cursor-pointer transition-all border-2 ${
@@ -497,10 +543,7 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="What do you want to achieve?"
                   maxLength={100}
-                  autoComplete="on"
-                  autoCorrect="on"
-                  autoCapitalize="sentences"
-                  spellCheck="true"
+                  inputMode="text"
                   className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors"
                 />
               </div>
@@ -514,10 +557,7 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                   placeholder="Describe your goal and why it matters to you..."
                   maxLength={500}
                   rows={3}
-                  autoComplete="on"
-                  autoCorrect="on"
-                  autoCapitalize="sentences"
-                  spellCheck="true"
+                  inputMode="text"
                   className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors resize-none"
                 />
               </div>
@@ -658,10 +698,7 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                   placeholder="How will achieving this goal change your life? What impact will it have on you and others?"
                   maxLength={300}
                   rows={3}
-                  autoComplete="on"
-                  autoCorrect="on"
-                  autoCapitalize="sentences"
-                  spellCheck="true"
+                  inputMode="text"
                   className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors resize-none"
                 />
               </div>

@@ -12,9 +12,9 @@ import {
   GoalStats,
   GoalProgress,
   GoalDetailData,
-  // TemplateTask,
-  // TemplateHabit
+  TemplateCreationResult
 } from '../types/goal';
+import templateLoader from '../services/templateLoader';
 
 const generateId = () => Date.now().toString() + Math.random().toString(36).substring(2, 9);
 
@@ -22,8 +22,33 @@ const generateId = () => Date.now().toString() + Math.random().toString(36).subs
 //   return date.toISOString().split('T')[0];
 // };
 
-// Sample goal templates
-const sampleTemplates: GoalTemplate[] = [
+// Initialize template loading on store creation with better error handling
+const initializeTemplates = async () => {
+  try {
+    console.log('🔄 Initializing templates in goalStore...');
+    await templateLoader.loadTemplates();
+    console.log('✅ Templates loaded successfully in goalStore');
+    
+    // Update store with loaded templates if possible
+    if (typeof window !== 'undefined') {
+      const loadedTemplates = await templateLoader.getTemplates();
+      console.log(`📊 Loaded ${loadedTemplates.length} templates from templateLoader`);
+    }
+  } catch (error) {
+    console.error('❌ Failed to load templates in goalStore:', error);
+    console.log('🔄 Using legacy templates as fallback');
+  }
+};
+
+// Trigger template loading with error protection
+try {
+  initializeTemplates();
+} catch (initError) {
+  console.error('❌ Failed to initialize templates:', initError);
+}
+
+// Legacy fallback templates (kept for backwards compatibility)
+const legacyTemplates: GoalTemplate[] = [
   {
     id: 'health-fitness',
     name: 'Get Fit & Strong',
@@ -123,7 +148,7 @@ export const useGoalStore = create<GoalStore>()(
   persist(
     (set, get) => ({
       goals: [], // Start with empty goals to show empty state
-      templates: sampleTemplates,
+      templates: legacyTemplates,
       currentFilter: initialFilter,
       viewMode: 'list',
       modalState: initialModalState,
@@ -244,20 +269,27 @@ export const useGoalStore = create<GoalStore>()(
         let habitCompletionRate = 0;
 
         try {
-          // Import stores dynamically to avoid circular dependencies
-          const { useTaskStore } = await import('./taskStore');
-          const { useHabitStore } = await import('./habitStore');
+          // Import stores dynamically with error handling
+          let taskStore, habitStore;
+          try {
+            const { useTaskStore } = await import('./taskStore');
+            const { useHabitStore } = await import('./habitStore');
+            taskStore = useTaskStore.getState();
+            habitStore = useHabitStore.getState();
+          } catch (importError) {
+            console.warn('⚠️ Could not load task/habit stores, using fallback:', importError);
+            return { success: false, error: 'Store initialization failed' };
+          }
           
           // Get tasks linked to this goal
-          const tasks = useTaskStore.getState().tasks || [];
+          const tasks = taskStore?.tasks || [];
           const linkedTasks = tasks.filter((task: any) => task.goalId === id);
           tasksTotal = linkedTasks.length;
           tasksCompleted = linkedTasks.filter((task: any) => task.status === 'completed').length;
 
           // Get habits linked to this goal  
-          const habitStore = useHabitStore.getState();
-          const habits = habitStore.habits || [];
-          const completions = habitStore.completions || [];
+          const habits = habitStore?.habits || [];
+          const completions = habitStore?.completions || [];
           const linkedHabits = habits.filter((habit: any) => habit.goalId === id);
           habitsActive = linkedHabits.length;
           
@@ -391,29 +423,183 @@ export const useGoalStore = create<GoalStore>()(
         get().updateGoalProgress(goalId);
       },
 
-      // Templates
-      createGoalFromTemplate: (templateId: string, customData?: Partial<GoalFormData>) => {
-        const template = get().templates.find(t => t.id === templateId);
-        if (!template) return;
+      // Templates - Enhanced with JSON template system
+      createGoalFromTemplate: async (templateId: string, customData?: Partial<GoalFormData>): Promise<TemplateCreationResult> => {
+        try {
+          console.log(`🎯 Creating goal from template: ${templateId}`);
+          
+          // Load template from JSON system
+          const template = await templateLoader.getTemplateById(templateId);
+          if (!template) {
+            console.error(`❌ Template not found: ${templateId}`);
+            return {
+              success: false,
+              taskIds: [],
+              habitIds: [],
+              error: `Template with ID '${templateId}' not found`
+            };
+          }
 
-        const goalData: GoalFormData = {
-          name: customData?.name || template.name,
-          description: customData?.description || template.description,
-          category: template.category,
-          icon: customData?.icon || template.icon,
-          color: customData?.color || template.color,
-          priority: customData?.priority || 'medium',
-          targetDate: customData?.targetDate,
-          motivation: customData?.motivation,
-          tags: customData?.tags || template.tags,
-          templateId: templateId
-        };
+          console.log(`📋 Found template: ${template.name}`);
+          console.log(`📝 Template has ${template.templateTasks.length} tasks and ${template.templateHabits.length} habits`);
 
-        get().addGoal(goalData);
+          // Create the main goal
+          const goalData: GoalFormData = {
+            name: customData?.name || template.name,
+            description: customData?.description || template.description,
+            category: template.category,
+            icon: customData?.icon || template.icon,
+            color: customData?.color || template.color,
+            priority: customData?.priority || 'medium',
+            targetDate: customData?.targetDate,
+            motivation: customData?.motivation || `Based on ${template.name} template`,
+            tags: customData?.tags || template.tags,
+            templateId: templateId
+          };
+
+          const goalId = get().addGoal(goalData);
+          console.log(`✅ Created goal with ID: ${goalId}`);
+
+          const createdTaskIds: string[] = [];
+          const createdHabitIds: string[] = [];
+
+          // Get access to task and habit stores with error handling
+          let taskStore, habitStore;
+          try {
+            const { useTaskStore } = await import('./taskStore');
+            const { useHabitStore } = await import('./habitStore');
+            taskStore = useTaskStore.getState();
+            habitStore = useHabitStore.getState();
+          } catch (importError) {
+            console.warn('⚠️ Could not load stores for template creation:', importError);
+            return { success: false, error: 'Store import failed during template creation' };
+          }
+
+          // Create tasks from template
+          if (template.templateTasks && template.templateTasks.length > 0) {
+            console.log(`📝 Creating ${template.templateTasks.length} tasks...`);
+            
+            for (const templateTask of template.templateTasks) {
+              const taskData = {
+                name: templateTask.name,
+                description: templateTask.description || '',
+                type: 'standard' as const,
+                priority: templateTask.priority,
+                goalId: goalId,
+                notes: templateTask.details || '',
+                tags: [template.name, ...(template.tags || [])],
+                subtasks: [],
+                status: 'pending' as const,
+                dueDate: templateTask.weekNumber ? 
+                  new Date(Date.now() + (templateTask.weekNumber * 7 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0] : 
+                  undefined
+              };
+              
+              try {
+                const taskId = taskStore.addTask(taskData);
+                createdTaskIds.push(taskId);
+                get().linkTaskToGoal(taskId, goalId);
+                console.log(`✅ Created task: ${templateTask.name}`);
+              } catch (error) {
+                console.error(`❌ Failed to create task: ${templateTask.name}`, error);
+              }
+            }
+          }
+
+          // Create habits from template
+          if (template.templateHabits && template.templateHabits.length > 0) {
+            console.log(`🔄 Creating ${template.templateHabits.length} habits...`);
+            
+            for (const templateHabit of template.templateHabits) {
+              const habitData = {
+                name: templateHabit.name,
+                description: templateHabit.description || '',
+                icon: templateHabit.icon,
+                color: template.color,
+                measurementType: templateHabit.measurementType,
+                frequency: templateHabit.frequency,
+                selectedDays: templateHabit.selectedDays,
+                customFrequency: templateHabit.customFrequency,
+                targetAmount: templateHabit.targetAmount,
+                targetUnit: templateHabit.targetUnit,
+                calendarIntegration: false,
+                startDate: new Date().toISOString().split('T')[0],
+                goalId: goalId
+              };
+              
+              try {
+                const habitId = habitStore.addHabit(habitData);
+                createdHabitIds.push(habitId);
+                get().linkHabitToGoal(habitId, goalId);
+                console.log(`✅ Created habit: ${templateHabit.name}`);
+              } catch (error) {
+                console.error(`❌ Failed to create habit: ${templateHabit.name}`, error);
+              }
+            }
+          }
+
+          // Update goal progress after linking all items
+          get().updateGoalProgress(goalId);
+
+          console.log(`🎉 Successfully created goal from template!`);
+          console.log(`📊 Summary: 1 goal, ${createdTaskIds.length} tasks, ${createdHabitIds.length} habits`);
+
+          return {
+            success: true,
+            goalId,
+            taskIds: createdTaskIds,
+            habitIds: createdHabitIds
+          };
+
+        } catch (error) {
+          console.error('❌ Error creating goal from template:', error);
+          return {
+            success: false,
+            taskIds: [],
+            habitIds: [],
+            error: error instanceof Error ? error.message : 'Unknown error occurred'
+          };
+        }
       },
 
-      getTemplatesByCategory: (category: GoalCategory) => {
-        return get().templates.filter(template => template.category === category);
+      getTemplatesByCategory: async (category: GoalCategory): Promise<GoalTemplate[]> => {
+        try {
+          return await templateLoader.getTemplatesByCategory(category);
+        } catch (error) {
+          console.error('Error getting templates by category:', error);
+          // Fallback to legacy templates
+          return get().templates.filter(template => template.category === category);
+        }
+      },
+
+      // Additional template methods
+      getAllTemplates: async (): Promise<GoalTemplate[]> => {
+        try {
+          const templates = await templateLoader.getTemplates();
+          return templates || [];
+        } catch (error) {
+          console.error('Error getting all templates:', error);
+          const fallbackTemplates = get().templates || legacyTemplates || [];
+          return fallbackTemplates;
+        }
+      },
+
+      getTemplateById: async (templateId: string): Promise<GoalTemplate | undefined> => {
+        try {
+          return await templateLoader.getTemplateById(templateId);
+        } catch (error) {
+          console.error('Error getting template by ID:', error);
+          return get().templates.find(t => t.id === templateId);
+        }
+      },
+
+      refreshTemplates: async (): Promise<void> => {
+        try {
+          await templateLoader.reloadTemplates();
+          console.log('✅ Templates refreshed successfully');
+        } catch (error) {
+          console.error('❌ Error refreshing templates:', error);
+        }
       },
 
       // Filtering and views
