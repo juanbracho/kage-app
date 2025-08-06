@@ -24,7 +24,35 @@ While the Goal Templates System works perfectly from the Goals page (creating co
 
 ## 📋 NEXT DEVELOPMENT MILESTONES
 
-### Milestone 11: Template System Enhancement
+### Milestone 11: User Experience Enhancement (NEW USER FEEDBACK)
+**Priority**: HIGH | **Timeline**: 2-3 weeks
+
+#### **Feature 1: Goal Milestones System**
+- [ ] **Milestone Interface**: Add `milestones` array to Goal type with description and completion status
+- [ ] **Milestone CRUD Operations**: Create, edit, delete milestones within GoalDetail component
+- [ ] **Progress Calculation Enhancement**: User-selectable progress tracking methods:
+  - **Tasks Mode**: Progress based on task completion percentage (current default)
+  - **Habits Mode**: Progress based on habit completion rate over time
+  - **Milestones Mode**: Progress based on milestone completion percentage
+  - **Mixed Mode**: Weighted combination of tasks, habits, and milestones
+- [ ] **Progress Settings UI**: Settings interface for users to choose progress calculation method per goal
+- [ ] **Enhanced Goal Display**: Show milestone progress alongside task/habit progress in goal cards
+
+#### **Feature 2: Journal Passcode Protection**
+- [ ] **Passcode Settings**: 4-digit numeric passcode setup in Settings page
+- [ ] **Encrypted Storage**: Secure passcode storage with encryption utilities
+- [ ] **Access Control**: Passcode entry modal before journal access
+- [ ] **Auto-Lock System**: Automatic re-lock after inactivity or app backgrounding
+- [ ] **Security UI**: Enable/disable passcode toggle and passcode change functionality
+
+#### **Feature 3: Enhanced Recurring Tasks Display**
+- [ ] **Tasks Page Preview**: Show next 3 upcoming iterations of recurring tasks
+- [ ] **Calendar Optimization**: Display only next occurrence per recurring task on each date
+- [ ] **Smart Task Generation**: Pre-create limited future instances for better UX
+- [ ] **Upcoming Tasks Filter**: New filter mode for "upcoming" vs "all instances"
+- [ ] **Morning Task Display**: Show upcoming tasks at beginning of each calendar day
+
+### Milestone 12: Template System Enhancement
 **Priority**: Medium | **Timeline**: 2-3 weeks
 
 - [ ] **Additional Templates**: Weight loss, skill learning, creative projects
@@ -33,7 +61,7 @@ While the Goal Templates System works perfectly from the Goals page (creating co
 - [ ] **Template Analytics**: Track template usage and success rates
 - [ ] **Template Categories**: Better organization and filtering
 
-### Milestone 12: User Account & Sync System  
+### Milestone 13: User Account & Sync System  
 **Priority**: Medium | **Timeline**: 4-6 weeks
 
 - [ ] **Profile Creation**: Enhanced onboarding with user profiles
@@ -42,7 +70,7 @@ While the Goal Templates System works perfectly from the Goals page (creating co
 - [ ] **Account Management**: Settings and data management
 - [ ] **Multi-Device Support**: Seamless experience across devices
 
-### Milestone 13: Advanced Analytics & Insights
+### Milestone 14: Advanced Analytics & Insights
 **Priority**: Low | **Timeline**: 3-4 weeks
 
 - [ ] **Progress Analytics**: Advanced goal and habit analytics
@@ -126,10 +154,10 @@ While the Goal Templates System works perfectly from the Goals page (creating co
 ## 📞 IMMEDIATE ACTION ITEMS
 
 ### For Next Development Session
-1. **Debug onboarding template issue** with browser dev tools and comprehensive logging
-2. **Test latest APK** on physical device to confirm white screen resolution
-3. **Plan additional templates** based on user feedback and market research
-4. **Review performance metrics** and identify optimization opportunities
+1. **NEW USER FEEDBACK IMPLEMENTATION**: Start with Goal Milestones System and progress calculation enhancement
+2. **Debug onboarding template issue** with browser dev tools and comprehensive logging
+3. **Test latest APK** on physical device to confirm white screen resolution
+4. **Plan journal passcode security implementation** for user privacy requirements
 
 ### For User Testing
 1. **Deploy latest APK** to test users with onboarding template creation

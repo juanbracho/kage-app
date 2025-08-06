@@ -56,12 +56,12 @@ Each version folder contains:
 
 ## 🧪 Testing Checklist
 
-- [ ] App launches successfully
-- [ ] Existing data preserved (for updates)
-- [ ] Core features functional (Habits, Tasks, Goals, Journal, Calendar)
-- [ ] Data export/import working
-- [ ] Archive functionality working (v1.2.0+)
-- [ ] Time blocking saves consistently (v1.2.0+)
+- [X] App launches successfully
+- [X] Existing data preserved (for updates)
+- [X] Core features functional (Habits, Tasks, Goals, Journal, Calendar)
+- [X] Data export/import working
+- [X] Archive functionality working (v1.2.0+)
+- [X] Time blocking saves consistently (v1.2.0+)
 
 ---
 

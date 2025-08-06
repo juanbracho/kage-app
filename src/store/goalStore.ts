@@ -12,7 +12,9 @@ import {
   GoalStats,
   GoalProgress,
   GoalDetailData,
-  TemplateCreationResult
+  TemplateCreationResult,
+  GoalMilestone,
+  GoalProgressSettings
 } from '../types/goal';
 import templateLoader from '../services/templateLoader';
 
@@ -180,6 +182,12 @@ export const useGoalStore = create<GoalStore>()(
             longestStreak: 0,
             lastUpdated: new Date().toISOString()
           },
+          // NEW: Initialize milestones and progress settings
+          milestones: [],
+          progressSettings: {
+            calculationMode: 'tasks', // Default to current behavior
+            timeframe: '30days'
+          },
           linkedTaskIds: [],
           linkedHabitIds: [],
           linkedJournalIds: [],
@@ -313,22 +321,44 @@ export const useGoalStore = create<GoalStore>()(
           console.warn('Could not calculate goal progress:', error);
         }
 
-        // Calculate overall percentage (60% tasks, 40% habits)
+        // Calculate overall percentage using selected progress mode
         let percentage = 0;
-        if (tasksTotal > 0 || habitsActive > 0) {
-          const taskWeight = 0.6;
-          const habitWeight = 0.4;
+        const progressSettings = goal.progressSettings || { calculationMode: 'tasks', timeframe: '30days' };
+        
+        const milestonesCompleted = goal.milestones?.filter(m => m.completed).length || 0;
+        const milestonesTotal = goal.milestones?.length || 0;
+        
+        // Calculate progress based on selected mode
+        switch (progressSettings.calculationMode) {
+          case 'tasks':
+            percentage = tasksTotal > 0 ? (tasksCompleted / tasksTotal) * 100 : 0;
+            break;
           
-          const taskProgress = tasksTotal > 0 ? (tasksCompleted / tasksTotal) * 100 : 0;
-          const habitProgress = habitCompletionRate;
+          case 'habits':
+            percentage = habitsActive > 0 ? habitCompletionRate : 0;
+            break;
           
-          if (tasksTotal > 0 && habitsActive > 0) {
-            percentage = Math.round((taskProgress * taskWeight) + (habitProgress * habitWeight));
-          } else if (tasksTotal > 0) {
-            percentage = Math.round(taskProgress);
-          } else if (habitsActive > 0) {
-            percentage = Math.round(habitProgress);
-          }
+          case 'milestones':
+            percentage = milestonesTotal > 0 ? (milestonesCompleted / milestonesTotal) * 100 : 0;
+            break;
+          
+          case 'mixed':
+            const weights = progressSettings.mixedWeights || { tasks: 40, habits: 40, milestones: 20 };
+            let taskProgress = tasksTotal > 0 ? (tasksCompleted / tasksTotal) * 100 : 0;
+            let habitProgress = habitsActive > 0 ? habitCompletionRate : 0;
+            let milestoneProgress = milestonesTotal > 0 ? (milestonesCompleted / milestonesTotal) * 100 : 0;
+            
+            // Apply weights (convert percentages to decimals)
+            percentage = (
+              (taskProgress * (weights.tasks / 100)) +
+              (habitProgress * (weights.habits / 100)) +
+              (milestoneProgress * (weights.milestones / 100))
+            );
+            break;
+          
+          default:
+            // Fallback to tasks mode
+            percentage = tasksTotal > 0 ? (tasksCompleted / tasksTotal) * 100 : 0;
         }
 
         const updatedProgress: GoalProgress = {
@@ -420,6 +450,120 @@ export const useGoalStore = create<GoalStore>()(
         }));
 
         // Update goal progress
+        get().updateGoalProgress(goalId);
+      },
+
+      // NEW: Milestone management operations
+      addMilestone: (goalId: string, description: string, dueDate?: string) => {
+        const milestone: GoalMilestone = {
+          id: generateId(),
+          description,
+          completed: false,
+          createdAt: new Date().toISOString(),
+          order: get().goals.find(g => g.id === goalId)?.milestones.length || 0,
+          dueDate
+        };
+
+        set(state => ({
+          goals: state.goals.map(goal =>
+            goal.id === goalId
+              ? { 
+                  ...goal, 
+                  milestones: [...goal.milestones, milestone],
+                  updatedAt: new Date().toISOString()
+                }
+              : goal
+          )
+        }));
+
+        // Update progress if using milestone-based calculation
+        get().updateGoalProgress(goalId);
+      },
+
+      updateMilestone: (goalId: string, milestoneId: string, updates: Partial<GoalMilestone>) => {
+        set(state => ({
+          goals: state.goals.map(goal =>
+            goal.id === goalId
+              ? {
+                  ...goal,
+                  milestones: goal.milestones.map(milestone =>
+                    milestone.id === milestoneId
+                      ? { ...milestone, ...updates }
+                      : milestone
+                  ),
+                  updatedAt: new Date().toISOString()
+                }
+              : goal
+          )
+        }));
+
+        // Update progress if using milestone-based calculation
+        get().updateGoalProgress(goalId);
+      },
+
+      deleteMilestone: (goalId: string, milestoneId: string) => {
+        set(state => ({
+          goals: state.goals.map(goal =>
+            goal.id === goalId
+              ? {
+                  ...goal,
+                  milestones: goal.milestones.filter(m => m.id !== milestoneId),
+                  updatedAt: new Date().toISOString()
+                }
+              : goal
+          )
+        }));
+
+        // Update progress if using milestone-based calculation
+        get().updateGoalProgress(goalId);
+      },
+
+      toggleMilestoneCompletion: (goalId: string, milestoneId: string) => {
+        const goal = get().goals.find(g => g.id === goalId);
+        const milestone = goal?.milestones.find(m => m.id === milestoneId);
+        
+        if (!milestone) return;
+
+        const updates: Partial<GoalMilestone> = {
+          completed: !milestone.completed,
+          completedAt: !milestone.completed ? new Date().toISOString() : undefined
+        };
+
+        get().updateMilestone(goalId, milestoneId, updates);
+      },
+
+      reorderMilestones: (goalId: string, milestoneIds: string[]) => {
+        set(state => ({
+          goals: state.goals.map(goal =>
+            goal.id === goalId
+              ? {
+                  ...goal,
+                  milestones: milestoneIds.map((id, index) => {
+                    const milestone = goal.milestones.find(m => m.id === id);
+                    return milestone ? { ...milestone, order: index } : null;
+                  }).filter(Boolean) as GoalMilestone[],
+                  updatedAt: new Date().toISOString()
+                }
+              : goal
+          )
+        }));
+      },
+
+      // NEW: Progress settings management
+      updateProgressSettings: (goalId: string, settings: Partial<GoalProgressSettings>) => {
+        set(state => ({
+          goals: state.goals.map(goal =>
+            goal.id === goalId
+              ? {
+                  ...goal,
+                  progressSettings: { ...goal.progressSettings, ...settings },
+                  updatedAt: new Date().toISOString()
+                }
+              : goal
+          )
+        }));
+
+        // Recalculate progress with new settings
         get().updateGoalProgress(goalId);
       },
 

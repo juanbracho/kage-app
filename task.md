@@ -100,6 +100,40 @@ Kage is a comprehensive personal productivity PWA that integrates habits, tasks,
 - [x] Task 10.7: Build and deploy production-ready APK with all stability fixes
 - [ ] Task 10.8: Debug remaining onboarding template creation issue (IN PROGRESS)
 
+## Milestone 11: User Experience Enhancement (NEW USER FEEDBACK) 🔄
+
+#### **Goal Milestones System**
+- [ ] Task 11.1: Add milestone interface to Goal type with description and completion status
+- [ ] Task 11.2: Create milestone CRUD operations in goalStore.ts
+- [ ] Task 11.3: Build milestone management UI in GoalDetail component
+- [ ] Task 11.4: Implement milestone display with checkboxes and progress tracking
+
+#### **Progress Calculation Enhancement**
+- [ ] Task 11.5: Design user-selectable progress tracking system architecture
+- [ ] Task 11.6: Implement Tasks Mode progress calculation (current system - task completion %)
+- [ ] Task 11.7: Implement Habits Mode progress calculation (habit completion rate over time)
+- [ ] Task 11.8: Implement Milestones Mode progress calculation (milestone completion %)
+- [ ] Task 11.9: Implement Mixed Mode progress calculation (weighted combination)
+- [ ] Task 11.10: Create progress method settings UI in GoalDetail or Settings
+- [ ] Task 11.11: Update goal progress display to show selected calculation method
+- [ ] Task 11.12: Migrate existing goals to use default Tasks Mode calculation
+
+#### **Journal Passcode Protection**
+- [ ] Task 11.13: Design passcode security architecture with encryption
+- [ ] Task 11.14: Create 4-digit numeric passcode setup UI in Settings
+- [ ] Task 11.15: Implement secure passcode storage with encryption utilities
+- [ ] Task 11.16: Build passcode entry modal for journal access control
+- [ ] Task 11.17: Implement auto-lock system (inactivity/background detection)
+- [ ] Task 11.18: Add enable/disable passcode toggle and change passcode functionality
+
+#### **Enhanced Recurring Tasks Display**
+- [ ] Task 11.19: Modify recurring task generation to create limited future instances
+- [ ] Task 11.20: Implement "next 3 upcoming iterations" display on Tasks page
+- [ ] Task 11.21: Update calendar view to show only next occurrence per recurring task
+- [ ] Task 11.22: Create "upcoming tasks" filter mode vs "all instances"
+- [ ] Task 11.23: Enhance morning task display to prioritize upcoming tasks
+- [ ] Task 11.24: Update task scheduling logic for better UX with recurring tasks
+
 ## Features Checklist
 
 - [x] Feature 1: Habits tracking with calendar view
@@ -122,6 +156,9 @@ Kage is a comprehensive personal productivity PWA that integrates habits, tasks,
 - [x] Feature 18: Comprehensive goal creation with linked tasks and habits ecosystems
 - [x] Feature 19: Template loading service with validation and error handling
 - [x] Feature 20: Marathon training template with 16-week structured program
-- [ ] Feature 21: Advanced analytics dashboard
-- [ ] Feature 22: Data synchronization across devices
-- [ ] Feature 23: Customizable widgets and layouts
+- [ ] Feature 21: Goal milestones system with user-selectable progress calculation
+- [ ] Feature 22: Journal passcode protection with 4-digit security
+- [ ] Feature 23: Enhanced recurring tasks display (next 3 iterations + calendar optimization)
+- [ ] Feature 24: Advanced analytics dashboard
+- [ ] Feature 25: Data synchronization across devices
+- [ ] Feature 26: Customizable widgets and layouts

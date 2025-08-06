@@ -15,6 +15,12 @@ export interface Goal {
   // Progress tracking
   progress: GoalProgress;
   
+  // NEW: Milestones system
+  milestones: GoalMilestone[];
+  
+  // NEW: Progress calculation settings
+  progressSettings: GoalProgressSettings;
+  
   // Linked items
   linkedTaskIds: string[];
   linkedHabitIds: string[];
@@ -230,12 +236,23 @@ export interface GoalProgressSnapshot {
 
 export interface GoalMilestone {
   id: string;
-  title: string;
-  description?: string;
-  targetDate: string;
-  isCompleted: boolean;
+  description: string;
+  completed: boolean;
   completedAt?: string;
-  progress: number; // 0-100
+  createdAt: string;
+  order: number;
+  dueDate?: string;
+}
+
+// NEW: Progress calculation settings
+export interface GoalProgressSettings {
+  calculationMode: 'tasks' | 'habits' | 'milestones' | 'mixed';
+  mixedWeights?: {
+    tasks: number;      // 0-100, default: 40
+    habits: number;     // 0-100, default: 30  
+    milestones: number; // 0-100, default: 30
+  };
+  timeframe?: '7days' | '30days' | '90days'; // For habit calculations, default: '30days'
 }
 
 // Store interface
@@ -261,6 +278,16 @@ export interface GoalStore {
   unlinkTaskFromGoal: (goalId: string, taskId: string) => void;
   linkHabitToGoal: (goalId: string, habitId: string) => void;
   unlinkHabitFromGoal: (goalId: string, habitId: string) => void;
+  
+  // NEW: Milestone management
+  addMilestone: (goalId: string, description: string, dueDate?: string) => void;
+  updateMilestone: (goalId: string, milestoneId: string, updates: Partial<GoalMilestone>) => void;
+  deleteMilestone: (goalId: string, milestoneId: string) => void;
+  toggleMilestoneCompletion: (goalId: string, milestoneId: string) => void;
+  reorderMilestones: (goalId: string, milestoneIds: string[]) => void;
+  
+  // NEW: Progress settings management
+  updateProgressSettings: (goalId: string, settings: Partial<GoalProgressSettings>) => void;
   
   // Templates - Enhanced with JSON system
   createGoalFromTemplate: (templateId: string, customData?: Partial<GoalFormData>) => Promise<TemplateCreationResult>;
