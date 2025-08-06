@@ -42,7 +42,12 @@ export default function SettingsPage() {
     setTheme, 
     togglePrivacySetting,
     updateAppearanceSettings,
-    getAccentColorName
+    getAccentColorName,
+    setupPasscode,
+    validatePasscode,
+    disablePasscode,
+    changePasscode,
+    setAutoLockTimeout
   } = useSettingsStore()
   
   const { signOut, isPremiumUser } = useUserStore()
@@ -52,6 +57,15 @@ export default function SettingsPage() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
   const [expandedArchive, setExpandedArchive] = useState(false)
+  
+  // Passcode states
+  const [showPasscodeSetup, setShowPasscodeSetup] = useState(false)
+  const [showPasscodeChange, setShowPasscodeChange] = useState(false)
+  const [passcodeInput, setPasscodeInput] = useState('')
+  const [confirmPasscodeInput, setConfirmPasscodeInput] = useState('')
+  const [currentPasscodeInput, setCurrentPasscodeInput] = useState('')
+  const [passcodeError, setPasscodeError] = useState('')
+  const [passcodeLoading, setPasscodeLoading] = useState(false)
 
   const handleReminderTimeChange = () => {
     // This would open a time picker modal
@@ -86,6 +100,114 @@ export default function SettingsPage() {
 
   const handleShowOnboarding = () => {
     startOnboarding()
+  }
+
+  // Passcode Handlers
+  const resetPasscodeState = () => {
+    setPasscodeInput('')
+    setConfirmPasscodeInput('')
+    setCurrentPasscodeInput('')
+    setPasscodeError('')
+    setPasscodeLoading(false)
+  }
+
+  const handleEnablePasscode = () => {
+    resetPasscodeState()
+    setShowPasscodeSetup(true)
+  }
+
+  const handleDisablePasscode = async () => {
+    if (!currentPasscodeInput) {
+      setPasscodeError('Please enter your current passcode')
+      return
+    }
+
+    setPasscodeLoading(true)
+    try {
+      const success = await disablePasscode(currentPasscodeInput)
+      if (success) {
+        resetPasscodeState()
+        setShowPasscodeSetup(false)
+        console.log('✅ Passcode disabled successfully')
+      } else {
+        setPasscodeError('Incorrect passcode')
+      }
+    } catch (error) {
+      setPasscodeError('Failed to disable passcode')
+    } finally {
+      setPasscodeLoading(false)
+    }
+  }
+
+  const handleSetupPasscode = async () => {
+    setPasscodeError('')
+
+    if (passcodeInput.length !== 4 || !/^\d{4}$/.test(passcodeInput)) {
+      setPasscodeError('Passcode must be 4 digits')
+      return
+    }
+
+    if (passcodeInput !== confirmPasscodeInput) {
+      setPasscodeError('Passcodes do not match')
+      return
+    }
+
+    setPasscodeLoading(true)
+    try {
+      const success = await setupPasscode(passcodeInput)
+      if (success) {
+        resetPasscodeState()
+        setShowPasscodeSetup(false)
+        console.log('✅ Passcode setup successful')
+      } else {
+        setPasscodeError('Failed to setup passcode')
+      }
+    } catch (error) {
+      setPasscodeError('Failed to setup passcode')
+    } finally {
+      setPasscodeLoading(false)
+    }
+  }
+
+  const handleChangePasscode = async () => {
+    setPasscodeError('')
+
+    if (!currentPasscodeInput) {
+      setPasscodeError('Please enter your current passcode')
+      return
+    }
+
+    if (passcodeInput.length !== 4 || !/^\d{4}$/.test(passcodeInput)) {
+      setPasscodeError('New passcode must be 4 digits')
+      return
+    }
+
+    if (passcodeInput !== confirmPasscodeInput) {
+      setPasscodeError('New passcodes do not match')
+      return
+    }
+
+    setPasscodeLoading(true)
+    try {
+      const success = await changePasscode(currentPasscodeInput, passcodeInput)
+      if (success) {
+        resetPasscodeState()
+        setShowPasscodeChange(false)
+        console.log('✅ Passcode changed successfully')
+      } else {
+        setPasscodeError('Current passcode is incorrect')
+      }
+    } catch (error) {
+      setPasscodeError('Failed to change passcode')
+    } finally {
+      setPasscodeLoading(false)
+    }
+  }
+
+  const handleCancelPasscodeAction = () => {
+    resetPasscodeState()
+    setShowPasscodeSetup(false)
+    setShowPasscodeChange(false)
   }
 
   const handleUnarchiveGoal = (goalId: string, goalName: string) => {
@@ -234,6 +356,50 @@ export default function SettingsPage() {
           checked={settings.privacy.analytics}
           onToggle={() => togglePrivacySetting('analytics')}
         />
+      </SettingsSection>
+
+      {/* Security & Passcode */}
+      <SettingsSection title="Security & Passcode" icon={<Lock className="w-5 h-5" />}>
+        <SettingsItem
+          icon={<Key className="w-4 h-4" />}
+          iconBgColor="bg-indigo-500"
+          title="Journal Passcode"
+          subtitle={settings.passcode.enabled ? "Enabled - Journal protected" : "Disabled - Journal accessible"}
+          type="toggle"
+          checked={settings.passcode.enabled}
+          onToggle={settings.passcode.enabled ? () => setShowPasscodeSetup(true) : handleEnablePasscode}
+        />
+        
+        {settings.passcode.enabled && (
+          <>
+            <SettingsItem
+              icon={<RotateCcw className="w-4 h-4" />}
+              iconBgColor="bg-orange-500"
+              title="Change Passcode"
+              subtitle="Update your journal passcode"
+              type="navigate"
+              onClick={() => {
+                resetPasscodeState()
+                setShowPasscodeChange(true)
+              }}
+            />
+            
+            <SettingsItem
+              icon={<Clock className="w-4 h-4" />}
+              iconBgColor="bg-purple-500"
+              title="Auto-Lock Timeout"
+              subtitle={`Lock after ${settings.passcode.autoLockTimeout === 'never' ? 'never' : settings.passcode.autoLockTimeout}`}
+              type="navigate"
+              onClick={() => {
+                // This would open auto-lock timeout selection
+                const timeouts = ['1min', '5min', '15min', '30min', 'never'];
+                const currentIndex = timeouts.indexOf(settings.passcode.autoLockTimeout);
+                const nextIndex = (currentIndex + 1) % timeouts.length;
+                setAutoLockTimeout(timeouts[nextIndex] as any);
+              }}
+            />
+          </>
+        )}
       </SettingsSection>
 
       {/* Archive Management */}
@@ -422,6 +588,139 @@ export default function SettingsPage() {
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
       />
+
+      {/* Passcode Setup/Change Modals */}
+      {(showPasscodeSetup || showPasscodeChange) && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-3">
+                <Key className="w-6 h-6 text-indigo-500" />
+                {settings.passcode.enabled && showPasscodeSetup ? 'Disable Passcode' :
+                 showPasscodeChange ? 'Change Passcode' : 'Setup Passcode'}
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              {/* Current passcode (for disable or change) */}
+              {(settings.passcode.enabled && showPasscodeSetup) || showPasscodeChange ? (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Current Passcode
+                  </label>
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={4}
+                    value={currentPasscodeInput}
+                    onChange={(e) => {
+                      setCurrentPasscodeInput(e.target.value.replace(/\D/g, ''))
+                      setPasscodeError('')
+                    }}
+                    className="w-full px-4 py-3 text-center text-2xl font-mono border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="••••"
+                  />
+                </div>
+              ) : null}
+
+              {/* New passcode (for setup or change, but not disable) */}
+              {!(settings.passcode.enabled && showPasscodeSetup) && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {showPasscodeChange ? 'New Passcode' : 'Enter 4-Digit Passcode'}
+                    </label>
+                    <input
+                      type="password"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={4}
+                      value={passcodeInput}
+                      onChange={(e) => {
+                        setPasscodeInput(e.target.value.replace(/\D/g, ''))
+                        setPasscodeError('')
+                      }}
+                      className="w-full px-4 py-3 text-center text-2xl font-mono border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      placeholder="••••"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Confirm Passcode
+                    </label>
+                    <input
+                      type="password"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={4}
+                      value={confirmPasscodeInput}
+                      onChange={(e) => {
+                        setConfirmPasscodeInput(e.target.value.replace(/\D/g, ''))
+                        setPasscodeError('')
+                      }}
+                      className="w-full px-4 py-3 text-center text-2xl font-mono border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      placeholder="••••"
+                    />
+                  </div>
+                </>
+              )}
+
+              {passcodeError && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                  <div className="text-sm text-red-700 dark:text-red-300">
+                    {passcodeError}
+                  </div>
+                </div>
+              )}
+
+              {/* Information text */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                <div className="text-sm text-blue-700 dark:text-blue-300">
+                  {settings.passcode.enabled && showPasscodeSetup
+                    ? 'Enter your current passcode to disable journal protection.'
+                    : showPasscodeChange
+                    ? 'Enter your current passcode and choose a new 4-digit passcode.'
+                    : 'Choose a 4-digit numeric passcode to protect your journal entries.'
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleCancelPasscodeAction}
+                className="flex-1 px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                disabled={passcodeLoading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={
+                  settings.passcode.enabled && showPasscodeSetup
+                    ? handleDisablePasscode
+                    : showPasscodeChange
+                    ? handleChangePasscode
+                    : handleSetupPasscode
+                }
+                disabled={passcodeLoading}
+                className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {passcodeLoading && (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                )}
+                {settings.passcode.enabled && showPasscodeSetup
+                  ? 'Disable'
+                  : showPasscodeChange
+                  ? 'Change'
+                  : 'Setup'
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

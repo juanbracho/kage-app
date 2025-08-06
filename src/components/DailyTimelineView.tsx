@@ -69,20 +69,31 @@ export default function DailyTimelineView({
   const [recurringAction, setRecurringAction] = useState<{ event: CalendarEvent; type: 'delete' | 'complete' } | null>(null);
   const [undoAction, setUndoAction] = useState<{ type: 'delete' | 'complete'; event: CalendarEvent; timeoutId: NodeJS.Timeout } | null>(null);
 
-  // Generate time slots from 6 AM to 10 PM
-  const timeSlots: TimeSlot[] = useMemo(() => {
-    const slots: TimeSlot[] = [];
+  // Separate all-day events from timed events
+  const { allDayEvents, timedEvents } = useMemo(() => {
     const events = getEventsForDate(selectedDate);
     
-    console.log('📅 Regenerating timeSlots, events:', events.length, 'timeBlocks:', timeBlocks.length);
+    console.log('📅 Regenerating events, total:', events.length, 'timeBlocks:', timeBlocks.length);
+    
+    const allDay = events.filter(event => event.allDay === true || event.type === 'milestone' || event.type === 'repetitive-task');
+    const timed = events.filter(event => !event.allDay && event.type !== 'milestone' && event.type !== 'repetitive-task');
+    
+    console.log('📅 All-day events:', allDay.length, 'Timed events:', timed.length);
+    
+    return { allDayEvents: allDay, timedEvents: timed };
+  }, [selectedDate, timeBlocks, getEventsForDate]);
+
+  // Generate time slots from 6 AM to 10 PM for timed events
+  const timeSlots: TimeSlot[] = useMemo(() => {
+    const slots: TimeSlot[] = [];
     
     for (let hour = 6; hour <= 22; hour++) {
       const displayTime = hour === 12 ? '12 PM' : 
                          hour > 12 ? `${hour - 12} PM` : 
                          hour === 0 ? '12 AM' : `${hour} AM`;
       
-      // Filter events for this hour - show events only at their starting hour
-      const hourEvents = events.filter(event => {
+      // Filter timed events for this hour - show events only at their starting hour
+      const hourEvents = timedEvents.filter(event => {
         const eventStartHour = parseInt(event.startTime.split(':')[0]);
         
         // Only include events that START in this hour (no duplicates)
@@ -101,18 +112,28 @@ export default function DailyTimelineView({
     }
     
     return slots;
-  }, [selectedDate, timeBlocks, getEventsForDate]);
+  }, [timedEvents]);
 
   // Get current time for "Now" indicator
   const currentHour = new Date().getHours();
   const isToday = selectedDate.toDateString() === new Date().toDateString();
 
-  const handleEventCompletion = (event: CalendarEvent) => {
+  const handleEventCompletion = async (event: CalendarEvent) => {
     const eventId = event.linkedId || event.id;
     
-    console.log('🎯 Handling completion for event:', event.title, 'ID:', eventId, 'Current completed:', event.completed);
+    console.log('🎯 Handling completion for event:', event.title, 'ID:', eventId, 'Current completed:', event.completed, 'Type:', event.type);
     
-    if (isRecurringEvent(eventId)) {
+    // Handle milestone completion differently
+    if (event.type === 'milestone' && event.goalId && event.milestoneId) {
+      try {
+        const { useGoalStore } = await import('../store/goalStore');
+        const goalStore = useGoalStore.getState();
+        goalStore.toggleMilestoneCompletion(event.goalId, event.milestoneId);
+        console.log('🎯 Milestone completion toggled:', event.title);
+      } catch (error) {
+        console.error('❌ Error toggling milestone completion:', error);
+      }
+    } else if (isRecurringEvent(eventId)) {
       setRecurringAction({ event, type: 'complete' });
       setShowRecurringModal(true);
     } else {
@@ -232,6 +253,80 @@ export default function DailyTimelineView({
           Today
         </button>
       </div>
+
+      {/* All-Day Events Section */}
+      {allDayEvents.length > 0 && (
+        <div className="px-4 py-3 border-b border-gray-700">
+          <div className="space-y-2">
+            {allDayEvents.map((event) => (
+              <div
+                key={event.id}
+                {...eventGestures}
+                onMouseDown={() => eventGestures.onMouseDown?.(event)}
+                className={`flex items-center gap-3 p-2.5 rounded-lg border transition-all duration-200 cursor-pointer hover:scale-[1.02] ${
+                  event.completed 
+                    ? 'bg-gray-800 border-gray-600 opacity-60' 
+                    : 'bg-gray-800/80 border-gray-600 hover:border-gray-500'
+                }`}
+                style={{
+                  borderLeftWidth: '4px',
+                  borderLeftColor: event.type === 'milestone' ? '#F59E0B' : event.type === 'repetitive-task' ? '#8B5CF6' : event.color
+                }}
+              >
+                {/* Completion Checkbox */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEventCompletion(event);
+                  }}
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                    event.completed
+                      ? 'bg-green-500 border-green-500'
+                      : 'border-gray-400 hover:border-gray-300'
+                  }`}
+                >
+                  {event.completed && (
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </button>
+
+                {/* Event Icon */}
+                <div className="text-xl">{event.icon}</div>
+
+                {/* Event Content */}
+                <div className="flex-1 min-w-0">
+                  <h3 className={`font-medium truncate ${
+                    event.completed ? 'text-gray-400 line-through' : 'text-white'
+                  }`}>
+                    {event.title}
+                  </h3>
+                  {event.description && (
+                    <p className={`text-sm truncate ${
+                      event.completed ? 'text-gray-500' : 'text-gray-300'
+                    }`}>
+                      {event.description}
+                    </p>
+                  )}
+                </div>
+
+                {/* Event Type Badge */}
+                <div className={`px-2 py-1 text-xs font-medium rounded-full ${
+                  event.type === 'milestone' 
+                    ? 'bg-amber-500/20 text-amber-300' 
+                    : event.type === 'repetitive-task'
+                    ? 'bg-purple-500/20 text-purple-300'
+                    : 'bg-blue-500/20 text-blue-300'
+                }`}>
+                  {event.type === 'milestone' ? 'Milestone' : 
+                   event.type === 'repetitive-task' ? 'Task' : 'Event'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Timeline */}
       <div className="flex-1 overflow-y-auto pb-20">

@@ -476,11 +476,19 @@ export const useGoalStore = create<GoalStore>()(
           )
         }));
 
+        // Create calendar event for milestone if it has a due date
+        if (dueDate) {
+          get().createMilestoneCalendarEvent(goalId, milestone);
+        }
+
         // Update progress if using milestone-based calculation
         get().updateGoalProgress(goalId);
       },
 
       updateMilestone: (goalId: string, milestoneId: string, updates: Partial<GoalMilestone>) => {
+        const goal = get().goals.find(g => g.id === goalId);
+        const originalMilestone = goal?.milestones.find(m => m.id === milestoneId);
+        
         set(state => ({
           goals: state.goals.map(goal =>
             goal.id === goalId
@@ -496,6 +504,12 @@ export const useGoalStore = create<GoalStore>()(
               : goal
           )
         }));
+
+        // If due date was added or changed, update calendar event
+        if (updates.dueDate && updates.dueDate !== originalMilestone?.dueDate && originalMilestone) {
+          const updatedMilestone = { ...originalMilestone, ...updates };
+          get().createMilestoneCalendarEvent(goalId, updatedMilestone);
+        }
 
         // Update progress if using milestone-based calculation
         get().updateGoalProgress(goalId);
@@ -530,6 +544,11 @@ export const useGoalStore = create<GoalStore>()(
         };
 
         get().updateMilestone(goalId, milestoneId, updates);
+        
+        // Trigger journal prompt if milestone is being completed
+        if (!milestone.completed && goal) {
+          get().triggerMilestoneJournalPrompt(goalId, milestoneId, goal, milestone);
+        }
       },
 
       reorderMilestones: (goalId: string, milestoneIds: string[]) => {
@@ -932,6 +951,74 @@ export const useGoalStore = create<GoalStore>()(
         const goals = get().goals;
         for (const goal of goals) {
           await get().updateGoalProgress(goal.id);
+        }
+      },
+
+      // NEW: Calendar integration for milestones
+      createMilestoneCalendarEvent: async (goalId: string, milestone: GoalMilestone) => {
+        try {
+          const goal = get().goals.find(g => g.id === goalId);
+          if (!goal || !milestone.dueDate) return;
+
+          // Import calendar store dynamically to avoid circular dependency
+          const { useCalendarStore } = await import('./calendarStore');
+          const calendarStore = useCalendarStore.getState();
+
+          const timeBlockData = {
+            title: `Milestone: ${milestone.description}`,
+            description: `Goal: ${goal.name}`,
+            date: milestone.dueDate,
+            startTime: '00:00', // All-day event
+            durationMinutes: 1440, // Full day
+            blockType: 'milestone' as const,
+            icon: '🎯',
+            color: goal.color || 'linear-gradient(135deg, #F59E0B, #D97706)', // Amber gradient for milestones
+            linkedItemType: 'milestone' as const,
+            linkedItemId: milestone.id,
+            allDay: true,
+            goalId: goalId,
+            milestoneId: milestone.id
+          };
+
+          await calendarStore.addTimeBlock(timeBlockData);
+          console.log('✅ Created calendar event for milestone:', milestone.description);
+        } catch (error) {
+          console.error('❌ Error creating milestone calendar event:', error);
+        }
+      },
+
+      // NEW: Journal prompt integration for milestone completion
+      triggerMilestoneJournalPrompt: async (goalId: string, milestoneId: string, goal: Goal, milestone: GoalMilestone) => {
+        try {
+          // Import journal store dynamically
+          const { useJournalStore } = await import('./journalStore');
+          const journalStore = useJournalStore.getState();
+          
+          const today = new Date().toISOString().split('T')[0];
+          const journalPrompt = `🎯 Milestone Achievement!\n\nI just completed the milestone "${milestone.description}" for my goal "${goal.name}".\n\nWhat I learned from this milestone:\n\nHow this brings me closer to my goal:\n\nNext steps:\n\n`;
+
+          // Check if there's already a journal entry for today
+          const existingEntry = journalStore.getEntry(today);
+          
+          if (existingEntry) {
+            // Append to existing entry
+            const updatedContent = `${existingEntry.content}\n\n${journalPrompt}`;
+            journalStore.updateEntry(today, { content: updatedContent });
+          } else {
+            // Create new entry
+            journalStore.addEntry({
+              date: today,
+              content: journalPrompt,
+              mood: 'positive' as const,
+              tags: [`goal:${goal.name}`, 'milestone', 'achievement']
+            });
+          }
+
+          // Show success message (in real app, this would trigger a modal)
+          console.log(`🎉 Journal entry created for milestone completion: ${milestone.description}`);
+          
+        } catch (error) {
+          console.error('❌ Error creating milestone journal entry:', error);
         }
       }
     }),

@@ -326,6 +326,10 @@ export interface GoalStore {
   
   // Utility
   recalculateAllGoalProgress: () => Promise<void>;
+
+  // NEW: Calendar and journal integration
+  createMilestoneCalendarEvent: (goalId: string, milestone: GoalMilestone) => Promise<void>;
+  triggerMilestoneJournalPrompt: (goalId: string, milestoneId: string, goal: Goal, milestone: GoalMilestone) => Promise<void>;
 }
 
 // Constants for UI

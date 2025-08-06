@@ -318,11 +318,15 @@ export const useCalendarStore = create<CalendarStore>()(
       date: block.date,
       startTime: block.startTime,
       endTime: addMinutesToTime(block.startTime, block.durationMinutes),
-      type: 'timeblock',
+      type: block.blockType === 'milestone' ? 'milestone' : 
+            block.blockType === 'all-day-task' ? 'repetitive-task' : 'timeblock',
       icon: block.icon,
       color: block.color,
       completed: block.status === 'completed',
-      linkedId: block.id
+      linkedId: block.id,
+      allDay: block.allDay,
+      goalId: block.goalId,
+      milestoneId: block.milestoneId
     }));
     
     // Calculate stats based on linkedItemType from time blocks

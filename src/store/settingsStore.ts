@@ -1,14 +1,17 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { encryptPasscode, validatePasscode, generateSalt, getAutoLockTimeoutMs } from '../utils/passcode'
 import type { 
   AppSettings, 
   NotificationSettings, 
   AppearanceSettings, 
   PrivacySettings, 
   PremiumSettings,
+  PasscodeSettings,
   Theme,
   AccentColor,
-  NotificationTime
+  NotificationTime,
+  AutoLockTimeout
 } from '../types/settings'
 
 // Map accent color IDs to their display names
@@ -30,6 +33,7 @@ interface SettingsStore {
   updateAppearanceSettings: (settings: Partial<AppearanceSettings>) => void
   updatePrivacySettings: (settings: Partial<PrivacySettings>) => void
   updatePremiumSettings: (settings: Partial<PremiumSettings>) => void
+  updatePasscodeSettings: (settings: Partial<PasscodeSettings>) => void
   setTheme: (theme: Theme) => void
   setAccentColor: (color: AccentColor) => void
   setReminderTime: (time: NotificationTime) => void
@@ -38,6 +42,15 @@ interface SettingsStore {
   resetToDefaults: () => void
   exportSettings: () => string
   importSettings: (settingsJson: string) => boolean
+  
+  // Passcode Actions
+  setupPasscode: (passcode: string) => Promise<boolean>
+  validatePasscode: (passcode: string) => Promise<boolean>
+  disablePasscode: (currentPasscode: string) => Promise<boolean>
+  changePasscode: (currentPasscode: string, newPasscode: string) => Promise<boolean>
+  setAutoLockTimeout: (timeout: AutoLockTimeout) => void
+  updateLastAccess: () => void
+  shouldAutoLock: () => boolean
   
   // Onboarding
   completeOnboarding: () => void
@@ -79,6 +92,10 @@ const defaultSettings: AppSettings = {
     cloudSync: false,
     unlimitedGoals: false,
     customThemes: false
+  },
+  passcode: {
+    enabled: false,
+    autoLockTimeout: '5min'
   },
   version: '1.0.0',
   firstLaunch: true,
@@ -133,6 +150,18 @@ export const useSettingsStore = create<SettingsStore>()(
             ...state.settings,
             premium: {
               ...state.settings.premium,
+              ...newSettings
+            }
+          }
+        }))
+      },
+
+      updatePasscodeSettings: (newSettings: Partial<PasscodeSettings>) => {
+        set(state => ({
+          settings: {
+            ...state.settings,
+            passcode: {
+              ...state.settings.passcode,
               ...newSettings
             }
           }
@@ -293,6 +322,99 @@ export const useSettingsStore = create<SettingsStore>()(
             }
           }
         }))
+      },
+
+      // Passcode Management Methods
+      setupPasscode: async (passcode: string): Promise<boolean> => {
+        try {
+          const salt = generateSalt();
+          const hash = await encryptPasscode(passcode, salt);
+          
+          get().updatePasscodeSettings({
+            enabled: true,
+            hash,
+            salt,
+            lastAccessTime: undefined // Don't set lastAccessTime on setup - journal should be locked
+          });
+          
+          console.log('✅ Passcode setup successful');
+          return true;
+        } catch (error) {
+          console.error('❌ Passcode setup failed:', error);
+          return false;
+        }
+      },
+
+      validatePasscode: async (passcode: string): Promise<boolean> => {
+        try {
+          const { settings } = get();
+          if (!settings.passcode.enabled || !settings.passcode.hash || !settings.passcode.salt) {
+            return false;
+          }
+
+          const isValid = await validatePasscode(passcode, settings.passcode.hash, settings.passcode.salt);
+          
+          if (isValid) {
+            get().updateLastAccess();
+            console.log('✅ Passcode validation successful');
+          } else {
+            console.log('❌ Passcode validation failed');
+          }
+          
+          return isValid;
+        } catch (error) {
+          console.error('❌ Passcode validation error:', error);
+          return false;
+        }
+      },
+
+      disablePasscode: async (currentPasscode: string): Promise<boolean> => {
+        const isValid = await get().validatePasscode(currentPasscode);
+        if (!isValid) {
+          return false;
+        }
+
+        get().updatePasscodeSettings({
+          enabled: false,
+          hash: undefined,
+          salt: undefined,
+          lastAccessTime: undefined
+        });
+        
+        console.log('✅ Passcode disabled successfully');
+        return true;
+      },
+
+      changePasscode: async (currentPasscode: string, newPasscode: string): Promise<boolean> => {
+        const isCurrentValid = await get().validatePasscode(currentPasscode);
+        if (!isCurrentValid) {
+          return false;
+        }
+
+        return await get().setupPasscode(newPasscode);
+      },
+
+      setAutoLockTimeout: (timeout: AutoLockTimeout) => {
+        get().updatePasscodeSettings({ autoLockTimeout: timeout });
+      },
+
+      updateLastAccess: () => {
+        get().updatePasscodeSettings({ lastAccessTime: Date.now() });
+      },
+
+      shouldAutoLock: (): boolean => {
+        const { settings } = get();
+        if (!settings.passcode.enabled || !settings.passcode.lastAccessTime) {
+          return false;
+        }
+
+        const timeoutMs = getAutoLockTimeoutMs(settings.passcode.autoLockTimeout);
+        if (timeoutMs === -1) {
+          return false; // Never auto-lock
+        }
+
+        const timeSinceLastAccess = Date.now() - settings.passcode.lastAccessTime;
+        return timeSinceLastAccess >= timeoutMs;
       },
 
       resetToDefaults: () => {

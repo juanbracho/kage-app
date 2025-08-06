@@ -29,6 +29,7 @@ export interface Task {
   calendarStartTime?: string
   calendarDuration?: number
   calendarDate?: string
+  allDayTask?: boolean
 }
 
 export interface Subtask {
@@ -86,6 +87,7 @@ export interface TaskFormData {
   calendarStartTime?: string
   calendarDuration?: number
   calendarDate?: string
+  allDayTask?: boolean
 }
 
 export interface TaskStore {

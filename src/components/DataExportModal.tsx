@@ -13,7 +13,7 @@ interface DataExportModalProps {
   onClose: () => void;
 }
 
-type ExportFormat = 'kage-full' | 'kage-habits';
+type ExportFormat = 'kage-full' | 'kage-habits' | 'kage-custom';
 
 interface ExportProgress {
   stage: 'idle' | 'preparing' | 'generating' | 'completed' | 'error';
@@ -31,8 +31,23 @@ interface ExportStats {
   timeBlocks: number;
 }
 
+interface CustomExportSelection {
+  goals: boolean;
+  tasks: boolean;
+  habits: boolean;
+  journal: boolean;
+  timeBlocks: boolean;
+}
+
 export default function DataExportModal({ isOpen, onClose }: DataExportModalProps) {
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('kage-full');
+  const [customSelection, setCustomSelection] = useState<CustomExportSelection>({
+    goals: true,
+    tasks: true,
+    habits: true,
+    journal: true,
+    timeBlocks: true
+  });
   const [progress, setProgress] = useState<ExportProgress>({
     stage: 'idle',
     message: 'Ready to export your data',
@@ -57,6 +72,105 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
     journalEntries: journalEntries.length,
     timeBlocks: timeBlocks.length
   });
+
+  const generateKageCustomExport = (selection: CustomExportSelection) => {
+    console.log('📤 Export: Generating custom backup with user selection:', selection);
+    
+    // Build relationship maps only for selected data types
+    const goalTaskMap = new Map<string, string[]>();
+    const goalHabitMap = new Map<string, string[]>();
+    const taskTimeBlockMap = new Map<string, string[]>();
+    const habitTimeTimeBlockMap = new Map<string, string[]>();
+    
+    // Map tasks to goals (only if both are selected)
+    if (selection.tasks && selection.goals) {
+      tasks.forEach(task => {
+        if (task.goalId) {
+          if (!goalTaskMap.has(task.goalId)) {
+            goalTaskMap.set(task.goalId, []);
+          }
+          goalTaskMap.get(task.goalId)!.push(task.id);
+        }
+      });
+    }
+    
+    // Map habits to goals (only if both are selected)
+    if (selection.habits && selection.goals) {
+      habits.forEach(habit => {
+        if ((habit as any).goalId) {
+          if (!goalHabitMap.has((habit as any).goalId)) {
+            goalHabitMap.set((habit as any).goalId, []);
+          }
+          goalHabitMap.get((habit as any).goalId)!.push(habit.id);
+        }
+      });
+    }
+    
+    // Map time blocks to tasks and habits (only if timeBlocks are selected)
+    if (selection.timeBlocks) {
+      timeBlocks.forEach(block => {
+        if (block.linkedItemType === 'task' && block.linkedItemId && selection.tasks) {
+          if (!taskTimeBlockMap.has(block.linkedItemId)) {
+            taskTimeBlockMap.set(block.linkedItemId, []);
+          }
+          taskTimeBlockMap.get(block.linkedItemId)!.push(block.id);
+        } else if (block.linkedItemType === 'habit' && block.linkedItemId && selection.habits) {
+          if (!habitTimeTimeBlockMap.has(block.linkedItemId)) {
+            habitTimeTimeBlockMap.set(block.linkedItemId, []);
+          }
+          habitTimeTimeBlockMap.get(block.linkedItemId)!.push(block.id);
+        }
+      });
+    }
+
+    const exportData: any = {
+      exportInfo: {
+        version: '1.2.0', // Increment for granular selection support and milestone data
+        exportDate: new Date().toISOString(),
+        appVersion: 'Kage Beta',
+        format: 'kage-custom',
+        selectedDataTypes: selection,
+        userProfile: {
+          name: user?.name || 'Unknown User',
+          email: user?.email || 'unknown@example.com'
+        },
+        relationshipMetadata: {
+          goalTaskMap: Object.fromEntries(goalTaskMap),
+          goalHabitMap: Object.fromEntries(goalHabitMap),
+          taskTimeBlockMap: Object.fromEntries(taskTimeBlockMap),
+          habitTimeBlockMap: Object.fromEntries(habitTimeTimeBlockMap)
+        }
+      },
+      statistics: getExportStats()
+    };
+
+    // Include selected data types
+    if (selection.habits) {
+      exportData.habits = habits.map(habit => ({
+        ...habit,
+        completions: completions.filter(c => c.habitId === habit.id)
+      }));
+    }
+    
+    if (selection.tasks) {
+      exportData.tasks = tasks;
+    }
+    
+    if (selection.goals) {
+      exportData.goals = goals; // This includes milestone data automatically
+    }
+    
+    if (selection.journal) {
+      exportData.journalEntries = journalEntries;
+    }
+    
+    if (selection.timeBlocks) {
+      exportData.timeBlocks = timeBlocks;
+    }
+
+    console.log('📤 Export: Custom export with milestones included in goals:', exportData.goals?.length || 0, 'goals');
+    return JSON.stringify(exportData, null, 2);
+  };
 
   const generateKageFullExport = () => {
     console.log('📤 Export: Generating full backup with relationship preservation');
@@ -273,6 +387,14 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
         case 'kage-habits':
           totalItems = stats.habits + stats.habitCompletions;
           break;
+        case 'kage-custom':
+          totalItems = 0;
+          if (customSelection.habits) totalItems += stats.habits + stats.habitCompletions;
+          if (customSelection.tasks) totalItems += stats.tasks;
+          if (customSelection.goals) totalItems += stats.goals;
+          if (customSelection.journal) totalItems += stats.journalEntries;
+          if (customSelection.timeBlocks) totalItems += stats.timeBlocks;
+          break;
       }
 
       await new Promise(resolve => setTimeout(resolve, 500)); // Simulate preparation time
@@ -318,6 +440,22 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
           filename = `kage-habits-export-${timestamp}.json`;
           break;
 
+        case 'kage-custom':
+          if (customSelection.habits) await updateProgress(stats.habits + stats.habitCompletions, 'Processing habits...');
+          if (customSelection.tasks) await updateProgress(stats.tasks, 'Processing tasks...');
+          if (customSelection.goals) await updateProgress(stats.goals, 'Processing goals with milestones...');
+          if (customSelection.journal) await updateProgress(stats.journalEntries, 'Processing journal entries...');
+          if (customSelection.timeBlocks) await updateProgress(stats.timeBlocks, 'Processing calendar events...');
+          exportContent = generateKageCustomExport(customSelection);
+          
+          // Generate filename based on selected types
+          const selectedTypes = [];
+          if (customSelection.goals) selectedTypes.push('goals');
+          if (customSelection.tasks) selectedTypes.push('tasks');
+          if (customSelection.habits) selectedTypes.push('habits');
+          if (customSelection.journal) selectedTypes.push('journal');
+          filename = `kage-${selectedTypes.join('-')}-${timestamp}.json`;
+          break;
 
         default:
           throw new Error('Invalid export format selected');
@@ -365,17 +503,17 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
     {
       id: 'kage-full' as ExportFormat,
       title: 'Complete Backup',
-      description: 'Full backup including all data types',
+      description: 'Full backup including all data types with milestones',
       icon: <Archive className="w-5 h-5 text-blue-500" />,
       stats: `${stats.habits} habits, ${stats.tasks} tasks, ${stats.goals} goals, ${stats.journalEntries} entries`
     },
     {
-      id: 'kage-habits' as ExportFormat,
-      title: 'Habits Only',
-      description: 'Export only habit data and completion history',
-      icon: <Calendar className="w-5 h-5 text-green-500" />,
-      stats: `${stats.habits} habits, ${stats.habitCompletions} completions`
-    },
+      id: 'kage-custom' as ExportFormat,
+      title: 'Custom Selection',
+      description: 'Choose specific data types to export',
+      icon: <CheckCircle className="w-5 h-5 text-orange-500" />,
+      stats: 'Select individual data types below'
+    }
   ];
 
   return (
@@ -443,6 +581,52 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
                   </div>
                 ))}
               </div>
+
+              {/* Custom Selection Checkboxes */}
+              {selectedFormat === 'kage-custom' && (
+                <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+                    Select Data Types to Export:
+                  </h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    {[
+                      { key: 'goals' as keyof CustomExportSelection, label: 'Goals (with Milestones)', count: stats.goals, icon: '🎯' },
+                      { key: 'tasks' as keyof CustomExportSelection, label: 'Tasks', count: stats.tasks, icon: '✅' },
+                      { key: 'habits' as keyof CustomExportSelection, label: 'Habits & Completions', count: stats.habits, icon: '🔄' },
+                      { key: 'journal' as keyof CustomExportSelection, label: 'Journal Entries', count: stats.journalEntries, icon: '📔' },
+                      { key: 'timeBlocks' as keyof CustomExportSelection, label: 'Calendar Events', count: stats.timeBlocks, icon: '📅' }
+                    ].map((item) => (
+                      <label key={item.key} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={customSelection[item.key]}
+                          onChange={(e) => setCustomSelection(prev => ({
+                            ...prev,
+                            [item.key]: e.target.checked
+                          }))}
+                          className="w-4 h-4 accent-text-500 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 focus:ring-accent-500"
+                        />
+                        <span className="text-lg">{item.icon}</span>
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900 dark:text-white">
+                            {item.label}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {item.count} {item.count === 1 ? 'item' : 'items'}
+                          </div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                  
+                  {/* Selection Summary */}
+                  <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <div className="text-xs text-gray-600 dark:text-gray-400">
+                      {Object.values(customSelection).filter(Boolean).length} of 5 data types selected
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -501,7 +685,7 @@ export default function DataExportModal({ isOpen, onClose }: DataExportModalProp
               </button>
               <button
                 onClick={handleExport}
-                disabled={!selectedFormat}
+                disabled={!selectedFormat || (selectedFormat === 'kage-custom' && !Object.values(customSelection).some(Boolean))}
                 className="accent-bg-500 hover-accent-bg-dark text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
               >
                 Start Export

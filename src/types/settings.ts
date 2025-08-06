@@ -24,6 +24,16 @@ export interface PrivacySettings {
   locationTracking: boolean
 }
 
+export type AutoLockTimeout = '1min' | '5min' | '15min' | '30min' | 'never';
+
+export interface PasscodeSettings {
+  enabled: boolean
+  hash?: string
+  salt?: string
+  autoLockTimeout: AutoLockTimeout
+  lastAccessTime?: number
+}
+
 export interface PremiumSettings {
   aiAssistant: boolean
   advancedAnalytics: boolean
@@ -37,6 +47,7 @@ export interface AppSettings {
   appearance: AppearanceSettings
   privacy: PrivacySettings
   premium: PremiumSettings
+  passcode: PasscodeSettings
   version: string
   firstLaunch: boolean
   onboardingCompleted: boolean
@@ -48,6 +59,7 @@ export type SettingsCategory =
   | 'profile'
   | 'notifications' 
   | 'appearance'
+  | 'security'
   | 'privacy'
   | 'premium'
   | 'support'

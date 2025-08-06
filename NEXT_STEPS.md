@@ -1,42 +1,45 @@
 # Kage App - Next Steps & Development Roadmap
 
 **Date**: January 5, 2025  
-**Current Status**: White Screen Resolved, Goal Templates System Operational  
-**Production APK**: `kage-v1.4.0-onboarding-template-fix-debug.apk`
+**Current Status**: Progress Calculation Enhancement Complete, Milestone System Operational  
+**Production APK**: `kage-v1.4.3-progress-calculation-debug.apk`
 
-## 🚨 IMMEDIATE PRIORITY: Onboarding Template Creation Debug
+## 🎯 NEXT PRIORITY: Journal Passcode Protection
 
-### Issue Description
-While the Goal Templates System works perfectly from the Goals page (creating complete goal structures with all tasks and habits), the onboarding template selection still doesn't create goals despite implementing the `completeOnboarding()` enhancement.
+### Feature Description
+Based on user feedback prioritization, the next major feature to implement is **Journal Passcode Protection** to provide users with privacy and security for their personal journal entries.
 
-### Investigation Plan
-1. **Console Logging Analysis**: Add browser dev tools to check if onboarding completion logs are appearing
-2. **Template Data Verification**: Confirm `onboardingData.selectedTemplate` contains correct template data
-3. **Store State Inspection**: Verify goalStore.createGoalFromTemplate is being called successfully
-4. **Async Timing Issues**: Check if onboarding completion happens before template loading completes
-5. **Error Handling**: Ensure any template creation errors are being caught and logged
+### Implementation Plan
+1. **Security Architecture**: Design passcode encryption system with secure storage
+2. **Settings Integration**: Add passcode setup and management in Settings page
+3. **Access Control**: Implement passcode entry modal before journal access
+4. **Auto-lock System**: Add inactivity detection and background app auto-lock
+5. **User Experience**: Ensure smooth passcode flow without disrupting journal usage
 
-### Expected Root Causes
-- **Timing Issue**: Template loading may not be complete when onboarding finishes
-- **Store State**: onboardingData may be cleared before template creation executes
-- **Error Swallowing**: Template creation errors may be failing silently
-- **Component Integration**: Onboarding flow may not be properly calling the enhanced completeOnboarding function
+### Key Requirements
+- **4-digit Numeric Passcode**: Simple but secure entry method
+- **Encrypted Storage**: Secure passcode storage with proper encryption
+- **Auto-lock Features**: Lock after inactivity or app backgrounding
+- **Settings Management**: Enable/disable toggle and passcode change functionality
 
 ## 📋 NEXT DEVELOPMENT MILESTONES
 
-### Milestone 11: User Experience Enhancement (NEW USER FEEDBACK)
-**Priority**: HIGH | **Timeline**: 2-3 weeks
+### Milestone 11: User Experience Enhancement (NEW USER FEEDBACK) ✅ COMPLETED
+**Priority**: HIGH | **Timeline**: 2-3 weeks | **Status**: COMPLETED January 5, 2025
 
-#### **Feature 1: Goal Milestones System**
-- [ ] **Milestone Interface**: Add `milestones` array to Goal type with description and completion status
-- [ ] **Milestone CRUD Operations**: Create, edit, delete milestones within GoalDetail component
-- [ ] **Progress Calculation Enhancement**: User-selectable progress tracking methods:
+#### **Feature 1: Goal Milestones System** ✅ COMPLETED
+- [x] **Milestone Interface**: Add `milestones` array to Goal type with description and completion status
+- [x] **Milestone CRUD Operations**: Create, edit, delete milestones within GoalDetail component
+- [x] **Progress Calculation Enhancement**: User-selectable progress tracking methods:
   - **Tasks Mode**: Progress based on task completion percentage (current default)
   - **Habits Mode**: Progress based on habit completion rate over time
   - **Milestones Mode**: Progress based on milestone completion percentage
   - **Mixed Mode**: Weighted combination of tasks, habits, and milestones
-- [ ] **Progress Settings UI**: Settings interface for users to choose progress calculation method per goal
-- [ ] **Enhanced Goal Display**: Show milestone progress alongside task/habit progress in goal cards
+- [x] **Progress Settings UI**: Settings interface positioned before Milestones for optimal UX flow
+- [x] **Enhanced Goal Display**: Show current progress calculation mode in goal details
+- [x] **Real-time Updates**: Progress recalculates immediately when settings or data change
+- [x] **Weight Controls**: Mixed mode includes adjustable percentage sliders for custom weighting
+- [x] **Backward Compatibility**: Existing goals default to Tasks mode preserving current behavior
 
 #### **Feature 2: Journal Passcode Protection**
 - [ ] **Passcode Settings**: 4-digit numeric passcode setup in Settings page

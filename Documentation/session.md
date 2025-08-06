@@ -1245,3 +1245,48 @@ Following successful APK installation and testing on user's Android device, comp
 ---
 
 *Session completed with major UX improvements. App now has native-quality gesture navigation across modals and main navigation.*
+
+---
+
+## Session 16 | 2025-08-06
+
+### Completed Tasks
+- ✅ Fixed HabitKit import invalid date errors with robust date parsing
+- ✅ Removed legacy export option, kept only Complete Backup & Custom Selection
+- ✅ Enhanced journal passcode system with live countdown and interaction resets
+
+### Issues Identified - Journal Passcode
+
+#### CRITICAL REMAINING ISSUE
+**Problem**: Journal not immediately locked when passcode enabled
+- Current: Journal accessible until auto-lock timer expires  
+- Expected: Journal locked immediately upon passcode enable
+- Also: Journal should lock on app restart if passcode enabled
+
+#### Current State
+- ✅ Settings UI works perfectly
+- ✅ Passcode encryption/validation works
+- ✅ Auto-lock timer functions
+- ✅ Countdown displays correctly
+- ❌ **Initial lock state broken**: Journal accessible without passcode until timer expires
+
+#### Next Steps Required
+1. **Fix initial lock logic**: Journal should start locked when passcode enabled
+2. **Fix app restart behavior**: Journal should be locked on app launch if passcode protection active  
+3. **Timer should start at 0**: No grace period - immediate protection
+
+### Technical Analysis
+The issue is in the lock state logic - currently checks `!lastAccessTime || shouldAutoLock()` but needs to handle "fresh passcode setup" vs "timeout expired" differently.
+
+### Files Modified This Session
+- `DataImportModal.tsx` - Fixed HabitKit date parsing
+- `DataExportModal.tsx` - Removed legacy export option  
+- `JournalPage.tsx` - Enhanced countdown and interaction handling
+- `settingsStore.ts` - Passcode setup improvements
+
+### Build Status
+- **APK**: `kage-v1.4.4-final-debug.apk` (4.3MB)
+- **Status**: Partial - passcode needs immediate lock fix
+
+---
+**Next Session Goal**: Fix journal immediate lock on passcode enable & app restart, then move to new features

@@ -541,9 +541,15 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
         }
 
         // Convert HabitKit date to local date
+        const parseDate = (dateStr: string) => {
+          // Handle both ISO timestamps and date-only strings
+          const date = new Date(dateStr.includes('T') ? dateStr : dateStr + 'T00:00:00.000Z');
+          return isNaN(date.getTime()) ? new Date() : date;
+        };
+        
         let localDateString = completion.date;
         if (completion.timezoneOffsetInMinutes) {
-          const utcDate = new Date(completion.date + 'T00:00:00.000Z');
+          const utcDate = parseDate(completion.date);
           const localDate = new Date(utcDate.getTime() - (completion.timezoneOffsetInMinutes * 60000));
           localDateString = localDate.toISOString().split('T')[0];
         }
@@ -553,7 +559,7 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
           habitId: completion.habitId,
           date: localDateString,
           completed: completion.amountOfCompletions > 0,
-          completedAt: new Date(completion.date + 'T00:00:00.000Z').toISOString(),
+          completedAt: parseDate(completion.date).toISOString(),
           value: completion.amountOfCompletions || 1
         };
 

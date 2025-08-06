@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Plus, Search, Edit3, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
+import { Plus, Search, Edit3, Trash2, ChevronDown, ChevronUp, Lock, Key } from 'lucide-react'
 import { useJournalStore } from '../store/journalStore'
 import { useTaskStore } from '../store/taskStore'
+import { useSettingsStore } from '../store/settingsStore'
+import { useAutoLock } from '../hooks/useAutoLock'
 import { MOOD_OPTIONS, type JournalFilter } from '../types/journal'
 import JournalEmpty from './JournalEmpty'
 import JournalEntryModal from './JournalEntryModal'
@@ -23,13 +25,138 @@ export default function JournalPage() {
   } = useJournalStore()
   
   const { tasks } = useTaskStore()
+  const { settings, validatePasscode, shouldAutoLock, updateLastAccess } = useSettingsStore()
 
   const [showSearch, setShowSearch] = useState(false)
+  const [isLocked, setIsLocked] = useState(false)
+  const [passcodeInput, setPasscodeInput] = useState('')
+  const [passcodeError, setPasscodeError] = useState('')
+  const [passcodeLoading, setPasscodeLoading] = useState(false)
+  const [autoLockWarning, setAutoLockWarning] = useState<number | null>(null)
+  const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timeout | null>(null)
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null)
   const [quickReflection, setQuickReflection] = useState('')
   const [selectedMood, setSelectedMood] = useState<string>('neutral')
   const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set())
   const filteredEntries = getFilteredEntries()
+
+  // Set up auto-lock functionality
+  useAutoLock({
+    onAutoLock: () => {
+      setIsLocked(true)
+      setPasscodeInput('')
+      setPasscodeError('')
+      setAutoLockWarning(null)
+      if (countdownInterval) {
+        clearInterval(countdownInterval)
+        setCountdownInterval(null)
+      }
+    },
+    onWarning: (timeRemaining) => {
+      setAutoLockWarning(timeRemaining)
+      
+      // Start countdown if not already running
+      if (!countdownInterval && timeRemaining > 0) {
+        const interval = setInterval(() => {
+          setAutoLockWarning(prev => {
+            if (prev === null || prev <= 1) {
+              clearInterval(interval)
+              setCountdownInterval(null)
+              return null
+            }
+            return prev - 1
+          })
+        }, 1000)
+        setCountdownInterval(interval)
+      }
+    }
+  })
+
+  // Check if journal should be locked on component mount
+  useEffect(() => {
+    if (settings.passcode.enabled) {
+      // Lock if: no previous access OR auto-lock timeout exceeded
+      const shouldLock = !settings.passcode.lastAccessTime || shouldAutoLock()
+      setIsLocked(shouldLock)
+    } else {
+      setIsLocked(false)
+    }
+  }, [settings.passcode.enabled, settings.passcode.lastAccessTime, shouldAutoLock])
+
+  // Handle passcode validation
+  const handlePasscodeSubmit = async () => {
+    if (passcodeInput.length !== 4) {
+      setPasscodeError('Passcode must be 4 digits')
+      return
+    }
+
+    setPasscodeLoading(true)
+    setPasscodeError('')
+
+    try {
+      const isValid = await validatePasscode(passcodeInput)
+      if (isValid) {
+        setIsLocked(false)
+        setPasscodeInput('')
+        updateLastAccess()
+        console.log('✅ Journal unlocked successfully')
+      } else {
+        setPasscodeError('Incorrect passcode')
+        setPasscodeInput('')
+      }
+    } catch (error) {
+      setPasscodeError('Failed to validate passcode')
+      setPasscodeInput('')
+    } finally {
+      setPasscodeLoading(false)
+    }
+  }
+
+  // Handle passcode input
+  const handlePasscodeInputChange = (value: string) => {
+    const numericValue = value.replace(/\D/g, '')
+    if (numericValue.length <= 4) {
+      setPasscodeInput(numericValue)
+      setPasscodeError('')
+    }
+  }
+
+  // Auto-submit when 4 digits are entered
+  useEffect(() => {
+    if (passcodeInput.length === 4 && !passcodeLoading) {
+      handlePasscodeSubmit()
+    }
+  }, [passcodeInput, passcodeLoading])
+
+  // Check for auto-lock on window focus
+  useEffect(() => {
+    const handleFocus = () => {
+      if (settings.passcode.enabled && shouldAutoLock()) {
+        setIsLocked(true)
+        setPasscodeInput('')
+        setPasscodeError('')
+      }
+    }
+
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [settings.passcode.enabled, shouldAutoLock])
+
+  // Update last access time when interacting with journal (while unlocked)
+  useEffect(() => {
+    if (settings.passcode.enabled && !isLocked) {
+      updateLastAccess()
+    }
+  }, [settings.passcode.enabled, isLocked, updateLastAccess])
+
+  // Cleanup countdown interval on unmount
+  useEffect(() => {
+    return () => {
+      if (countdownInterval) {
+        clearInterval(countdownInterval)
+      }
+    }
+  }, [countdownInterval])
 
   // Auto-hide search after inactivity
   useEffect(() => {
@@ -62,6 +189,15 @@ export default function JournalPage() {
 
   const handleCreateEntry = () => {
     openModal()
+    // Reset auto-lock timer on user interaction
+    if (settings.passcode.enabled) {
+      updateLastAccess()
+      setAutoLockWarning(null)
+      if (countdownInterval) {
+        clearInterval(countdownInterval)
+        setCountdownInterval(null)
+      }
+    }
   }
 
 
@@ -111,6 +247,16 @@ export default function JournalPage() {
       })
       setQuickReflection('')
       setSelectedMood('neutral')
+      
+      // Reset auto-lock timer on user interaction
+      if (settings.passcode.enabled) {
+        updateLastAccess()
+        setAutoLockWarning(null)
+        if (countdownInterval) {
+          clearInterval(countdownInterval)
+          setCountdownInterval(null)
+        }
+      }
     }
   }
 
@@ -171,6 +317,75 @@ export default function JournalPage() {
     }).length
   }
 
+  // Show passcode lock screen if journal is protected and locked
+  if (settings.passcode.enabled && isLocked) {
+    return (
+      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full p-8">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Journal Protected</h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Enter your 4-digit passcode to access your journal entries
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <input
+                type="password"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={4}
+                value={passcodeInput}
+                onChange={(e) => handlePasscodeInputChange(e.target.value)}
+                className="w-full px-4 py-4 text-center text-3xl font-mono border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent tracking-widest"
+                placeholder="••••"
+                autoFocus
+                disabled={passcodeLoading}
+              />
+            </div>
+
+            {passcodeError && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-red-500 rounded-full flex-shrink-0" />
+                  <div className="text-sm text-red-700 dark:text-red-300">
+                    {passcodeError}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <Key className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                <div className="text-sm text-blue-700 dark:text-blue-300">
+                  Enter all 4 digits to unlock your journal automatically
+                </div>
+              </div>
+            </div>
+
+            {passcodeLoading && (
+              <div className="flex items-center justify-center gap-3 text-gray-600 dark:text-gray-400">
+                <div className="w-5 h-5 border-2 border-gray-300 border-t-indigo-500 rounded-full animate-spin" />
+                <span className="text-sm">Verifying passcode...</span>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Forgot your passcode? Go to Settings to manage journal protection.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // Show empty state if no entries
   if (entries.length === 0) {
     return (
@@ -201,6 +416,39 @@ export default function JournalPage() {
           </button>
         </div>
       </div>
+
+      {/* Auto-lock warning */}
+      {autoLockWarning !== null && (
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center">
+              <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <div className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                Journal will auto-lock in {autoLockWarning} seconds
+              </div>
+              <div className="text-xs text-amber-700 dark:text-amber-300">
+                Continue using the journal to reset the timer
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              setAutoLockWarning(null)
+              if (countdownInterval) {
+                clearInterval(countdownInterval)
+                setCountdownInterval(null)
+              }
+            }}
+            className="text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Search Bar */}
       {showSearch && (

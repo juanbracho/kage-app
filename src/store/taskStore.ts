@@ -502,6 +502,7 @@ export const useTaskStore = create<TaskStore>()(
               dueDate: new Date(currentDate),
               originalTaskId: originalTask.id,
               isRecurring: false, // Individual instances are not recurring
+              allDayTask: originalTask.allDayTask, // Preserve all-day setting
               createdAt: new Date(),
               updatedAt: new Date(),
               // Reset subtasks completion status for each instance
@@ -619,9 +620,9 @@ export const useTaskStore = create<TaskStore>()(
             title: task.name,
             description: task.description || 'Task reminder',
             date: dateString,
-            startTime: task.calendarStartTime!,
-            durationMinutes: task.calendarDuration || 60,
-            blockType: 'admin' as const, // Use 'admin' for task-related time blocks
+            startTime: task.allDayTask ? '00:00' : task.calendarStartTime!,
+            durationMinutes: task.allDayTask ? 1440 : (task.calendarDuration || 60), // Full day for all-day tasks
+            blockType: task.allDayTask ? 'all-day-task' as const : 'admin' as const,
             icon: '📋',
             color: task.type === 'deadline' 
               ? 'linear-gradient(135deg, #EF4444, #DC2626)' // Red for deadlines
@@ -630,6 +631,7 @@ export const useTaskStore = create<TaskStore>()(
               : 'linear-gradient(135deg, #8B5CF6, #7C3AED)', // Purple for standard tasks
             linkedItemType: 'task' as const,
             linkedItemId: task.id,
+            allDay: task.allDayTask || false,
             isRecurring: task.isRecurring && task.recurrenceType !== 'daily',
             recurrenceType: task.recurrenceType === 'daily' ? undefined : task.recurrenceType as 'weekly' | 'monthly' | undefined,
             recurrenceInterval: task.recurrenceType === 'daily' ? undefined : task.recurrenceInterval,

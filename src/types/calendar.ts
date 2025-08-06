@@ -5,16 +5,20 @@ export interface TimeBlock {
   date: string; // YYYY-MM-DD
   startTime: string; // HH:MM
   durationMinutes: number;
-  blockType: 'focus' | 'meeting' | 'learning' | 'break' | 'creative' | 'admin';
+  blockType: 'focus' | 'meeting' | 'learning' | 'break' | 'creative' | 'admin' | 'milestone' | 'all-day-task';
   icon: string;
   color: string;
-  linkedItemType?: 'goal' | 'task' | 'habit';
+  linkedItemType?: 'goal' | 'task' | 'habit' | 'milestone';
   linkedItemId?: string;
   reminderMinutes?: number;
   status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
   completionNotes?: string;
   createdAt: string;
   updatedAt: string;
+  // All-day event support
+  allDay?: boolean;
+  goalId?: string; // For milestone events
+  milestoneId?: string; // For milestone events
   // Recurring event fields
   isRecurring?: boolean;
   recurrenceType?: 'weekly' | 'monthly';
@@ -31,11 +35,14 @@ export interface CalendarEvent {
   date: string;
   startTime: string;
   endTime: string;
-  type: 'task' | 'habit' | 'timeblock';
+  type: 'task' | 'habit' | 'timeblock' | 'milestone' | 'repetitive-task';
   icon: string;
   color: string;
   completed?: boolean;
-  linkedId?: string; // ID of the linked task/habit/timeblock
+  linkedId?: string; // ID of the linked task/habit/timeblock/milestone
+  allDay?: boolean; // For milestone and repetitive task events
+  goalId?: string; // For milestone events to link back to goal
+  milestoneId?: string; // For milestone events to link to specific milestone
 }
 
 export interface TimeBlockFormData {
@@ -44,12 +51,16 @@ export interface TimeBlockFormData {
   date: string;
   startTime: string;
   durationMinutes: number;
-  blockType: 'focus' | 'meeting' | 'learning' | 'break' | 'creative' | 'admin';
+  blockType: 'focus' | 'meeting' | 'learning' | 'break' | 'creative' | 'admin' | 'milestone' | 'all-day-task';
   icon: string;
   color: string;
-  linkedItemType?: 'goal' | 'task' | 'habit';
+  linkedItemType?: 'goal' | 'task' | 'habit' | 'milestone';
   linkedItemId?: string;
   reminderMinutes?: number;
+  // All-day event support
+  allDay?: boolean;
+  goalId?: string; // For milestone events
+  milestoneId?: string; // For milestone events
   // Recurring event fields
   isRecurring?: boolean;
   recurrenceType?: 'weekly' | 'monthly';

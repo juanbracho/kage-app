@@ -43,7 +43,8 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
     addToCalendar: false,
     calendarStartTime: '09:00',
     calendarDuration: 60,
-    calendarDate: ''
+    calendarDate: '',
+    allDayTask: false
   })
 
   const resetForm = () => {
@@ -70,7 +71,8 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
       addToCalendar: false,
       calendarStartTime: '09:00',
       calendarDuration: 60,
-      calendarDate: ''
+      calendarDate: '',
+      allDayTask: false
     })
   }
 
@@ -113,7 +115,8 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
         addToCalendar: editingTask.addToCalendar || false,
         calendarStartTime: editingTask.calendarStartTime || '09:00',
         calendarDuration: editingTask.calendarDuration || 60,
-        calendarDate: editingTask.calendarDate || ''
+        calendarDate: editingTask.calendarDate || '',
+        allDayTask: editingTask.allDayTask || false
       })
     } else if (isOpen && !editingTask) {
       setOriginalSubtasks([])
@@ -716,7 +719,32 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                           </div>
                         )}
                         
-                        {/* Time Settings */}
+                        {/* All-Day Task Toggle */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <label className="block text-sm font-semibold text-purple-700 dark:text-purple-300 mb-1">Show as All-Day Task</label>
+                            <p className="text-xs text-purple-600 dark:text-purple-400">Display at the top of calendar without specific time</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setFormData(prev => ({ 
+                              ...prev, 
+                              allDayTask: !prev.allDayTask
+                            }))}
+                            className={`relative w-12 h-6 rounded-full transition-colors ${
+                              formData.allDayTask 
+                                ? 'bg-purple-500' 
+                                : 'bg-gray-300 dark:bg-gray-600'
+                            }`}
+                          >
+                            <div className={`absolute w-5 h-5 bg-white rounded-full transition-transform top-0.5 ${
+                              formData.allDayTask ? 'translate-x-6' : 'translate-x-0.5'
+                            }`} />
+                          </button>
+                        </div>
+                        
+                        {/* Time Settings - Only show if not all-day */}
+                        {!formData.allDayTask && (
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-semibold text-purple-700 dark:text-purple-300 mb-2">Start Time</label>
@@ -747,6 +775,7 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                             />
                           </div>
                         </div>
+                        )}
 
                         {/* Calendar Preview */}
                         <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
