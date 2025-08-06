@@ -958,12 +958,28 @@ export const useGoalStore = create<GoalStore>()(
       createMilestoneCalendarEvent: async (goalId: string, milestone: GoalMilestone) => {
         try {
           const goal = get().goals.find(g => g.id === goalId);
-          if (!goal || !milestone.dueDate) return;
+          console.log('🎯 Creating milestone calendar event:', { goalId, milestone, goal });
+          
+          if (!goal) {
+            console.log('❌ Goal not found for milestone calendar event');
+            return;
+          }
+          
+          if (!milestone.dueDate) {
+            console.log('❌ No due date for milestone, skipping calendar event');
+            return;
+          }
 
           // Import calendar store dynamically to avoid circular dependency
           const { useCalendarStore } = await import('./calendarStore');
           const calendarStore = useCalendarStore.getState();
 
+          // Get current accent color for consistent theming
+          const { useSettingsStore } = await import('./settingsStore');
+          const { getAccentColorValue } = await import('../utils/accentColors');
+          const settingsStore = useSettingsStore.getState();
+          const currentAccentColor = getAccentColorValue(settingsStore.accentColor);
+          
           const timeBlockData = {
             title: `Milestone: ${milestone.description}`,
             description: `Goal: ${goal.name}`,
@@ -972,7 +988,7 @@ export const useGoalStore = create<GoalStore>()(
             durationMinutes: 1440, // Full day
             blockType: 'milestone' as const,
             icon: '🎯',
-            color: goal.color || 'linear-gradient(135deg, #F59E0B, #D97706)', // Amber gradient for milestones
+            color: goal.color || `linear-gradient(135deg, ${currentAccentColor}, ${currentAccentColor}dd)`,
             linkedItemType: 'milestone' as const,
             linkedItemId: milestone.id,
             allDay: true,
@@ -980,10 +996,26 @@ export const useGoalStore = create<GoalStore>()(
             milestoneId: milestone.id
           };
 
+          console.log('🎯 About to create calendar time block with data:', timeBlockData);
           await calendarStore.addTimeBlock(timeBlockData);
           console.log('✅ Created calendar event for milestone:', milestone.description);
+          
+          // Verify the time block was actually added
+          const allTimeBlocks = calendarStore.timeBlocks;
+          console.log('📅 Current time blocks count after milestone creation:', allTimeBlocks.length);
+          const justAdded = allTimeBlocks.find(tb => tb.title === timeBlockData.title && tb.milestoneId === milestone.id);
+          if (justAdded) {
+            console.log('✅ Verified: Milestone time block found in calendar store:', justAdded.id);
+          } else {
+            console.log('❌ Warning: Milestone time block not found in calendar store after addition');
+          }
         } catch (error) {
           console.error('❌ Error creating milestone calendar event:', error);
+          console.error('❌ Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+            timeBlockData
+          });
         }
       },
 

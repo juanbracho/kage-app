@@ -608,10 +608,16 @@ export const useTaskStore = create<TaskStore>()(
           return;
         }
         
-        // Import calendar store dynamically to avoid circular dependency
-        import('./calendarStore').then(({ useCalendarStore }) => {
+        // Import required stores and utilities
+        Promise.all([
+          import('./calendarStore'), 
+          import('./settingsStore'),
+          import('../utils/accentColors')
+        ]).then(([{ useCalendarStore }, { useSettingsStore }, { getAccentColorValue }]) => {
           console.log('📅 Calendar store imported successfully');
           const calendarStore = useCalendarStore.getState();
+          const settingsStore = useSettingsStore.getState();
+          const currentAccentColor = getAccentColorValue(settingsStore.accentColor);
           
           const dateString = formatDateToString(targetDate!);
           console.log('📅 Creating calendar entry with dateString:', dateString);
@@ -624,7 +630,9 @@ export const useTaskStore = create<TaskStore>()(
             durationMinutes: task.allDayTask ? 1440 : (task.calendarDuration || 60), // Full day for all-day tasks
             blockType: task.allDayTask ? 'all-day-task' as const : 'admin' as const,
             icon: '📋',
-            color: task.type === 'deadline' 
+            color: task.allDayTask 
+              ? `linear-gradient(135deg, ${currentAccentColor}, ${currentAccentColor}dd)` // Use accent color for all-day tasks
+              : task.type === 'deadline' 
               ? 'linear-gradient(135deg, #EF4444, #DC2626)' // Red for deadlines
               : task.type === 'to-buy'
               ? 'linear-gradient(135deg, #F59E0B, #D97706)' // Amber for shopping

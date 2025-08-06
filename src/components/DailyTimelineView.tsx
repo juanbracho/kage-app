@@ -73,12 +73,31 @@ export default function DailyTimelineView({
   const { allDayEvents, timedEvents } = useMemo(() => {
     const events = getEventsForDate(selectedDate);
     
-    console.log('📅 Regenerating events, total:', events.length, 'timeBlocks:', timeBlocks.length);
+    console.log('📅 Regenerating events for date:', selectedDate.toISOString().split('T')[0]);
+    console.log('📅 Total events found:', events.length, 'Total timeBlocks in store:', timeBlocks.length);
+    
+    // Log details about each event for debugging
+    events.forEach((event, index) => {
+      console.log(`📅 Event ${index + 1}:`, {
+        id: event.id,
+        title: event.title,
+        type: event.type,
+        allDay: event.allDay,
+        date: event.date,
+        startTime: event.startTime,
+        goalId: event.goalId,
+        milestoneId: event.milestoneId
+      });
+    });
     
     const allDay = events.filter(event => event.allDay === true || event.type === 'milestone' || event.type === 'repetitive-task');
     const timed = events.filter(event => !event.allDay && event.type !== 'milestone' && event.type !== 'repetitive-task');
     
     console.log('📅 All-day events:', allDay.length, 'Timed events:', timed.length);
+    
+    if (allDay.length > 0) {
+      console.log('📅 All-day events details:', allDay.map(e => ({ title: e.title, type: e.type, allDay: e.allDay })));
+    }
     
     return { allDayEvents: allDay, timedEvents: timed };
   }, [selectedDate, timeBlocks, getEventsForDate]);
@@ -270,7 +289,9 @@ export default function DailyTimelineView({
                 }`}
                 style={{
                   borderLeftWidth: '4px',
-                  borderLeftColor: event.type === 'milestone' ? '#F59E0B' : event.type === 'repetitive-task' ? '#8B5CF6' : event.color
+                  borderLeftColor: event.type === 'milestone' ? currentAccentColor : 
+                                   event.type === 'repetitive-task' ? currentAccentColor : 
+                                   event.color || currentAccentColor
                 }}
               >
                 {/* Completion Checkbox */}
@@ -281,9 +302,13 @@ export default function DailyTimelineView({
                   }}
                   className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
                     event.completed
-                      ? 'bg-green-500 border-green-500'
+                      ? 'text-white'
                       : 'border-gray-400 hover:border-gray-300'
                   }`}
+                  style={event.completed ? {
+                    backgroundColor: currentAccentColor,
+                    borderColor: currentAccentColor
+                  } : {}}
                 >
                   {event.completed && (
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -312,13 +337,13 @@ export default function DailyTimelineView({
                 </div>
 
                 {/* Event Type Badge */}
-                <div className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  event.type === 'milestone' 
-                    ? 'bg-amber-500/20 text-amber-300' 
-                    : event.type === 'repetitive-task'
-                    ? 'bg-purple-500/20 text-purple-300'
-                    : 'bg-blue-500/20 text-blue-300'
-                }`}>
+                <div 
+                  className="px-2 py-1 text-xs font-medium rounded-full"
+                  style={{
+                    backgroundColor: `${currentAccentColor}20`,
+                    color: currentAccentColor
+                  }}
+                >
                   {event.type === 'milestone' ? 'Milestone' : 
                    event.type === 'repetitive-task' ? 'Task' : 'Event'}
                 </div>
