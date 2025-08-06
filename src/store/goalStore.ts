@@ -478,7 +478,19 @@ export const useGoalStore = create<GoalStore>()(
 
         // Create calendar event for milestone if it has a due date
         if (dueDate) {
-          get().createMilestoneCalendarEvent(goalId, milestone);
+          console.log('🎯 About to create calendar event for milestone:', {
+            goalId,
+            milestoneId: milestone.id,
+            milestoneDescription: milestone.description,
+            dueDate: milestone.dueDate
+          });
+          
+          // Call async function without await to avoid blocking the milestone creation
+          get().createMilestoneCalendarEvent(goalId, milestone).catch(error => {
+            console.error('❌ Async error in milestone calendar creation:', error);
+          });
+        } else {
+          console.log('🎯 Milestone has no due date, skipping calendar event creation');
         }
 
         // Update progress if using milestone-based calculation
@@ -1060,7 +1072,21 @@ export const useGoalStore = create<GoalStore>()(
         goals: state.goals,
         currentFilter: state.currentFilter,
         viewMode: state.viewMode
-      })
+      }),
+      onRehydrateStorage: () => (state) => {
+        // Migrate existing goals to ensure they have milestones and progressSettings
+        if (state?.goals) {
+          state.goals = state.goals.map(goal => ({
+            ...goal,
+            milestones: goal.milestones || [],
+            progressSettings: goal.progressSettings || {
+              calculationMode: 'tasks',
+              timeframe: '30days'
+            }
+          }));
+          console.log('🎯 Migrated', state.goals.length, 'goals to include milestone support');
+        }
+      }
     }
   )
 );

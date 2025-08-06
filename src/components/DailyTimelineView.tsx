@@ -90,8 +90,23 @@ export default function DailyTimelineView({
       });
     });
     
-    const allDay = events.filter(event => event.allDay === true || event.type === 'milestone' || event.type === 'repetitive-task');
-    const timed = events.filter(event => !event.allDay && event.type !== 'milestone' && event.type !== 'repetitive-task');
+    const allDay = events.filter(event => {
+      const isAllDay = event.allDay === true;
+      const isMilestone = event.type === 'milestone';
+      const isRepetitiveTask = event.type === 'repetitive-task';
+      const shouldBeAllDay = isAllDay || isMilestone || isRepetitiveTask;
+      
+      console.log(`📅 Event "${event.title}" - allDay:${isAllDay}, milestone:${isMilestone}, repetitive:${isRepetitiveTask}, shouldBeAllDay:${shouldBeAllDay}`);
+      
+      return shouldBeAllDay;
+    });
+    
+    const timed = events.filter(event => {
+      const isNotAllDay = !event.allDay;
+      const isNotMilestone = event.type !== 'milestone';
+      const isNotRepetitiveTask = event.type !== 'repetitive-task';
+      return isNotAllDay && isNotMilestone && isNotRepetitiveTask;
+    });
     
     console.log('📅 All-day events:', allDay.length, 'Timed events:', timed.length);
     
@@ -220,27 +235,27 @@ export default function DailyTimelineView({
 
 
   return (
-    <div className="flex flex-col h-full bg-gray-900">
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900">
       {/* Compact Date Header with Navigation */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
               navigatePrevious();
             }}
-            className="w-8 h-8 bg-gray-800 hover:bg-gray-700 rounded-md flex items-center justify-center text-gray-300 transition-colors"
+            className="w-8 h-8 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md flex items-center justify-center text-gray-600 dark:text-gray-300 transition-colors"
           >
             ‹
           </button>
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               {selectedDate.toLocaleDateString('en-US', { 
                 weekday: 'long',
                 month: 'long', 
                 day: 'numeric'
               })}
             </h2>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               {isToday ? 'Today' : selectedDate.toLocaleDateString('en-US', { year: 'numeric' })}
             </p>
           </div>
@@ -248,7 +263,7 @@ export default function DailyTimelineView({
             onClick={() => {
               navigateNext();
             }}
-            className="w-8 h-8 bg-gray-800 hover:bg-gray-700 rounded-md flex items-center justify-center text-gray-300 transition-colors"
+            className="w-8 h-8 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md flex items-center justify-center text-gray-600 dark:text-gray-300 transition-colors"
           >
             ›
           </button>
@@ -273,9 +288,23 @@ export default function DailyTimelineView({
         </button>
       </div>
 
+      {/* Debug Section - Remove after testing */}
+      <div className="px-4 py-2 border-b border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 text-xs">
+        <div className="text-yellow-800 dark:text-yellow-300 font-mono">
+          Debug: Total events: {timedEvents.length + allDayEvents.length} | 
+          Timed: {timedEvents.length} | 
+          All-day: {allDayEvents.length} | 
+          TimeBlocks in store: {timeBlocks.length}
+        </div>
+      </div>
+
       {/* All-Day Events Section */}
       {allDayEvents.length > 0 && (
-        <div className="px-4 py-3 border-b border-gray-700">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-current opacity-60"></span>
+            All-Day Events ({allDayEvents.length})
+          </h3>
           <div className="space-y-2">
             {allDayEvents.map((event) => (
               <div
@@ -284,8 +313,8 @@ export default function DailyTimelineView({
                 onMouseDown={() => eventGestures.onMouseDown?.(event)}
                 className={`flex items-center gap-3 p-2.5 rounded-lg border transition-all duration-200 cursor-pointer hover:scale-[1.02] ${
                   event.completed 
-                    ? 'bg-gray-800 border-gray-600 opacity-60' 
-                    : 'bg-gray-800/80 border-gray-600 hover:border-gray-500'
+                    ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 opacity-60' 
+                    : 'bg-white dark:bg-gray-800/80 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
                 }`}
                 style={{
                   borderLeftWidth: '4px',
@@ -323,13 +352,13 @@ export default function DailyTimelineView({
                 {/* Event Content */}
                 <div className="flex-1 min-w-0">
                   <h3 className={`font-medium truncate ${
-                    event.completed ? 'text-gray-400 line-through' : 'text-white'
+                    event.completed ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-900 dark:text-white'
                   }`}>
                     {event.title}
                   </h3>
                   {event.description && (
                     <p className={`text-sm truncate ${
-                      event.completed ? 'text-gray-500' : 'text-gray-300'
+                      event.completed ? 'text-gray-500 dark:text-gray-600' : 'text-gray-600 dark:text-gray-300'
                     }`}>
                       {event.description}
                     </p>
@@ -369,8 +398,8 @@ export default function DailyTimelineView({
                   isToday && slot.hour === currentHour 
                     ? 'text-blue-400' 
                     : !slot.isEmpty 
-                      ? 'text-gray-300' 
-                      : 'text-gray-500'
+                      ? 'text-gray-700 dark:text-gray-300' 
+                      : 'text-gray-500 dark:text-gray-500'
                 }`}>
                   {slot.displayTime}
                 </span>
@@ -382,7 +411,7 @@ export default function DailyTimelineView({
                 <div 
                   className={`relative w-4 h-4 rounded-full transition-all duration-200 ${
                     slot.isEmpty 
-                      ? 'border-2 border-gray-600 bg-gray-800' 
+                      ? 'border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800' 
                       : 'border-2 shadow-lg'
                   }`}
                   style={!slot.isEmpty ? {
@@ -403,7 +432,7 @@ export default function DailyTimelineView({
                 {/* Timeline Line Below Dot */}
                 <div 
                   className={`w-1 flex-1 min-h-[60px] transition-all duration-200 ${
-                    slot.isEmpty ? 'bg-gray-700' : ''
+                    slot.isEmpty ? 'bg-gray-300 dark:bg-gray-700' : ''
                   }`}
                   style={!slot.isEmpty ? {
                     background: `linear-gradient(180deg, ${currentAccentColor} 0%, ${currentAccentColor}40 100%)`,
@@ -417,7 +446,7 @@ export default function DailyTimelineView({
                 {slot.isEmpty ? (
                   <button
                     onClick={() => handleEmptySlotClick(slot.hour)}
-                    className="group w-full p-4 border-2 border-dashed border-gray-600 rounded-xl text-gray-500 text-sm transition-all duration-200 touch-manipulation hover:border-solid hover:scale-[1.02] hover:shadow-md hover:bg-opacity-5"
+                    className="group w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 dark:text-gray-500 text-sm transition-all duration-200 touch-manipulation hover:border-solid hover:scale-[1.02] hover:shadow-md hover:bg-opacity-5"
                     style={{
                       '--hover-border-color': currentAccentColor,
                       '--hover-text-color': currentAccentColor
@@ -610,7 +639,7 @@ export default function DailyTimelineView({
       {/* Undo Toast - Only for deletions */}
       {undoAction && undoAction.type === 'delete' && (
         <div className="fixed bottom-20 left-4 right-4 z-50">
-          <div className="bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center justify-between">
+          <div className="bg-gray-800 dark:bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center justify-between">
             <span className="text-sm">
               Event deleted
             </span>

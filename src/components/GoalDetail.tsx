@@ -25,6 +25,15 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
   // Get live goal data from store for real-time updates
   const currentGoal = goals.find(g => g.id === goal.id) || goal;
   
+  // Debug logging for milestone issues
+  console.log('🎯 GoalDetail - Current goal:', {
+    id: currentGoal.id,
+    name: currentGoal.name,
+    milestonesCount: currentGoal.milestones?.length || 0,
+    milestones: currentGoal.milestones || [],
+    hasProgressSettings: !!currentGoal.progressSettings
+  });
+  
   // Goal color utilities for consistent styling
   const getGoalButtonStyle = () => ({
     backgroundColor: goal.color,
@@ -565,7 +574,7 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
             <h2 className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
               🎯 Milestones
               <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-md text-xs font-semibold">
-                {currentGoal.milestones.length}
+                {currentGoal.milestones?.length || 0}
               </span>
             </h2>
             <button
@@ -626,14 +635,14 @@ export default function GoalDetail({ goal, onBack, onEdit, onNavigate }: GoalDet
             )}
 
             {/* Milestones List */}
-            {currentGoal.milestones.length === 0 && !isAddingMilestone ? (
+            {(currentGoal.milestones?.length || 0) === 0 && !isAddingMilestone ? (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 <div className="text-4xl mb-2">🎯</div>
                 <p>No milestones set for this goal yet.</p>
                 <p className="text-sm">Add milestones to track major achievements!</p>
               </div>
             ) : (
-              currentGoal.milestones
+              (currentGoal.milestones || [])
                 .sort((a, b) => a.order - b.order)
                 .map((milestone, index) => (
                   <div key={milestone.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-sm transition-shadow">
