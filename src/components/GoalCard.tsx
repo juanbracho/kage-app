@@ -182,6 +182,15 @@ export default function GoalCard({ goal, viewMode, onClick }: GoalCardProps) {
           <span>habits</span>
         </div>
         
+        {/* Milestones */}
+        <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+          <span className="text-base">🎯</span>
+          <span className="font-semibold text-gray-900 dark:text-white">
+            {(goal.milestones || []).filter(m => m.completed).length}/{(goal.milestones || []).length}
+          </span>
+          <span>milestones</span>
+        </div>
+        
         {/* Streak */}
         {goal.progress.currentStreak > 0 && (
           <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">

@@ -40,11 +40,6 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
     recurrenceInterval: 1,
     recurrenceStartDate: '',
     recurrenceEndDate: '',
-    addToCalendar: false,
-    calendarStartTime: '09:00',
-    calendarDuration: 60,
-    calendarDate: '',
-    allDayTask: false
   })
 
   const resetForm = () => {
@@ -68,11 +63,6 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
       recurrenceInterval: 1,
       recurrenceStartDate: '',
       recurrenceEndDate: '',
-      addToCalendar: false,
-      calendarStartTime: '09:00',
-      calendarDuration: 60,
-      calendarDate: '',
-      allDayTask: false
     })
   }
 
@@ -112,11 +102,6 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
         recurrenceInterval: editingTask.recurrenceInterval || 1,
         recurrenceStartDate: editingTask.recurrenceStartDate || '',
         recurrenceEndDate: editingTask.recurrenceEndDate || '',
-        addToCalendar: editingTask.addToCalendar || false,
-        calendarStartTime: editingTask.calendarStartTime || '09:00',
-        calendarDuration: editingTask.calendarDuration || 60,
-        calendarDate: editingTask.calendarDate || '',
-        allDayTask: editingTask.allDayTask || false
       })
     } else if (isOpen && !editingTask) {
       setOriginalSubtasks([])
@@ -216,10 +201,6 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
     console.log('📋 TaskCreationModal: Submitting task data:', {
       taskName: taskData.name,
       taskType: taskType,
-      addToCalendar: taskData.addToCalendar,
-      calendarDate: taskData.calendarDate,
-      calendarStartTime: taskData.calendarStartTime,
-      calendarDuration: taskData.calendarDuration,
       isRecurring: taskData.isRecurring,
       recurrenceStartDate: taskData.recurrenceStartDate,
       dueDate: taskData.dueDate
@@ -667,139 +648,18 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                     )}
                   </div>
 
-                  {/* Add to Calendar Section */}
-                  <div>
-                    <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg transition-colors">
-                      <span className="text-lg">📅</span>
-                      <div className="flex-1">
-                        <div className="font-semibold text-gray-800 dark:text-gray-200">Add to Calendar</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">Create calendar time blocks for this task</div>
+                  {/* Calendar Integration Info - Only show for repetitive tasks */}
+                  {formData.isRecurring && (
+                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">📅</span>
+                        <div>
+                          <div className="font-semibold text-blue-800 dark:text-blue-200">Calendar Integration</div>
+                          <div className="text-sm text-blue-600 dark:text-blue-300">Repetitive tasks automatically appear as all-day events in your calendar</div>
+                        </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setFormData(prev => ({ 
-                          ...prev, 
-                          addToCalendar: !prev.addToCalendar,
-                          // Auto-populate calendar date if enabling calendar integration and no date is set
-                          calendarDate: !prev.addToCalendar && !prev.calendarDate && !prev.isRecurring 
-                            ? new Date().toISOString().split('T')[0] 
-                            : prev.calendarDate
-                        }))}
-                        className={`relative w-12 h-6 rounded-full transition-colors ${
-                          formData.addToCalendar 
-                            ? 'bg-purple-500' 
-                            : 'bg-gray-300 dark:bg-gray-600'
-                        }`}
-                      >
-                        <div className={`absolute w-5 h-5 bg-white rounded-full transition-transform top-0.5 ${
-                          formData.addToCalendar ? 'translate-x-6' : 'translate-x-0.5'
-                        }`} />
-                      </button>
                     </div>
-
-                    {formData.addToCalendar && (
-                      <div className="mt-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg space-y-4 border border-purple-200 dark:border-purple-800">
-                        {/* Calendar Date - Always show for non-recurring tasks */}
-                        {!formData.isRecurring && (
-                          <div>
-                            <label className="block text-sm font-semibold text-purple-700 dark:text-purple-300 mb-2">Calendar Date</label>
-                            <input
-                              type="date"
-                              value={formData.calendarDate}
-                              onChange={(e) => setFormData(prev => ({ 
-                                ...prev, 
-                                calendarDate: e.target.value
-                              }))}
-                              className="w-full px-3 py-2 border border-purple-300 dark:border-purple-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                              required
-                            />
-                            <div className="text-xs text-purple-600 dark:text-purple-400 mt-1">
-                              Required for calendar integration
-                            </div>
-                          </div>
-                        )}
-                        
-                        {/* All-Day Task Toggle */}
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <label className="block text-sm font-semibold text-purple-700 dark:text-purple-300 mb-1">Show as All-Day Task</label>
-                            <p className="text-xs text-purple-600 dark:text-purple-400">Display at the top of calendar without specific time</p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setFormData(prev => ({ 
-                              ...prev, 
-                              allDayTask: !prev.allDayTask
-                            }))}
-                            className={`relative w-12 h-6 rounded-full transition-colors ${
-                              formData.allDayTask 
-                                ? 'bg-purple-500' 
-                                : 'bg-gray-300 dark:bg-gray-600'
-                            }`}
-                          >
-                            <div className={`absolute w-5 h-5 bg-white rounded-full transition-transform top-0.5 ${
-                              formData.allDayTask ? 'translate-x-6' : 'translate-x-0.5'
-                            }`} />
-                          </button>
-                        </div>
-                        
-                        {/* Time Settings - Only show if not all-day */}
-                        {!formData.allDayTask && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-semibold text-purple-700 dark:text-purple-300 mb-2">Start Time</label>
-                            <input
-                              type="time"
-                              value={formData.calendarStartTime}
-                              onChange={(e) => setFormData(prev => ({ 
-                                ...prev, 
-                                calendarStartTime: e.target.value
-                              }))}
-                              className="w-full px-3 py-2 border border-purple-300 dark:border-purple-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-semibold text-purple-700 dark:text-purple-300 mb-2">Duration (minutes)</label>
-                            <input
-                              type="number"
-                              min="15"
-                              max="480"
-                              step="15"
-                              placeholder="60"
-                              value={formData.calendarDuration !== 60 ? formData.calendarDuration : ''}
-                              onChange={(e) => setFormData(prev => ({ 
-                                ...prev, 
-                                calendarDuration: parseInt(e.target.value) || 60
-                              }))}
-                              className="w-full px-3 py-2 border border-purple-300 dark:border-purple-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                            />
-                          </div>
-                        </div>
-                        )}
-
-                        {/* Calendar Preview */}
-                        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700">
-                          <div className="text-xs font-semibold text-purple-700 dark:text-purple-300 mb-1">Calendar Preview</div>
-                          <div className="flex items-center gap-3 p-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white">
-                            <span className="text-lg">📋</span>
-                            <div className="flex-1">
-                              <div className="font-semibold text-sm">{formData.name || 'Task Name'}</div>
-                              <div className="text-xs opacity-90">
-                                {formData.calendarStartTime} - {(() => {
-                                  if (!formData.calendarStartTime) return '';
-                                  const [hours, minutes] = formData.calendarStartTime.split(':').map(Number);
-                                  const totalMinutes = hours * 60 + minutes + formData.calendarDuration;
-                                  const endHours = Math.floor(totalMinutes / 60) % 24;
-                                  const endMins = totalMinutes % 60;
-                                  return `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}`;
-                                })()} ({formData.calendarDuration}min)
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  )}
 
                 </div>
               )}

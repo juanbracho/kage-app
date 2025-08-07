@@ -3,6 +3,7 @@ import { useCalendarStore } from '../store/calendarStore';
 import { useTaskStore } from '../store/taskStore';
 import { useHabitStore } from '../store/habitStore';
 import { useSettingsStore } from '../store/settingsStore';
+import { useGoalStore } from '../store/goalStore';
 import { CalendarEvent } from '../types/calendar';
 import { Task } from '../types/task';
 import { Habit } from '../types/habit';
@@ -70,52 +71,55 @@ export default function DailyTimelineView({
   const [undoAction, setUndoAction] = useState<{ type: 'delete' | 'complete'; event: CalendarEvent; timeoutId: NodeJS.Timeout } | null>(null);
 
   // Separate all-day events from timed events
+  const { goals } = useGoalStore();
+  
   const { allDayEvents, timedEvents } = useMemo(() => {
     const events = getEventsForDate(selectedDate);
     
-    console.log('📅 Regenerating events for date:', selectedDate.toISOString().split('T')[0]);
-    console.log('📅 Total events found:', events.length, 'Total timeBlocks in store:', timeBlocks.length);
+    // Get milestone events directly from goals for the selected date
+    const dateString = selectedDate.toISOString().split('T')[0];
     
-    // Log details about each event for debugging
-    events.forEach((event, index) => {
-      console.log(`📅 Event ${index + 1}:`, {
-        id: event.id,
-        title: event.title,
-        type: event.type,
-        allDay: event.allDay,
-        date: event.date,
-        startTime: event.startTime,
-        goalId: event.goalId,
-        milestoneId: event.milestoneId
-      });
-    });
+    const milestoneEvents = goals.flatMap(goal => 
+      goal.milestones?.filter(milestone => 
+        milestone.dueDate === dateString
+      ).map(milestone => ({
+        id: `milestone-${milestone.id}`,
+        title: milestone.description,
+        description: `Goal: ${goal.name}`,
+        date: dateString,
+        type: 'milestone' as const,
+        icon: '🎯',
+        color: goal.color,
+        completed: milestone.completed,
+        allDay: true,
+        goalId: goal.id,
+        milestoneId: milestone.id,
+        startTime: '00:00',
+        endTime: '23:59'
+      })) || []
+    );
     
-    const allDay = events.filter(event => {
+    // Combine timeblock events with milestone events
+    const allEvents = [...events, ...milestoneEvents];
+    
+    const allDay = allEvents.filter(event => {
       const isAllDay = event.allDay === true;
       const isMilestone = event.type === 'milestone';
       const isRepetitiveTask = event.type === 'repetitive-task';
       const shouldBeAllDay = isAllDay || isMilestone || isRepetitiveTask;
       
-      console.log(`📅 Event "${event.title}" - allDay:${isAllDay}, milestone:${isMilestone}, repetitive:${isRepetitiveTask}, shouldBeAllDay:${shouldBeAllDay}`);
-      
       return shouldBeAllDay;
     });
     
-    const timed = events.filter(event => {
+    const timed = allEvents.filter(event => {
       const isNotAllDay = !event.allDay;
       const isNotMilestone = event.type !== 'milestone';
       const isNotRepetitiveTask = event.type !== 'repetitive-task';
       return isNotAllDay && isNotMilestone && isNotRepetitiveTask;
     });
     
-    console.log('📅 All-day events:', allDay.length, 'Timed events:', timed.length);
-    
-    if (allDay.length > 0) {
-      console.log('📅 All-day events details:', allDay.map(e => ({ title: e.title, type: e.type, allDay: e.allDay })));
-    }
-    
     return { allDayEvents: allDay, timedEvents: timed };
-  }, [selectedDate, timeBlocks, getEventsForDate]);
+  }, [selectedDate, timeBlocks, getEventsForDate, goals]);
 
   // Generate time slots from 6 AM to 10 PM for timed events
   const timeSlots: TimeSlot[] = useMemo(() => {
@@ -164,6 +168,14 @@ export default function DailyTimelineView({
         const goalStore = useGoalStore.getState();
         goalStore.toggleMilestoneCompletion(event.goalId, event.milestoneId);
         console.log('🎯 Milestone completion toggled:', event.title);
+        
+        // Trigger journal prompt if milestone is being completed
+        if (!event.completed) {
+          goalStore.triggerMilestoneJournalPrompt(event.goalId, event.milestoneId, 
+            goalStore.goals.find(g => g.id === event.goalId)!,
+            goalStore.goals.find(g => g.id === event.goalId)!.milestones.find(m => m.id === event.milestoneId)!
+          );
+        }
       } catch (error) {
         console.error('❌ Error toggling milestone completion:', error);
       }
@@ -178,11 +190,21 @@ export default function DailyTimelineView({
 
   const handleEventDeletion = (event: CalendarEvent) => {
     const eventId = event.linkedId || event.id;
+    const isRecurring = isRecurringEvent(eventId);
     
-    if (isRecurringEvent(eventId)) {
+    console.log('🗑️ Event deletion:', {
+      eventTitle: event.title,
+      eventId,
+      linkedId: event.linkedId,
+      isRecurring
+    });
+    
+    if (isRecurring) {
+      console.log('🗑️ Showing recurring deletion modal for:', event.title);
       setRecurringAction({ event, type: 'delete' });
       setShowRecurringModal(true);
     } else {
+      console.log('🗑️ Directly deleting non-recurring event:', event.title);
       deleteTimeBlock(eventId);
       
       // Show undo option for deletion only
@@ -225,6 +247,24 @@ export default function DailyTimelineView({
     if (event.type === 'habit') return '#34C759';
     if (event.type === 'task') return '#007AFF';
     return event.color || currentAccentColor;
+  };
+
+  const getEventBackgroundStyle = (event: CalendarEvent) => {
+    const color = getEventTypeColor(event);
+    
+    // If it's already a gradient, use it directly
+    if (color.includes('linear-gradient')) {
+      return {
+        background: color,
+        borderColor: color.includes('#') ? color.match(/#[0-9A-Fa-f]{6}/g)?.[0] || currentAccentColor : currentAccentColor
+      };
+    }
+    
+    // For hex colors, create a gradient with transparency
+    return {
+      background: `linear-gradient(135deg, ${color}25, ${color}15)`,
+      borderColor: color
+    };
   };
 
   const getEventTypeClass = (event: CalendarEvent) => {
@@ -288,15 +328,6 @@ export default function DailyTimelineView({
         </button>
       </div>
 
-      {/* Debug Section - Remove after testing */}
-      <div className="px-4 py-2 border-b border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 text-xs">
-        <div className="text-yellow-800 dark:text-yellow-300 font-mono">
-          Debug: Total events: {timedEvents.length + allDayEvents.length} | 
-          Timed: {timedEvents.length} | 
-          All-day: {allDayEvents.length} | 
-          TimeBlocks in store: {timeBlocks.length}
-        </div>
-      </div>
 
       {/* All-Day Events Section */}
       {allDayEvents.length > 0 && (
@@ -500,11 +531,10 @@ export default function DailyTimelineView({
                             event.completed ? 'opacity-60' : ''
                           } ${getEventTypeClass(event)} p-4 rounded-xl shadow-md border border-opacity-20`}
                           style={{ 
-                            background: `linear-gradient(135deg, ${getEventTypeColor(event)}25, ${getEventTypeColor(event)}15)`,
+                            ...getEventBackgroundStyle(event),
                             backdropFilter: 'blur(10px)',
-                            borderColor: getEventTypeColor(event),
                             color: 'white',
-                            boxShadow: `0 4px 12px ${getEventTypeColor(event)}20`,
+                            boxShadow: `0 4px 12px ${getEventTypeColor(event).includes('linear-gradient') ? '#00000020' : getEventTypeColor(event) + '20'}`,
                             // Enhanced height for multi-hour events
                             minHeight: durationHours > 1 ? `${Math.min(durationHours * 60, 200)}px` : 'auto'
                           }}
@@ -514,8 +544,10 @@ export default function DailyTimelineView({
                             <div 
                               className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
                               style={{ 
-                                backgroundColor: getEventTypeColor(event),
-                                boxShadow: `0 0 8px ${getEventTypeColor(event)}60`
+                                background: getEventTypeColor(event).includes('linear-gradient') 
+                                  ? getEventTypeColor(event) 
+                                  : getEventTypeColor(event),
+                                boxShadow: `0 0 8px ${getEventTypeColor(event).includes('linear-gradient') ? '#00000060' : getEventTypeColor(event) + '60'}`
                               }}
                             />
                           )}
@@ -524,8 +556,12 @@ export default function DailyTimelineView({
                             <div 
                               className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-lg shadow-sm transition-all duration-200"
                               style={{ 
-                                backgroundColor: getEventTypeColor(event) + '30',
-                                border: `1px solid ${getEventTypeColor(event)}40`
+                                background: getEventTypeColor(event).includes('linear-gradient') 
+                                  ? getEventTypeColor(event) 
+                                  : getEventTypeColor(event) + '30',
+                                border: getEventTypeColor(event).includes('linear-gradient') 
+                                  ? '1px solid rgba(255,255,255,0.3)' 
+                                  : `1px solid ${getEventTypeColor(event)}40`
                               }}
                             >
                               {event.icon}
@@ -548,8 +584,10 @@ export default function DailyTimelineView({
                                   <span 
                                     className="px-2 py-1 rounded-md font-bold text-white text-xs"
                                     style={{ 
-                                      backgroundColor: getEventTypeColor(event),
-                                      boxShadow: `0 2px 4px ${getEventTypeColor(event)}40`
+                                      background: getEventTypeColor(event).includes('linear-gradient') 
+                                        ? getEventTypeColor(event) 
+                                        : getEventTypeColor(event),
+                                      boxShadow: `0 2px 4px ${getEventTypeColor(event).includes('linear-gradient') ? '#00000040' : getEventTypeColor(event) + '40'}`
                                     }}
                                   >
                                     ⏱️ {Math.round(durationHours * 10) / 10}h

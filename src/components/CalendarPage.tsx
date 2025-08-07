@@ -46,7 +46,7 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex-1 bg-gray-900 min-h-screen">
+    <div className="flex-1 bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="w-full px-2 py-3 lg:px-3 lg:py-4">
         {/* Header removed - now using DailyTimelineView's compact header */}
 

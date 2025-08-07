@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Clock, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronUp, Target, Edit, Trash2 } from 'lucide-react';
+import { Plus, Clock, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronUp, Target, Edit, Trash2, Repeat } from 'lucide-react';
 import { useTaskStore } from '../store/taskStore';
 import { useGoalStore } from '../store/goalStore';
 import { TaskFilter } from '../types/task';
@@ -10,6 +10,7 @@ import { safeAddEventListener } from '../utils/pwaDetection';
 const FILTER_TABS: { id: TaskFilter; label: string; icon: React.ComponentType<any> }[] = [
   { id: 'today', label: 'Today', icon: Calendar },
   { id: 'upcoming', label: 'Upcoming', icon: Clock },
+  { id: 'repetitive', label: 'Repetitive', icon: Repeat },
   { id: 'overdue', label: 'Overdue', icon: AlertTriangle },
   { id: 'completed', label: 'Done', icon: CheckCircle2 }
 ];
@@ -320,6 +321,250 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
     );
   };
 
+  const renderRepetitiveTasks = (tasks: any[]) => {
+    // Group tasks by their metadata
+    const upcomingTasks = tasks.filter((task: any) => task._repetitiveGroup?.isUpcoming);
+    const monthlyGroups = new Map<string, any[]>();
+    
+    tasks.forEach((task: any) => {
+      if (!task._repetitiveGroup?.isUpcoming) {
+        const monthGroup = task._repetitiveGroup?.monthGroup || 'No Due Date';
+        if (!monthlyGroups.has(monthGroup)) {
+          monthlyGroups.set(monthGroup, []);
+        }
+        monthlyGroups.get(monthGroup)!.push(task);
+      }
+    });
+
+    return (
+      <div className="space-y-8">
+        {/* Upcoming Section (within 2 weeks) */}
+        {upcomingTasks.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Clock className="w-4 h-4 text-blue-500" />
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Upcoming</h2>
+              <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-md text-xs font-semibold">
+                Within 2 weeks
+              </span>
+              <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-md text-xs font-semibold">
+                {upcomingTasks.length}
+              </span>
+            </div>
+            <div className="space-y-3">
+              {upcomingTasks.map((task) => renderRepetitiveTaskCard(task))}
+            </div>
+          </div>
+        )}
+
+        {/* Monthly Groups */}
+        {Array.from(monthlyGroups.entries())
+          .sort(([monthA], [monthB]) => {
+            if (monthA === 'No Due Date') return 1;
+            if (monthB === 'No Due Date') return -1;
+            return new Date(monthA + ' 1, 2000').getTime() - new Date(monthB + ' 1, 2000').getTime();
+          })
+          .map(([monthGroup, monthTasks]) => (
+            <div key={monthGroup} className="mb-8">
+              <div className="flex items-center gap-2 mb-4">
+                <Calendar className="w-4 h-4 text-purple-500" />
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{monthGroup}</h2>
+                <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-md text-xs font-semibold">
+                  {monthTasks.length}
+                </span>
+              </div>
+              <div className="space-y-3">
+                {monthTasks.map((task) => renderRepetitiveTaskCard(task))}
+              </div>
+            </div>
+          ))}
+      </div>
+    );
+  };
+
+  const renderRepetitiveTaskCard = (task: any) => {
+    const isExpanded = expandedTasks.has(task.id);
+    const completedSubtasks = task.subtasks?.filter((st: any) => st.completed)?.length || 0;
+    const totalSubtasks = task.subtasks?.length || 0;
+    const goalName = getGoalName(task.goalId);
+    const repetitiveInfo = task._repetitiveGroup;
+
+    return (
+      <div key={task.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-sm transition-shadow">
+        <div className="flex items-start gap-3">
+          <button
+            onClick={() => toggleTask(task.id)}
+            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors mt-0.5 ${
+              task.status === 'completed'
+                ? 'bg-green-500 border-green-500 text-white'
+                : 'border-gray-300 hover-accent-border'
+            }`}
+          >
+            {task.status === 'completed' && <span className="text-xs">✓</span>}
+          </button>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex-1 min-w-0">
+                <h3 className={`font-semibold text-gray-800 dark:text-white ${
+                  task.status === 'completed' ? 'line-through text-gray-500 dark:text-gray-400' : ''
+                }`}>
+                  {task.name}
+                </h3>
+                
+                {/* Repetitive Task Info */}
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-1 text-xs">
+                    <Repeat className="w-3 h-3 text-purple-500" />
+                    <span className="text-purple-600 dark:text-purple-400 font-medium">
+                      {task.recurrenceType} • Next of {repetitiveInfo?.allInstances || 1} occurrences
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-1">
+                {((task.subtasks && task.subtasks.length > 0) || (task.type === 'to-buy' && task.shoppingItems && task.shoppingItems.length > 0)) && (
+                  <button
+                    onClick={() => toggleExpanded(task.id)}
+                    className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1"
+                  >
+                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                )}
+                
+                <button
+                  onClick={() => handleEditTask(task)}
+                  className="text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors p-1"
+                  title="Edit task"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+                
+                <button
+                  onClick={() => handleDeleteTask(task.id)}
+                  className="text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors p-1"
+                  title="Delete task"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            
+            {task.description && (
+              <p className={`text-sm text-gray-600 dark:text-gray-300 mb-3 ${
+                task.status === 'completed' ? 'line-through' : ''
+              }`}>
+                {task.description}
+              </p>
+            )}
+            
+            <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+              {task.dueDate && (
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  <span>Next: {new Date(task.dueDate).toLocaleDateString()}</span>
+                </div>
+              )}
+              
+              {task.priority && (
+                <div className="flex items-center gap-1">
+                  <div className={`w-2 h-2 rounded-full ${
+                    task.priority === 'urgent' ? 'bg-red-500' :
+                    task.priority === 'high' ? 'accent-bg-500' :
+                    task.priority === 'medium' ? 'bg-yellow-500' :
+                    'bg-green-500'
+                  }`} />
+                  <span className="capitalize">{task.priority}</span>
+                </div>
+              )}
+              
+              {goalName && (
+                <button
+                  onClick={() => onNavigate?.('goals')}
+                  className="flex items-center gap-1 hover-accent-text-600 transition-colors"
+                >
+                  <Target className="w-3 h-3" />
+                  <span>{goalName}</span>
+                </button>
+              )}
+              
+              {task.subtasks && task.subtasks.length > 0 && (
+                <div className="flex items-center gap-1">
+                  <span>{completedSubtasks}/{totalSubtasks} subtasks</span>
+                </div>
+              )}
+              
+              {task.type === 'to-buy' && task.shoppingItems && task.shoppingItems.length > 0 && (
+                <div className="flex items-center gap-1">
+                  <span className="text-base">🛒</span>
+                  <span>{task.shoppingItems.filter((item: any) => item.completed).length}/{task.shoppingItems.length} items</span>
+                </div>
+              )}
+            </div>
+            
+            {/* Rest of the expanded content (subtasks, shopping items) remains the same as renderTaskCard */}
+            {isExpanded && task.subtasks && task.subtasks.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {task.subtasks.map((subtask: any, index: number) => {
+                  const subtaskId = typeof subtask === 'string' ? `${task.id}-${index}` : subtask.id;
+                  const subtaskName = typeof subtask === 'string' ? subtask : subtask.name;
+                  const isCompleted = typeof subtask === 'string' ? false : subtask.completed;
+                  
+                  return (
+                  <div key={subtaskId || `subtask-${task.id}-${index}`} className="flex items-center gap-2 ml-4">
+                    <button
+                      onClick={() => toggleSubtask(task.id, subtaskId)}
+                      className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                        isCompleted
+                          ? 'bg-green-500 border-green-500 text-white'
+                          : 'border-gray-300 hover-accent-border'
+                      }`}
+                    >
+                      {isCompleted && <span className="text-xs">✓</span>}
+                    </button>
+                    <span className={`text-sm ${
+                      isCompleted ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-700 dark:text-gray-300'
+                    }`}>
+                      {subtaskName}
+                    </span>
+                  </div>
+                );
+                })}
+              </div>
+            )}
+            
+            {/* Shopping Items for To-Buy tasks */}
+            {isExpanded && task.type === 'to-buy' && task.shoppingItems && task.shoppingItems.length > 0 && (
+              <div className="mt-3 space-y-2">
+                <div className="text-xs font-medium text-gray-600 dark:text-gray-400 ml-4 mb-2">Shopping List:</div>
+                {task.shoppingItems.map((item: any, index: number) => (
+                  <div key={item.id || `item-${task.id}-${index}`} className="flex items-center gap-2 ml-4">
+                    <button
+                      onClick={() => toggleShoppingItem(task.id, item.id)}
+                      className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                        item.completed
+                          ? 'bg-green-500 border-green-500 text-white'
+                          : 'border-gray-300 hover-accent-border'
+                      }`}
+                    >
+                      {item.completed && <span className="text-xs">✓</span>}
+                    </button>
+                    <span className={`text-sm ${
+                      item.completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-700 dark:text-gray-300'
+                    }`}>
+                      {item.quantity && `${item.quantity} `}{item.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
 
   return (
     <div className="space-y-6">
@@ -373,7 +618,21 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
           </div>
         )}
         
-        {currentFilter !== 'all' && (
+        {currentFilter === 'repetitive' && (
+          <div>
+            {filteredTasks.length === 0 ? (
+              <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                <div className="text-4xl mb-2">🔁</div>
+                <p>No repetitive tasks found.</p>
+                <p className="text-sm mt-2">Repetitive tasks will appear here when you create recurring tasks.</p>
+              </div>
+            ) : (
+              renderRepetitiveTasks(filteredTasks)
+            )}
+          </div>
+        )}
+        
+        {currentFilter !== 'all' && currentFilter !== 'repetitive' && (
           <div className="space-y-3">
             {filteredTasks.length === 0 ? (
               <div className="text-center py-12 text-gray-500 dark:text-gray-400">

@@ -44,59 +44,7 @@ const formatDateToString = (date: Date) => {
 //   return date.toTimeString().slice(0, 5);
 // };
 
-// Save verification and retry helpers
-const verifySave = async (storeName: string, expectedCount?: number, timeoutMs = 2000): Promise<boolean> => {
-  return new Promise((resolve) => {
-    const startTime = Date.now();
-    const checkInterval = setInterval(() => {
-      try {
-        const item = localStorage.getItem(storeName);
-        if (item) {
-          const parsed = JSON.parse(item);
-          const actualCount = parsed?.state?.timeBlocks?.length || 0;
-          
-          if (expectedCount === undefined || actualCount >= expectedCount) {
-            console.log('📅 Calendar Store: Save verification successful:', actualCount, 'timeBlocks');
-            clearInterval(checkInterval);
-            resolve(true);
-            return;
-          }
-        }
-      } catch (error) {
-        console.error('📅 Calendar Store: Save verification error:', error);
-      }
-      
-      if (Date.now() - startTime >= timeoutMs) {
-        console.warn('📅 Calendar Store: Save verification timeout');
-        clearInterval(checkInterval);
-        resolve(false);
-      }
-    }, 100);
-  });
-};
-
-const retryOperation = async <T>(
-  operation: () => Promise<T>,
-  maxRetries = 3,
-  delayMs = 500
-): Promise<T> => {
-  let lastError: Error | null = null;
-  
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await operation();
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error('Unknown error');
-      console.warn(`📅 Calendar Store: Operation failed (attempt ${attempt}/${maxRetries}):`, lastError.message);
-      
-      if (attempt < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
-      }
-    }
-  }
-  
-  throw lastError || new Error('Operation failed after retries');
-};
+// Helper functions
 
 const addMinutesToTime = (timeStr: string, minutes: number): string => {
   const [hours, mins] = timeStr.split(':').map(Number);
@@ -170,12 +118,7 @@ export const useCalendarStore = create<CalendarStore>()(
       updatedAt: new Date().toISOString()
     };
     
-    // Use retry mechanism for the entire operation
-    await retryOperation(async () => {
-      // Get current count for verification
-      const currentCount = get().timeBlocks.length;
-      const expectedCount = currentCount + 1;
-      
+    try {
       // Perform the state update
       set((state) => {
         const updatedState = {
@@ -186,28 +129,23 @@ export const useCalendarStore = create<CalendarStore>()(
         return updatedState;
       });
       
-      // Verify the save was persisted
-      const saveVerified = await verifySave('calendar-store', expectedCount, 3000);
-      if (!saveVerified) {
-        throw new Error('Failed to verify timeblock save to storage');
-      }
-      
       // Generate recurring events if applicable
       if (newTimeBlock.isRecurring) {
         console.log('📅 Calendar Store: Generating recurring events for:', newTimeBlock.title);
         get().generateRecurringEvents(newTimeBlock);
       }
       
-      console.log('📅 Calendar Store: Successfully added and verified timeblock:', newTimeBlock.title);
-    });
+      console.log('📅 Calendar Store: Successfully added time block:', newTimeBlock.title);
+    } catch (error) {
+      console.error('📅 Calendar Store: Failed to add time block:', error);
+      throw error;
+    }
   },
   
   updateTimeBlock: async (id: string, updates: Partial<TimeBlock>) => {
     console.log('📅 Calendar Store: Updating time block:', id);
     
-    await retryOperation(async () => {
-      const currentCount = get().timeBlocks.length;
-      
+    try {
       // Perform the state update
       set((state) => ({
         timeBlocks: state.timeBlocks.map(block =>
@@ -217,14 +155,11 @@ export const useCalendarStore = create<CalendarStore>()(
         )
       }));
       
-      // Verify the update was persisted (same count but content changed)
-      const saveVerified = await verifySave('calendar-store', currentCount, 2000);
-      if (!saveVerified) {
-        throw new Error('Failed to verify timeblock update to storage');
-      }
-      
-      console.log('📅 Calendar Store: Successfully updated and verified timeblock:', id);
-    });
+      console.log('📅 Calendar Store: Successfully updated time block:', id);
+    } catch (error) {
+      console.error('📅 Calendar Store: Failed to update time block:', error);
+      throw error;
+    }
   },
   
   deleteTimeBlock: (id: string) => {
@@ -391,6 +326,13 @@ export const useCalendarStore = create<CalendarStore>()(
   generateRecurringEvents: (originalEvent: TimeBlock) => {
     if (!originalEvent.isRecurring) return;
     
+    console.log('🔄 Generating recurring events for:', originalEvent.title, {
+      recurrenceType: originalEvent.recurrenceType,
+      recurrenceInterval: originalEvent.recurrenceInterval,
+      startDate: originalEvent.date,
+      endDate: originalEvent.recurrenceEndDate
+    });
+    
     const { timeBlocks } = get();
     const startDate = new Date(originalEvent.date);
     const endDate = originalEvent.recurrenceEndDate 
@@ -401,12 +343,14 @@ export const useCalendarStore = create<CalendarStore>()(
     const currentDate = new Date(startDate);
     
     // Generate recurring instances
-    while (currentDate <= endDate) {
-      // Move to next occurrence
+    while (currentDate <= endDate && recurringInstances.length < 100) {
+      // Move to next occurrence FIRST
       if (originalEvent.recurrenceType === 'weekly') {
         currentDate.setDate(currentDate.getDate() + (7 * (originalEvent.recurrenceInterval || 1)));
       } else if (originalEvent.recurrenceType === 'monthly') {
         currentDate.setMonth(currentDate.getMonth() + (originalEvent.recurrenceInterval || 1));
+      } else if (originalEvent.recurrenceType === 'daily') {
+        currentDate.setDate(currentDate.getDate() + (originalEvent.recurrenceInterval || 1));
       }
       
       if (currentDate > endDate) break;
@@ -414,6 +358,8 @@ export const useCalendarStore = create<CalendarStore>()(
       // Skip if date is in exceptions
       const dateString = formatDateToString(currentDate);
       if (originalEvent.recurrenceExceptions?.includes(dateString)) continue;
+      
+      console.log('🔄 Creating instance for date:', dateString);
       
       // Create recurring instance
       const recurringInstance: TimeBlock = {
@@ -427,15 +373,16 @@ export const useCalendarStore = create<CalendarStore>()(
       };
       
       recurringInstances.push(recurringInstance);
-      
-      // Limit to prevent infinite generation (max 100 instances)
-      if (recurringInstances.length >= 100) break;
     }
     
+    console.log('🔄 Generated', recurringInstances.length, 'recurring instances');
+    
     // Add all recurring instances to the store
-    set((state) => ({
-      timeBlocks: [...state.timeBlocks, ...recurringInstances]
-    }));
+    if (recurringInstances.length > 0) {
+      set((state) => ({
+        timeBlocks: [...state.timeBlocks, ...recurringInstances]
+      }));
+    }
   },
 
   isRecurringEvent: (id: string) => {
@@ -448,6 +395,52 @@ export const useCalendarStore = create<CalendarStore>()(
     const { timeBlocks } = get();
     const block = timeBlocks.find(b => b.id === id);
     return block?.originalEventId || (block?.isRecurring ? id : null);
+  },
+
+  deleteSingleRecurringEvent: (id: string) => {
+    console.log('🗑️ Calendar Store: Deleting single recurring event:', id);
+    set((state) => ({
+      timeBlocks: state.timeBlocks.filter(block => block.id !== id)
+    }));
+  },
+
+  deleteRecurringSeries: (originalEventId: string) => {
+    console.log('🗑️ Calendar Store: Deleting entire recurring series:', originalEventId);
+    set((state) => ({
+      timeBlocks: state.timeBlocks.filter(block => 
+        block.id !== originalEventId && block.originalEventId !== originalEventId
+      )
+    }));
+  },
+
+  toggleSingleRecurringCompletion: (id: string) => {
+    console.log('✅ Calendar Store: Toggling single recurring completion:', id);
+    set((state) => ({
+      timeBlocks: state.timeBlocks.map(block =>
+        block.id === id
+          ? {
+              ...block,
+              status: block.status === 'completed' ? 'scheduled' : 'completed',
+              updatedAt: new Date().toISOString()
+            }
+          : block
+      )
+    }));
+  },
+
+  toggleRecurringSeriesCompletion: (originalEventId: string, completed: boolean) => {
+    console.log('✅ Calendar Store: Toggling recurring series completion:', originalEventId, completed);
+    set((state) => ({
+      timeBlocks: state.timeBlocks.map(block =>
+        (block.id === originalEventId || block.originalEventId === originalEventId)
+          ? {
+              ...block,
+              status: completed ? 'completed' : 'scheduled',
+              updatedAt: new Date().toISOString()
+            }
+          : block
+      )
+    }));
   },
 
   cleanupRecurringEvents: (originalEventId: string) => {

@@ -1012,15 +1012,27 @@ export const useGoalStore = create<GoalStore>()(
           await calendarStore.addTimeBlock(timeBlockData);
           console.log('✅ Created calendar event for milestone:', milestone.description);
           
-          // Verify the time block was actually added
-          const allTimeBlocks = calendarStore.timeBlocks;
-          console.log('📅 Current time blocks count after milestone creation:', allTimeBlocks.length);
-          const justAdded = allTimeBlocks.find(tb => tb.title === timeBlockData.title && tb.milestoneId === milestone.id);
-          if (justAdded) {
-            console.log('✅ Verified: Milestone time block found in calendar store:', justAdded.id);
-          } else {
-            console.log('❌ Warning: Milestone time block not found in calendar store after addition');
-          }
+          // Verify the time block was actually added (with a small delay to ensure store is updated)
+          setTimeout(() => {
+            const allTimeBlocks = calendarStore.timeBlocks;
+            console.log('📅 Current time blocks count after milestone creation:', allTimeBlocks.length);
+            console.log('📅 All time blocks:', allTimeBlocks.map(tb => ({
+              id: tb.id,
+              title: tb.title,
+              date: tb.date,
+              blockType: tb.blockType,
+              allDay: tb.allDay,
+              milestoneId: tb.milestoneId
+            })));
+            
+            const justAdded = allTimeBlocks.find(tb => tb.title === timeBlockData.title && tb.milestoneId === milestone.id);
+            if (justAdded) {
+              console.log('✅ Verified: Milestone time block found in calendar store:', justAdded);
+            } else {
+              console.log('❌ Warning: Milestone time block not found in calendar store after addition');
+              console.log('📅 Searching for:', { title: timeBlockData.title, milestoneId: milestone.id });
+            }
+          }, 100);
         } catch (error) {
           console.error('❌ Error creating milestone calendar event:', error);
           console.error('❌ Error details:', {

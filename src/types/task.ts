@@ -52,7 +52,7 @@ export type TaskStatus = 'pending' | 'in-progress' | 'completed' | 'overdue'
 
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
 
-export type TaskFilter = 'all' | 'today' | 'upcoming' | 'overdue' | 'completed'
+export type TaskFilter = 'all' | 'today' | 'upcoming' | 'overdue' | 'completed' | 'repetitive'
 
 export interface TaskSection {
   id: string

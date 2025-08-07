@@ -37,6 +37,7 @@ interface TaskStore {
   getFilteredTasks: () => Task[]
   getTasksBySection: () => { today: Task[], overdue: Task[], upcoming: Task[], noDueDate: Task[] }
   getTaskCounts: () => Record<TaskFilter, number>
+  getRepetitiveTasks: () => Task[]
 }
 
 const generateId = () => Date.now().toString() + Math.random().toString(36).substring(2, 9)
@@ -80,6 +81,57 @@ const isUpcoming = (dueDate?: Date) => {
   const diffTime = due.getTime() - today.getTime()
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
   return diffDays > 0 && diffDays <= 7
+}
+
+// Helper function to filter out duplicate repetitive tasks
+// Only show the next occurrence within a month for each repetitive task group
+const filterNextOccurrenceOnly = (tasks: Task[]): Task[] => {
+  const now = new Date()
+  const oneMonthFromNow = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000))
+  
+  // Group tasks by recurring groups
+  const taskGroups = new Map<string, Task[]>()
+  const nonRepetitiveTasks: Task[] = []
+  
+  tasks.forEach(task => {
+    if (task.isRecurring || task.originalTaskId) {
+      // This is a repetitive task
+      const groupKey = task.originalTaskId || task.id
+      if (!taskGroups.has(groupKey)) {
+        taskGroups.set(groupKey, [])
+      }
+      taskGroups.get(groupKey)!.push(task)
+    } else {
+      // Regular non-repetitive task
+      nonRepetitiveTasks.push(task)
+    }
+  })
+  
+  const filteredRepetitiveTasks: Task[] = []
+  
+  // For each repetitive group, only include the next occurrence within a month
+  taskGroups.forEach((groupTasks) => {
+    // Sort by due date
+    groupTasks.sort((a, b) => {
+      if (!a.dueDate && !b.dueDate) return 0
+      if (!a.dueDate) return 1
+      if (!b.dueDate) return -1
+      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+    })
+    
+    // Find the next occurrence within a month
+    const nextOccurrence = groupTasks.find(task => {
+      if (!task.dueDate) return false
+      const dueDate = new Date(task.dueDate)
+      return dueDate >= now && dueDate <= oneMonthFromNow
+    })
+    
+    if (nextOccurrence) {
+      filteredRepetitiveTasks.push(nextOccurrence)
+    }
+  })
+  
+  return [...nonRepetitiveTasks, ...filteredRepetitiveTasks]
 }
 
 export const useTaskStore = create<TaskStore>()(
@@ -351,28 +403,38 @@ export const useTaskStore = create<TaskStore>()(
         
         switch (currentFilter) {
           case 'today':
-            return tasks.filter(task => 
-              isToday(task.dueDate) && !isOverdue(task.dueDate) && task.status !== 'completed'
+            return filterNextOccurrenceOnly(
+              tasks.filter(task => 
+                isToday(task.dueDate) && !isOverdue(task.dueDate) && task.status !== 'completed'
+              )
             )
           case 'upcoming':
-            return tasks.filter(task => 
-              isUpcoming(task.dueDate) && !isOverdue(task.dueDate) && !isToday(task.dueDate) && task.status !== 'completed'
+            return filterNextOccurrenceOnly(
+              tasks.filter(task => 
+                isUpcoming(task.dueDate) && !isOverdue(task.dueDate) && !isToday(task.dueDate) && task.status !== 'completed'
+              )
             )
+          case 'repetitive':
+            return get().getRepetitiveTasks()
           case 'overdue':
-            return tasks.filter(task => 
-              isOverdue(task.dueDate) && task.status !== 'completed'
+            return filterNextOccurrenceOnly(
+              tasks.filter(task => 
+                isOverdue(task.dueDate) && task.status !== 'completed'
+              )
             )
           case 'completed':
-            return tasks.filter(task => task.status === 'completed')
+            return filterNextOccurrenceOnly(
+              tasks.filter(task => task.status === 'completed')
+            )
           default:
-            return tasks
+            return filterNextOccurrenceOnly(tasks)
         }
       },
 
       getTasksBySection: () => {
         const { tasks } = get()
         
-        const incompleteTasks = tasks.filter(task => task.status !== 'completed')
+        const incompleteTasks = filterNextOccurrenceOnly(tasks.filter(task => task.status !== 'completed'))
         
         return {
           overdue: incompleteTasks.filter(task => isOverdue(task.dueDate)),
@@ -390,18 +452,100 @@ export const useTaskStore = create<TaskStore>()(
         const { tasks } = get()
         
         return {
-          all: tasks.length,
-          today: tasks.filter(task => 
-            isToday(task.dueDate) && task.status !== 'completed'
+          all: filterNextOccurrenceOnly(tasks).length,
+          today: filterNextOccurrenceOnly(
+            tasks.filter(task => 
+              isToday(task.dueDate) && task.status !== 'completed'
+            )
           ).length,
-          upcoming: tasks.filter(task => 
-            isUpcoming(task.dueDate) && task.status !== 'completed'
+          upcoming: filterNextOccurrenceOnly(
+            tasks.filter(task => 
+              isUpcoming(task.dueDate) && task.status !== 'completed'
+            )
           ).length,
-          overdue: tasks.filter(task => 
-            isOverdue(task.dueDate) && task.status !== 'completed'
+          repetitive: get().getRepetitiveTasks().length,
+          overdue: filterNextOccurrenceOnly(
+            tasks.filter(task => 
+              isOverdue(task.dueDate) && task.status !== 'completed'
+            )
           ).length,
-          completed: tasks.filter(task => task.status === 'completed').length
+          completed: filterNextOccurrenceOnly(
+            tasks.filter(task => task.status === 'completed')
+          ).length
         }
+      },
+
+      getRepetitiveTasks: () => {
+        const { tasks } = get()
+        const now = new Date()
+        const twoWeeksFromNow = new Date(now.getTime() + (14 * 24 * 60 * 60 * 1000))
+        
+        // Get all repetitive tasks (original recurring tasks and their instances)
+        const repetitiveTasks = tasks.filter(task => 
+          (task.isRecurring || task.originalTaskId) && task.status !== 'completed'
+        )
+        
+        // Group by original task (for recurring tasks) or by task itself (for original recurring tasks)
+        const taskGroups = new Map<string, Task[]>()
+        
+        repetitiveTasks.forEach(task => {
+          const groupKey = task.originalTaskId || task.id
+          if (!taskGroups.has(groupKey)) {
+            taskGroups.set(groupKey, [])
+          }
+          taskGroups.get(groupKey)!.push(task)
+        })
+        
+        const result: Task[] = []
+        
+        taskGroups.forEach((taskInstances, groupKey) => {
+          // Sort instances by due date
+          taskInstances.sort((a, b) => {
+            if (!a.dueDate && !b.dueDate) return 0
+            if (!a.dueDate) return 1
+            if (!b.dueDate) return -1
+            return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+          })
+          
+          // Find the next occurrence within the next month
+          const nextOccurrence = taskInstances.find(task => {
+            if (!task.dueDate) return false
+            const dueDate = new Date(task.dueDate)
+            return dueDate >= now
+          })
+          
+          if (nextOccurrence) {
+            // Mark this task with special metadata for UI grouping
+            const taskWithMetadata = {
+              ...nextOccurrence,
+              _repetitiveGroup: {
+                isUpcoming: nextOccurrence.dueDate && new Date(nextOccurrence.dueDate) <= twoWeeksFromNow,
+                monthGroup: nextOccurrence.dueDate ? 
+                  new Date(nextOccurrence.dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : 
+                  'No Due Date',
+                allInstances: taskInstances.length
+              }
+            } as Task & { _repetitiveGroup: { isUpcoming: boolean; monthGroup: string; allInstances: number } }
+            
+            result.push(taskWithMetadata)
+          }
+        })
+        
+        // Sort final result: upcoming first, then by month
+        return result.sort((a: any, b: any) => {
+          const aGroup = a._repetitiveGroup
+          const bGroup = b._repetitiveGroup
+          
+          // Upcoming tasks first
+          if (aGroup.isUpcoming && !bGroup.isUpcoming) return -1
+          if (!aGroup.isUpcoming && bGroup.isUpcoming) return 1
+          
+          // Then by due date
+          if (!a.dueDate && !b.dueDate) return 0
+          if (!a.dueDate) return 1
+          if (!b.dueDate) return -1
+          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+        })
       },
 
       // Goal linking functions
