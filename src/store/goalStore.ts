@@ -476,21 +476,11 @@ export const useGoalStore = create<GoalStore>()(
           )
         }));
 
-        // Create calendar event for milestone if it has a due date
+        // Milestone will appear as all-day event card directly from goal store (no calendar integration needed)
         if (dueDate) {
-          console.log('🎯 About to create calendar event for milestone:', {
-            goalId,
-            milestoneId: milestone.id,
-            milestoneDescription: milestone.description,
-            dueDate: milestone.dueDate
-          });
-          
-          // Call async function without await to avoid blocking the milestone creation
-          get().createMilestoneCalendarEvent(goalId, milestone).catch(error => {
-            console.error('❌ Async error in milestone calendar creation:', error);
-          });
+          console.log('✅ Milestone created with due date, will appear as all-day event card:', milestone.description);
         } else {
-          console.log('🎯 Milestone has no due date, skipping calendar event creation');
+          console.log('🎯 Milestone has no due date, will not appear in calendar');
         }
 
         // Update progress if using milestone-based calculation
@@ -518,9 +508,9 @@ export const useGoalStore = create<GoalStore>()(
         }));
 
         // If due date was added or changed, update calendar event
-        if (updates.dueDate && updates.dueDate !== originalMilestone?.dueDate && originalMilestone) {
-          const updatedMilestone = { ...originalMilestone, ...updates };
-          get().createMilestoneCalendarEvent(goalId, updatedMilestone);
+        // Milestone calendar integration removed - milestones appear as direct all-day event cards
+        if (updates.dueDate && updates.dueDate !== originalMilestone?.dueDate) {
+          console.log('✅ Milestone due date updated, will appear as all-day event card on:', updates.dueDate);
         }
 
         // Update progress if using milestone-based calculation
@@ -967,81 +957,6 @@ export const useGoalStore = create<GoalStore>()(
       },
 
       // NEW: Calendar integration for milestones
-      createMilestoneCalendarEvent: async (goalId: string, milestone: GoalMilestone) => {
-        try {
-          const goal = get().goals.find(g => g.id === goalId);
-          console.log('🎯 Creating milestone calendar event:', { goalId, milestone, goal });
-          
-          if (!goal) {
-            console.log('❌ Goal not found for milestone calendar event');
-            return;
-          }
-          
-          if (!milestone.dueDate) {
-            console.log('❌ No due date for milestone, skipping calendar event');
-            return;
-          }
-
-          // Import calendar store dynamically to avoid circular dependency
-          const { useCalendarStore } = await import('./calendarStore');
-          const calendarStore = useCalendarStore.getState();
-
-          // Get current accent color for consistent theming
-          const { useSettingsStore } = await import('./settingsStore');
-          const { getAccentColorValue } = await import('../utils/accentColors');
-          const settingsStore = useSettingsStore.getState();
-          const currentAccentColor = getAccentColorValue(settingsStore.accentColor);
-          
-          const timeBlockData = {
-            title: `Milestone: ${milestone.description}`,
-            description: `Goal: ${goal.name}`,
-            date: milestone.dueDate,
-            startTime: '00:00', // All-day event
-            durationMinutes: 1440, // Full day
-            blockType: 'milestone' as const,
-            icon: '🎯',
-            color: goal.color || `linear-gradient(135deg, ${currentAccentColor}, ${currentAccentColor}dd)`,
-            linkedItemType: 'milestone' as const,
-            linkedItemId: milestone.id,
-            allDay: true,
-            goalId: goalId,
-            milestoneId: milestone.id
-          };
-
-          console.log('🎯 About to create calendar time block with data:', timeBlockData);
-          await calendarStore.addTimeBlock(timeBlockData);
-          console.log('✅ Created calendar event for milestone:', milestone.description);
-          
-          // Verify the time block was actually added (with a small delay to ensure store is updated)
-          setTimeout(() => {
-            const allTimeBlocks = calendarStore.timeBlocks;
-            console.log('📅 Current time blocks count after milestone creation:', allTimeBlocks.length);
-            console.log('📅 All time blocks:', allTimeBlocks.map(tb => ({
-              id: tb.id,
-              title: tb.title,
-              date: tb.date,
-              blockType: tb.blockType,
-              allDay: tb.allDay,
-              milestoneId: tb.milestoneId
-            })));
-            
-            const justAdded = allTimeBlocks.find(tb => tb.title === timeBlockData.title && tb.milestoneId === milestone.id);
-            if (justAdded) {
-              console.log('✅ Verified: Milestone time block found in calendar store:', justAdded);
-            } else {
-              console.log('❌ Warning: Milestone time block not found in calendar store after addition');
-              console.log('📅 Searching for:', { title: timeBlockData.title, milestoneId: milestone.id });
-            }
-          }, 100);
-        } catch (error) {
-          console.error('❌ Error creating milestone calendar event:', error);
-          console.error('❌ Error details:', {
-            message: error instanceof Error ? error.message : 'Unknown error',
-            stack: error instanceof Error ? error.stack : undefined,
-            timeBlockData
-          });
-        }
-      },
 
       // NEW: Journal prompt integration for milestone completion
       triggerMilestoneJournalPrompt: async (goalId: string, milestoneId: string, goal: Goal, milestone: GoalMilestone) => {

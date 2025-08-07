@@ -1458,3 +1458,54 @@ The issue is in the lock state logic - currently checks `!lastAccessTime || shou
 - `src/store/taskStore.ts` - Added filtering logic, missing property copying fix needed
 
 **Next Steps**: Fix `addTask()` function to properly copy recurring properties from TaskFormData to Task object
+
+### 🚨 Critical Issues Found After Bug Fix
+
+#### ✅ **Repetitive Task Creation Fix Applied**
+- Fixed `addTask()` function to copy recurring properties  
+- Fixed `updateTask()` function to handle recurring changes
+- Fixed TasksPage onSubmit type conversion
+
+#### 🐛 **New Issues Identified Through Testing:**
+
+##### Issue 1: **Dashboard Showing Too Many Instances**
+**Problem**: Dashboard "Today's Focus" showing 5 duplicate "haircut" tasks
+- **Expected**: Only 1 instance (next occurrence) should appear
+- **Actual**: All generated recurring instances appearing
+- **Root Cause**: Dashboard not using `filterNextOccurrenceOnly()` function
+- **Impact**: Dashboard cluttered with duplicate tasks
+
+##### Issue 2: **Tasks Not Appearing in Main Today Filter**  
+**Problem**: Tasks due today not showing in main Tasks page Today filter
+- **Expected**: Recurring tasks due today should appear in Today tab
+- **Actual**: Today tab completely empty despite having tasks due today
+- **Root Cause**: Filtering logic excluding recurring tasks incorrectly
+- **Impact**: Users can't see today's recurring tasks in main task view
+
+##### Issue 3: **Repetitive Filter Showing Tasks Beyond 2 Weeks**
+**Problem**: "Upcoming" section showing tasks over 3 weeks out
+- **Expected**: Upcoming section should only show tasks within 2 weeks
+- **Actual**: Tasks due 8/26/2025 and 9/9/2025 appearing in Upcoming section
+- **Current Date**: 8/6/2025 (tasks are 20+ and 34+ days out)
+- **Root Cause**: `isUpcoming` logic in repetitive filtering incorrect
+- **Impact**: Wrong categorization of repetitive tasks
+
+##### Issue 4: **Tasks Not Appearing in Calendar**
+**Problem**: Recurring tasks not showing as all-day events in calendar
+- **Expected**: Repetitive tasks should appear as all-day events like milestones
+- **Actual**: Calendar shows empty timeline with only "Tap to add" slots
+- **Root Cause**: Recurring tasks not being created as calendar time blocks
+- **Impact**: No calendar integration for repetitive tasks
+
+#### 📋 **Required Fixes:**
+1. Update Dashboard to use `filterNextOccurrenceOnly()` for recurring tasks
+2. Fix Today filter logic to properly include today's recurring tasks
+3. Correct `isUpcoming` calculation in repetitive filter (should be exactly ≤14 days)
+4. Implement automatic calendar time block creation for repetitive tasks
+5. Ensure repetitive tasks appear as all-day events in calendar timeline
+
+#### 📅 **Test Case Reference:**
+- Task: "haircut" - weekly recurring  
+- Current Date: August 6, 2025
+- Next Due: August 26, 2025 (20 days out - should be in Monthly, not Upcoming)
+- Following Due: September 9, 2025 (34 days out - should be in September section)

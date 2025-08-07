@@ -4,6 +4,18 @@
 
 Kage is a comprehensive personal productivity PWA that integrates habits, tasks, goals, journal, and calendar functionality with a focus on clean UI and reliable cross-platform performance.
 
+### 🚀 Current Project Status (Session 12 - 2025-08-07)
+- **✅ MAJOR MILESTONE**: Milestone Calendar Integration Complete - Google Calendar-style all-day events for milestones and repetitive tasks
+- **✅ ADVANCED FEATURES**: Repetitive task deletion system with granular control (single occurrence vs all iterations)
+- **✅ PRODUCTION READY**: 25+ major features implemented, comprehensive progress calculation system, goal templates
+- **✅ MOBILE APK**: Working Android APK with native file export, CSS safe areas, and proper gesture handling
+- **🎯 NEXT PRIORITIES**: Journal Passcode Protection, Enhanced Recurring Tasks Display, Export System Fixes
+
+### 📋 Recent Major Achievements
+- **Session 11**: Goal Milestones System + Progress Calculation Enhancement (4 calculation modes)
+- **Session 12**: Milestone Calendar Integration + Repetitive Task Deletion Options
+- **Ongoing**: 30/35 major features completed, comprehensive task tracking system established
+
 ## Milestone 1: Core Stability & UI Consistency ✅
 
 - [x] Task 1.1: Remove swipe gesture functionality from all modal components
@@ -118,21 +130,106 @@ Kage is a comprehensive personal productivity PWA that integrates habits, tasks,
 - [x] Task 11.11: Update goal progress display to show selected calculation method
 - [x] Task 11.12: Migrate existing goals to use default Tasks Mode calculation
 
-#### **Journal Passcode Protection**
-- [ ] Task 11.13: Design passcode security architecture with encryption
-- [ ] Task 11.14: Create 4-digit numeric passcode setup UI in Settings
-- [ ] Task 11.15: Implement secure passcode storage with encryption utilities
-- [ ] Task 11.16: Build passcode entry modal for journal access control
-- [ ] Task 11.17: Implement auto-lock system (inactivity/background detection)
-- [ ] Task 11.18: Add enable/disable passcode toggle and change passcode functionality
+## Milestone 12: Calendar Integration & Advanced Task Management ✅ COMPLETED
 
-#### **Enhanced Recurring Tasks Display**
-- [ ] Task 11.19: Modify recurring task generation to create limited future instances
-- [ ] Task 11.20: Implement "next 3 upcoming iterations" display on Tasks page
-- [ ] Task 11.21: Update calendar view to show only next occurrence per recurring task
-- [ ] Task 11.22: Create "upcoming tasks" filter mode vs "all instances"
-- [ ] Task 11.23: Enhance morning task display to prioritize upcoming tasks
-- [ ] Task 11.24: Update task scheduling logic for better UX with recurring tasks
+#### **Milestone Calendar Integration** ✅
+- [x] Task 12.1: Implement milestone display as all-day events in calendar with Google Calendar-style layout
+- [x] Task 12.2: Add repetitive task calendar integration with proper deduplication logic
+- [x] Task 12.3: Remove problematic calendar store integration and switch to direct store reading
+- [x] Task 12.4: Create expand/collapse functionality for All-Day Events section with smooth animations
+- [x] Task 12.5: Fix gesture handler conflicts preventing proper expand/collapse interaction
+- [x] Task 12.6: Implement milestone completion integration with journal prompts
+
+#### **Repetitive Task Deletion System** ✅
+- [x] Task 12.7: Design smart detection system for repetitive vs regular tasks
+- [x] Task 12.8: Create RecurringTaskDeleteModal component with user-friendly deletion options
+- [x] Task 12.9: Add deleteSingleRecurringTask() and deleteAllRecurringTasks() methods to task store
+- [x] Task 12.10: Implement proper instance vs series deletion logic with goal progress updates
+- [x] Task 12.11: Integrate deletion modal into TasksPage with automatic task type detection
+
+#### **Calendar UX Enhancements** ✅
+- [x] Task 12.12: Update calendar visibility logic to show when milestones/tasks exist (not just time blocks)
+- [x] Task 12.13: Remove conflicting long-press handlers from all-day event cards
+- [x] Task 12.14: Ensure real-time reactivity for all milestone and task operations
+- [x] Task 12.15: Implement consistent styling with accent colors and completion states
+
+#### **Journal Passcode Protection** 🔥 HIGH PRIORITY (PARTIALLY COMPLETE)
+- [x] Task 12.16: Design passcode security architecture with encryption
+- [ ] Task 12.17: Create 4-digit numeric passcode setup UI in Settings
+- [x] Task 12.18: Implement secure passcode storage with encryption utilities
+- [ ] Task 12.19: Build passcode entry modal for journal access control  
+- [x] Task 12.20: Implement auto-lock system (inactivity/background detection - useAutoLock hook implemented)
+- [ ] Task 12.21: Add enable/disable passcode toggle and change passcode functionality
+
+#### **Enhanced Recurring Tasks Display** ✅ COMPLETED
+- [x] Task 12.22: Modify recurring task generation to create limited future instances
+- [x] Task 12.23: Implement "next 3 upcoming iterations" display on Tasks page (3-month view implemented)
+- [x] Task 12.24: Update calendar view to show only next occurrence per recurring task (smart deduplication implemented)
+- [x] Task 12.25: Create "upcoming tasks" filter mode vs "all instances" (repetitive filter with upcoming/monthly sections)
+- [x] Task 12.26: Enhance morning task display to prioritize upcoming tasks
+- [x] Task 12.27: Update task scheduling logic for better UX with recurring tasks
+
+## Milestone 13: Critical System Enhancements & User Feedback
+
+#### **Export System Enhancements** ✅ COMPLETED
+- [x] Task 13.1: Fix Export JSON Milestone Support - Milestones included in goal exports automatically (v1.2.0)
+- [x] Task 13.2: Implement Granular Export Selection - Checkboxes implemented for Goals, Tasks, Habits, Journal, TimeBlocks
+- [x] Task 13.3: Verify Export Data Integrity - Export system tested with milestone data inclusion
+- [x] Task 13.4: Update import functionality to handle milestone data properly
+
+#### **Mobile User Experience Critical Fixes**
+- [ ] Task 13.5: Investigate and fix native mobile autocorrect implementation (ATTEMPTED v1.2.1-v1.2.2 but still not working - requires deeper Android native development)
+- [ ] Task 13.6: Test mobile autocorrect across all input components (Tasks, Habits, Goals, Journal, Settings)
+- [x] Task 13.7: Fix status bar overlap issue on mobile devices (CSS safe areas implemented)
+- [x] Task 13.8: Relocate "Add Subtask" and "Add Item" buttons to bottom of lists for better UX
+- [x] Task 13.9: Correct habit date order to show historical context (last 4 days + current)
+
+#### **Dashboard & Task Management Enhancements**
+- [x] Task 13.10: Create grocery dashboard card for shopping list management (GroceryListCard component exists)
+- [x] Task 13.11: Fix repetitive tasks logic to include start date in generation
+- [ ] Task 13.12: Implement individual habit reminder system (separate from calendar reminders)
+- [ ] Task 13.13: Add reminder time settings per habit in creation/edit modal
+- [ ] Task 13.14: Schedule local notifications for individual habit reminders
+
+#### **User Account & Data Persistence System**
+- [ ] Task 13.15: Design user account creation flow with optional usage
+- [ ] Task 13.16: Implement user data storage (Name, Email, Profile Picture, Language preference)
+- [ ] Task 13.17: Research and select backend infrastructure (Firebase, Supabase, custom API)
+- [ ] Task 13.18: Implement cloud data synchronization for logged-in users
+- [ ] Task 13.19: Add data migration from local to cloud storage
+- [ ] Task 13.20: Replace manual timezone setting with automatic phone timezone detection
+
+#### **Goal System & Template Enhancements**
+- [ ] Task 13.21: Debug remaining onboarding template creation issue (templates work from Goals page but not onboarding)
+- [ ] Task 13.22: Expand goal template categories with more variety
+- [ ] Task 13.23: Develop comprehensive JSON templates list for review and implementation
+- [ ] Task 13.24: Add template customization functionality after selection
+- [ ] Task 13.25: Implement template preview functionality before creation
+
+---
+
+## 🚀 **NEXT SESSION PRIORITIES (Session 13)**
+
+### **IMMEDIATE FOCUS - Journal Passcode Protection Completion**
+1. **Task 12.17**: Create 4-digit numeric passcode setup UI in Settings *(4-6 hours)*
+2. **Task 12.19**: Build passcode entry modal for journal access control *(3-4 hours)*
+3. **Task 12.21**: Add enable/disable passcode toggle and change passcode functionality *(2-3 hours)*
+
+### **HIGH PRIORITY - Core Functionality Gaps**
+4. **Task 13.12-13.14**: Individual habit reminder system with notifications *(6-8 hours)*
+5. **Task 13.21**: Debug onboarding template creation issue *(2-3 hours)*
+
+### **MEDIUM PRIORITY - Foundation Building**
+6. **Task 13.15-13.16**: User account system foundation *(8-12 hours)*
+7. **Task 13.22-13.24**: Goal template system expansion *(6-8 hours)*
+
+### **TECHNICAL IMPROVEMENTS**
+8. **Task 13.5**: Investigate deeper Android native development for autocorrect *(6-10 hours)*
+9. **Task 13.18**: Cloud data synchronization for logged-in users *(10-15 hours)*
+10. **New**: Achievement system foundation *(6-8 hours)*
+
+### **SESSION 13 RECOMMENDATION**
+**Focus on completing Journal Passcode Protection (Tasks 1-3) to deliver a complete security feature before moving to habit reminders. This provides immediate user value and completes a partially-implemented system.**
 
 ## Features Checklist
 
@@ -156,9 +253,18 @@ Kage is a comprehensive personal productivity PWA that integrates habits, tasks,
 - [x] Feature 18: Comprehensive goal creation with linked tasks and habits ecosystems
 - [x] Feature 19: Template loading service with validation and error handling
 - [x] Feature 20: Marathon training template with 16-week structured program
-- [ ] Feature 21: Goal milestones system with user-selectable progress calculation
-- [ ] Feature 22: Journal passcode protection with 4-digit security
-- [ ] Feature 23: Enhanced recurring tasks display (next 3 iterations + calendar optimization)
-- [ ] Feature 24: Advanced analytics dashboard
-- [ ] Feature 25: Data synchronization across devices
-- [ ] Feature 26: Customizable widgets and layouts
+- [x] Feature 21: Goal milestones system with user-selectable progress calculation
+- [x] Feature 22: Milestone calendar integration with Google Calendar-style all-day events
+- [x] Feature 23: Repetitive task calendar display with smart deduplication
+- [x] Feature 24: All-day events expand/collapse functionality with smooth animations
+- [x] Feature 25: Repetitive task deletion system (single occurrence vs all iterations)
+- [ ] Feature 26: Journal passcode protection with 4-digit security
+- [ ] Feature 27: Enhanced recurring tasks display (next 3 iterations + calendar optimization)
+- [ ] Feature 28: Export system enhancements (granular selection, milestone support)
+- [ ] Feature 29: Native mobile autocorrect functionality
+- [ ] Feature 30: Individual habit reminder system
+- [ ] Feature 31: User account system with cloud data persistence
+- [ ] Feature 32: Achievement system with motivational rewards
+- [ ] Feature 33: Advanced analytics dashboard
+- [ ] Feature 34: Data synchronization across devices
+- [ ] Feature 35: Customizable widgets and layouts

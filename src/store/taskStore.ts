@@ -12,6 +12,8 @@ interface TaskStore {
   addTask: (taskData: TaskFormData) => string
   updateTask: (id: string, updates: Partial<Task>) => void
   deleteTask: (id: string) => void
+  deleteSingleRecurringTask: (taskId: string) => void
+  deleteAllRecurringTasks: (originalTaskId: string) => void
   toggleTask: (id: string) => void
   toggleSubtask: (taskId: string, subtaskId: string) => void
   toggleShoppingItem: (taskId: string, itemId: string) => void
@@ -38,6 +40,7 @@ interface TaskStore {
   getTasksBySection: () => { today: Task[], overdue: Task[], upcoming: Task[], noDueDate: Task[] }
   getTaskCounts: () => Record<TaskFilter, number>
   getRepetitiveTasks: () => Task[]
+  filterNextOccurrenceOnly: (tasks: Task[]) => Task[]
 }
 
 const generateId = () => Date.now().toString() + Math.random().toString(36).substring(2, 9)
@@ -87,6 +90,7 @@ const isUpcoming = (dueDate?: Date) => {
 // Only show the next occurrence within a month for each repetitive task group
 const filterNextOccurrenceOnly = (tasks: Task[]): Task[] => {
   const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()) // Start of today
   const oneMonthFromNow = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000))
   
   // Group tasks by recurring groups
@@ -110,7 +114,7 @@ const filterNextOccurrenceOnly = (tasks: Task[]): Task[] => {
   const filteredRepetitiveTasks: Task[] = []
   
   // For each repetitive group, only include the next occurrence within a month
-  taskGroups.forEach((groupTasks) => {
+  taskGroups.forEach((groupTasks, groupKey) => {
     // Sort by due date
     groupTasks.sort((a, b) => {
       if (!a.dueDate && !b.dueDate) return 0
@@ -119,15 +123,33 @@ const filterNextOccurrenceOnly = (tasks: Task[]): Task[] => {
       return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
     })
     
-    // Find the next occurrence within a month
+    console.log('📅 filterNextOccurrenceOnly - processing group:', {
+      groupKey,
+      groupSize: groupTasks.length,
+      taskNames: groupTasks.map(t => `${t.name} (${t.dueDate})`),
+      today: today.toISOString(),
+      oneMonthFromNow: oneMonthFromNow.toISOString()
+    });
+    
+    // Find the next occurrence within a month (include today's tasks)
     const nextOccurrence = groupTasks.find(task => {
       if (!task.dueDate) return false
       const dueDate = new Date(task.dueDate)
-      return dueDate >= now && dueDate <= oneMonthFromNow
+      const isWithinRange = dueDate >= today && dueDate <= oneMonthFromNow
+      console.log('📅 filterNextOccurrenceOnly - checking task:', {
+        taskName: task.name,
+        dueDate: dueDate.toISOString(),
+        isWithinRange,
+        comparison: `${dueDate.toISOString()} >= ${today.toISOString()} && ${dueDate.toISOString()} <= ${oneMonthFromNow.toISOString()}`
+      });
+      return isWithinRange
     })
     
     if (nextOccurrence) {
+      console.log('📅 filterNextOccurrenceOnly - selected next occurrence:', nextOccurrence.name);
       filteredRepetitiveTasks.push(nextOccurrence)
+    } else {
+      console.log('📅 filterNextOccurrenceOnly - no next occurrence found for group:', groupKey);
     }
   })
   
@@ -171,7 +193,26 @@ export const useTaskStore = create<TaskStore>()(
             name: item.name,
             quantity: item.quantity,
             completed: false
-          })) || []
+          })) || [],
+          // Recurring task properties
+          isRecurring: taskData.isRecurring || false,
+          recurrenceType: taskData.recurrenceType,
+          recurrenceInterval: taskData.recurrenceInterval,
+          recurrenceStartDate: taskData.recurrenceStartDate,
+          recurrenceEndDate: taskData.recurrenceEndDate || (taskData.isRecurring ? (() => {
+            // Default to 1 year from start date (or today if no start date)
+            const startDate = taskData.recurrenceStartDate ? new Date(taskData.recurrenceStartDate) : new Date();
+            const oneYearLater = new Date(startDate);
+            oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
+            console.log('📅 Set default 1-year end date for new recurring task:', taskData.name, 'End date:', oneYearLater.toISOString().split('T')[0]);
+            return oneYearLater;
+          })() : undefined),
+          // Calendar integration properties
+          addToCalendar: taskData.addToCalendar || false,
+          calendarStartTime: taskData.calendarStartTime,
+          calendarDuration: taskData.calendarDuration,
+          calendarDate: taskData.calendarDate,
+          allDayTask: taskData.allDayTask || false
         }
         
         set(state => ({
@@ -182,15 +223,14 @@ export const useTaskStore = create<TaskStore>()(
         // Generate recurring tasks if applicable
         if (newTask.isRecurring) {
           console.log('📅 Generating recurring tasks for:', newTask.name);
+          // Repetitive tasks will appear as all-day event cards (no calendar integration needed)
           get().generateRecurringTasks(newTask);
+          console.log('✅ Repetitive task created, instances will appear as all-day event cards');
         } else if (newTask.addToCalendar) {
           console.log('📅 Creating calendar entry for non-recurring task:', newTask.name);
           get().createCalendarEntryForTask(newTask);
         } else {
-          console.log('📅 No calendar integration for task:', newTask.name, {
-            isRecurring: newTask.isRecurring,
-            addToCalendar: newTask.addToCalendar
-          });
+          console.log('📅 No calendar integration for task:', newTask.name);
         }
         
         // Update goal progress if task is linked to a goal
@@ -212,6 +252,15 @@ export const useTaskStore = create<TaskStore>()(
           tasks: state.tasks.map(task => {
             if (task.id === id) {
               const updatedTask = { ...task, ...updates, updatedAt: new Date() };
+              
+              // If task is becoming recurring and no end date is set, default to 1 year
+              if (updatedTask.isRecurring && !updatedTask.recurrenceEndDate && !task.isRecurring) {
+                const startDate = updatedTask.recurrenceStartDate ? new Date(updatedTask.recurrenceStartDate) : new Date();
+                const oneYearLater = new Date(startDate);
+                oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
+                updatedTask.recurrenceEndDate = oneYearLater;
+                console.log('📅 Set default 1-year end date for recurring task:', updatedTask.name, 'End date:', oneYearLater.toISOString().split('T')[0]);
+              }
               
               // If subtasks are being updated, ensure they maintain proper object structure
               if (updates.subtasks) {
@@ -260,9 +309,38 @@ export const useTaskStore = create<TaskStore>()(
           })
         }));
         
-        // Update goal progress if task was/is linked to a goal
+        // Handle recurring task changes
         const updatedTask = get().tasks.find(task => task.id === id);
-        if (updatedTask) {
+        if (updatedTask && currentTask) {
+          // Check if recurring status changed
+          const wasRecurring = currentTask.isRecurring;
+          const isNowRecurring = updatedTask.isRecurring;
+          
+          if (!wasRecurring && isNowRecurring) {
+            // Task became recurring - generate instances (will appear as all-day event cards)
+            console.log('📅 Task became recurring, generating instances for:', updatedTask.name);
+            get().generateRecurringTasks(updatedTask);
+            console.log('✅ Task converted to repetitive, instances will appear as all-day event cards');
+          } else if (wasRecurring && !isNowRecurring) {
+            // Task stopped being recurring - cleanup existing instances
+            console.log('📅 Task stopped being recurring, cleaning up instances for:', updatedTask.name);
+            get().cleanupRecurringTasks(id);
+          } else if (wasRecurring && isNowRecurring) {
+            // Task was and still is recurring - check if recurrence parameters changed
+            if (
+              currentTask.recurrenceType !== updatedTask.recurrenceType ||
+              currentTask.recurrenceInterval !== updatedTask.recurrenceInterval ||
+              currentTask.recurrenceStartDate !== updatedTask.recurrenceStartDate ||
+              currentTask.recurrenceEndDate !== updatedTask.recurrenceEndDate
+            ) {
+              console.log('📅 Recurring parameters changed, regenerating instances for:', updatedTask.name);
+              // Cleanup old instances and generate new ones
+              get().cleanupRecurringTasks(id);
+              get().generateRecurringTasks(updatedTask);
+            }
+          }
+          
+          // Update goal progress if task was/is linked to a goal
           const goalIds = new Set([currentTask?.goalId, updatedTask.goalId].filter(Boolean));
           goalIds.forEach(goalId => {
             if (goalId) {
@@ -290,6 +368,41 @@ export const useTaskStore = create<TaskStore>()(
         if (taskToDelete?.goalId) {
           import('./goalStore').then(({ useGoalStore }) => {
             useGoalStore.getState().updateGoalProgress(taskToDelete.goalId!)
+          }).catch(console.warn)
+        }
+      },
+
+      deleteSingleRecurringTask: (taskId: string) => {
+        const taskToDelete = get().tasks.find(task => task.id === taskId);
+        
+        set(state => ({
+          tasks: state.tasks.filter(task => task.id !== taskId)
+        }))
+        
+        // Update goal progress if deleted task was linked to a goal
+        if (taskToDelete?.goalId) {
+          import('./goalStore').then(({ useGoalStore }) => {
+            useGoalStore.getState().updateGoalProgress(taskToDelete.goalId!)
+          }).catch(console.warn)
+        }
+      },
+
+      deleteAllRecurringTasks: (originalTaskId: string) => {
+        const originalTask = get().tasks.find(task => task.id === originalTaskId);
+        const goalId = originalTask?.goalId;
+        
+        // Delete the original task
+        set(state => ({
+          tasks: state.tasks.filter(task => task.id !== originalTaskId)
+        }));
+        
+        // Delete all recurring instances
+        get().cleanupRecurringTasks(originalTaskId);
+        
+        // Update goal progress if task was linked to a goal
+        if (goalId) {
+          import('./goalStore').then(({ useGoalStore }) => {
+            useGoalStore.getState().updateGoalProgress(goalId)
           }).catch(console.warn)
         }
       },
@@ -403,11 +516,20 @@ export const useTaskStore = create<TaskStore>()(
         
         switch (currentFilter) {
           case 'today':
-            return filterNextOccurrenceOnly(
-              tasks.filter(task => 
-                isToday(task.dueDate) && !isOverdue(task.dueDate) && task.status !== 'completed'
-              )
-            )
+            const todayTasks = tasks.filter(task => 
+              isToday(task.dueDate) && !isOverdue(task.dueDate) && task.status !== 'completed'
+            );
+            console.log('📅 Today filter - before filterNextOccurrenceOnly:', {
+              totalTasks: tasks.length,
+              todayTasksFound: todayTasks.length,
+              todayTaskNames: todayTasks.map(t => `${t.name} (${t.dueDate}) recurring:${t.isRecurring || !!t.originalTaskId}`)
+            });
+            const filteredTodayTasks = filterNextOccurrenceOnly(todayTasks);
+            console.log('📅 Today filter - after filterNextOccurrenceOnly:', {
+              filteredCount: filteredTodayTasks.length,
+              filteredTaskNames: filteredTodayTasks.map(t => `${t.name} (${t.dueDate})`)
+            });
+            return filteredTodayTasks;
           case 'upcoming':
             return filterNextOccurrenceOnly(
               tasks.filter(task => 
@@ -478,7 +600,7 @@ export const useTaskStore = create<TaskStore>()(
       getRepetitiveTasks: () => {
         const { tasks } = get()
         const now = new Date()
-        const twoWeeksFromNow = new Date(now.getTime() + (14 * 24 * 60 * 60 * 1000))
+        const threeMonthsFromNow = new Date(now.getTime() + (90 * 24 * 60 * 60 * 1000)) // 3 months
         
         // Get all repetitive tasks (original recurring tasks and their instances)
         const repetitiveTasks = tasks.filter(task => 
@@ -507,28 +629,42 @@ export const useTaskStore = create<TaskStore>()(
             return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
           })
           
-          // Find the next occurrence within the next month
-          const nextOccurrence = taskInstances.find(task => {
+          // Find all occurrences within the next 3 months
+          const upcomingOccurrences = taskInstances.filter(task => {
             if (!task.dueDate) return false
             const dueDate = new Date(task.dueDate)
-            return dueDate >= now
+            return dueDate >= now && dueDate <= threeMonthsFromNow
           })
           
-          if (nextOccurrence) {
+          // If we have instances, add them all with metadata
+          upcomingOccurrences.forEach(occurrence => {
+            const taskDueDate = occurrence.dueDate ? new Date(occurrence.dueDate) : null
+            let isWithin14Days = false
+            
+            if (taskDueDate) {
+              // Calculate days from now (start of today)
+              const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()) // Start of today
+              const taskDate = new Date(taskDueDate.getFullYear(), taskDueDate.getMonth(), taskDueDate.getDate()) // Start of task date
+              const daysDifference = Math.ceil((taskDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+              
+              // Upcoming means: 1-14 days from now (exclude today = 0 days, include future within 2 weeks)
+              isWithin14Days = daysDifference > 0 && daysDifference <= 14
+            }
+            
             // Mark this task with special metadata for UI grouping
             const taskWithMetadata = {
-              ...nextOccurrence,
+              ...occurrence,
               _repetitiveGroup: {
-                isUpcoming: nextOccurrence.dueDate && new Date(nextOccurrence.dueDate) <= twoWeeksFromNow,
-                monthGroup: nextOccurrence.dueDate ? 
-                  new Date(nextOccurrence.dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : 
+                isUpcoming: isWithin14Days,
+                monthGroup: occurrence.dueDate ? 
+                  new Date(occurrence.dueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : 
                   'No Due Date',
                 allInstances: taskInstances.length
               }
             } as Task & { _repetitiveGroup: { isUpcoming: boolean; monthGroup: string; allInstances: number } }
             
             result.push(taskWithMetadata)
-          }
+          })
         })
         
         // Sort final result: upcoming first, then by month
@@ -546,6 +682,10 @@ export const useTaskStore = create<TaskStore>()(
           if (!b.dueDate) return -1
           return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
         })
+      },
+
+      filterNextOccurrenceOnly: (tasks: Task[]) => {
+        return filterNextOccurrenceOnly(tasks);
       },
 
       // Goal linking functions
@@ -685,16 +825,8 @@ export const useTaskStore = create<TaskStore>()(
           tasks: [...state.tasks, ...recurringInstances]
         }));
         
-        // Create calendar entries for recurring instances if calendar integration is enabled
-        if (originalTask.addToCalendar) {
-          console.log('📅 Creating calendar entries for', recurringInstances.length, 'recurring instances');
-          recurringInstances.forEach((instance, index) => {
-            console.log(`📅 Creating calendar entry ${index + 1}/${recurringInstances.length} for date:`, instance.dueDate);
-            get().createCalendarEntryForTask(instance);
-          });
-        } else {
-          console.log('📅 No calendar integration enabled for recurring task:', originalTask.name);
-        }
+        // Recurring instances will appear as all-day event cards directly from task store (no calendar integration)
+        console.log('✅ Generated', recurringInstances.length, 'recurring instances, will appear as all-day event cards');
       },
 
       cleanupRecurringTasks: (originalTaskId: string) => {
@@ -719,8 +851,9 @@ export const useTaskStore = create<TaskStore>()(
           return;
         }
         
-        if (!task.calendarStartTime) {
-          console.log('❌ Missing calendarStartTime');
+        // For all-day tasks, we don't need a specific start time
+        if (!task.allDayTask && !task.calendarStartTime) {
+          console.log('❌ Missing calendarStartTime for timed task');
           return;
         }
         

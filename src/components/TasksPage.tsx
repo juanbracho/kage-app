@@ -5,6 +5,7 @@ import { useGoalStore } from '../store/goalStore';
 import { TaskFilter } from '../types/task';
 import TaskCreationModal from './TaskCreationModal';
 import TasksEmpty from './TasksEmpty';
+import RecurringTaskDeleteModal from './RecurringTaskDeleteModal';
 import { safeAddEventListener } from '../utils/pwaDetection';
 
 const FILTER_TABS: { id: TaskFilter; label: string; icon: React.ComponentType<any> }[] = [
@@ -36,6 +37,8 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
     addTask,
     updateTask,
     deleteTask,
+    deleteSingleRecurringTask,
+    deleteAllRecurringTasks,
     cleanupEmptySubtasks
   } = useTaskStore();
   
@@ -45,6 +48,8 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
   const [editingTask, setEditingTask] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+  const [showRecurringDeleteModal, setShowRecurringDeleteModal] = useState(false);
+  const [recurringTaskToDelete, setRecurringTaskToDelete] = useState<any>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
   const [isAppStartup, setIsAppStartup] = useState(true);
 
@@ -104,8 +109,17 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
   };
 
   const handleDeleteTask = (taskId: string) => {
-    setTaskToDelete(taskId);
-    setShowDeleteConfirm(true);
+    const task = tasks.find(t => t.id === taskId);
+    
+    // Check if this is a repetitive task (either original recurring task or an instance)
+    if (task && (task.isRecurring || task.originalTaskId)) {
+      setRecurringTaskToDelete(task);
+      setShowRecurringDeleteModal(true);
+    } else {
+      // Regular task - show normal delete confirmation
+      setTaskToDelete(taskId);
+      setShowDeleteConfirm(true);
+    }
   };
 
   const confirmDelete = () => {
@@ -119,6 +133,24 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
   const cancelDelete = () => {
     setTaskToDelete(null);
     setShowDeleteConfirm(false);
+  };
+
+  const handleDeleteSingleRecurring = () => {
+    if (recurringTaskToDelete) {
+      deleteSingleRecurringTask(recurringTaskToDelete.id);
+      setRecurringTaskToDelete(null);
+      setShowRecurringDeleteModal(false);
+    }
+  };
+
+  const handleDeleteAllRecurring = () => {
+    if (recurringTaskToDelete) {
+      // If it's an instance, get the original task ID
+      const originalTaskId = recurringTaskToDelete.originalTaskId || recurringTaskToDelete.id;
+      deleteAllRecurringTasks(originalTaskId);
+      setRecurringTaskToDelete(null);
+      setShowRecurringDeleteModal(false);
+    }
   };
   
   // Show empty state if no tasks exist
@@ -672,6 +704,18 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
         </div>
       )}
 
+      {/* Recurring Task Delete Modal */}
+      <RecurringTaskDeleteModal
+        isOpen={showRecurringDeleteModal}
+        onClose={() => {
+          setShowRecurringDeleteModal(false);
+          setRecurringTaskToDelete(null);
+        }}
+        task={recurringTaskToDelete}
+        onDeleteSingle={handleDeleteSingleRecurring}
+        onDeleteAll={handleDeleteAllRecurring}
+      />
+
       {/* Task Creation Modal */}
       <TaskCreationModal 
         isOpen={isModalOpen} 
@@ -681,8 +725,35 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
         }}
         onSubmit={(taskData) => {
           if (editingTask) {
-            // Update existing task
-            updateTask(editingTask.id, taskData);
+            // Update existing task - convert TaskFormData to Task updates
+            const taskUpdates: any = {
+              name: taskData.name,
+              description: taskData.description,
+              type: taskData.type,
+              priority: taskData.priority,
+              dueDate: taskData.dueDate ? new Date(taskData.dueDate) : undefined,
+              goalId: taskData.goalId || undefined,
+              estimatedTime: taskData.estimatedTime ? parseInt(taskData.estimatedTime.toString()) : undefined,
+              location: taskData.location || undefined,
+              reminderTime: taskData.reminderTime ? new Date(taskData.reminderTime) : undefined,
+              notes: taskData.notes || undefined,
+              tags: taskData.tags || [],
+              subtasks: taskData.subtasks,
+              shoppingItems: taskData.shoppingItems,
+              // Recurring task properties
+              isRecurring: taskData.isRecurring || false,
+              recurrenceType: taskData.recurrenceType,
+              recurrenceInterval: taskData.recurrenceInterval,
+              recurrenceStartDate: taskData.recurrenceStartDate,
+              recurrenceEndDate: taskData.recurrenceEndDate,
+              // Calendar integration properties
+              addToCalendar: taskData.addToCalendar || false,
+              calendarStartTime: taskData.calendarStartTime,
+              calendarDuration: taskData.calendarDuration,
+              calendarDate: taskData.calendarDate,
+              allDayTask: taskData.allDayTask || false
+            };
+            updateTask(editingTask.id, taskUpdates);
           } else {
             // Create new task
             addTask(taskData);

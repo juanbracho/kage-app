@@ -244,7 +244,10 @@ export const useDashboardStore = create<DashboardStore>(() => ({
     
     // If we have less than 5 tasks, add tasks without due dates and upcoming tasks
     if (todayTasks.length < 5) {
-      const allTasks = taskStore.tasks.filter(task => 
+      // Apply filtering to all tasks to ensure we don't get duplicate recurring instances
+      const filteredTasks = taskStore.filterNextOccurrenceOnly(taskStore.tasks);
+      
+      const allTasks = filteredTasks.filter(task => 
         task.status !== 'completed' && 
         !urgentTaskIds.has(task.id) // Exclude urgent tasks from all sections
       );

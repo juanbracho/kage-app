@@ -69,6 +69,7 @@ export default function DailyTimelineView({
   const [showRecurringModal, setShowRecurringModal] = useState(false);
   const [recurringAction, setRecurringAction] = useState<{ event: CalendarEvent; type: 'delete' | 'complete' } | null>(null);
   const [undoAction, setUndoAction] = useState<{ type: 'delete' | 'complete'; event: CalendarEvent; timeoutId: NodeJS.Timeout } | null>(null);
+  const [isAllDayEventsExpanded, setIsAllDayEventsExpanded] = useState(true);
 
   // Separate all-day events from timed events
   const { goals } = useGoalStore();
@@ -98,9 +99,57 @@ export default function DailyTimelineView({
         endTime: '23:59'
       })) || []
     );
+
+    // Get repetitive task events directly from tasks for the selected date
+    // Only show instances (not original recurring tasks) and deduplicate
+    const seenTasks = new Set<string>();
+    const repetitiveTaskEvents = tasks.filter(task => {
+      if (!task.isRecurring && !task.originalTaskId) return false;
+      if (task.status === 'completed') return false;
+      if (!task.dueDate) return false;
+      
+      const taskDateString = task.dueDate instanceof Date 
+        ? task.dueDate.toISOString().split('T')[0] 
+        : task.dueDate.toString().split('T')[0];
+      
+      if (taskDateString !== dateString) return false;
+      
+      // Deduplicate: prefer instances over original recurring tasks
+      const taskKey = task.originalTaskId || task.id;
+      if (seenTasks.has(taskKey)) return false;
+      
+      // If this is an original recurring task, only include if no instance exists for today
+      if (task.isRecurring && !task.originalTaskId) {
+        const hasInstanceToday = tasks.some(t => 
+          t.originalTaskId === task.id && 
+          t.dueDate &&
+          (t.dueDate instanceof Date ? t.dueDate.toISOString().split('T')[0] : t.dueDate.toString().split('T')[0]) === dateString
+        );
+        if (hasInstanceToday) return false;
+      }
+      
+      seenTasks.add(taskKey);
+      return true;
+    }).map(task => ({
+      id: `repetitive-task-${task.id}`,
+      title: task.name,
+      description: task.description || 'Repetitive task',
+      date: dateString,
+      type: 'repetitive-task' as const,
+      icon: '🔄',
+      color: currentAccentColor,
+      completed: task.status === 'completed',
+      allDay: true,
+      linkedId: task.id,
+      startTime: '00:00',
+      endTime: '23:59',
+      // Include task-specific data for expansion
+      subtasks: task.subtasks || [],
+      hasDetails: !!(task.description || (task.subtasks && task.subtasks.length > 0))
+    }));
     
-    // Combine timeblock events with milestone events
-    const allEvents = [...events, ...milestoneEvents];
+    // Combine timeblock events with milestone events and repetitive task events
+    const allEvents = [...events, ...milestoneEvents, ...repetitiveTaskEvents];
     
     const allDay = allEvents.filter(event => {
       const isAllDay = event.allDay === true;
@@ -119,7 +168,7 @@ export default function DailyTimelineView({
     });
     
     return { allDayEvents: allDay, timedEvents: timed };
-  }, [selectedDate, timeBlocks, getEventsForDate, goals]);
+  }, [selectedDate, timeBlocks, getEventsForDate, goals, tasks, currentAccentColor]);
 
   // Generate time slots from 6 AM to 10 PM for timed events
   const timeSlots: TimeSlot[] = useMemo(() => {
@@ -178,6 +227,16 @@ export default function DailyTimelineView({
         }
       } catch (error) {
         console.error('❌ Error toggling milestone completion:', error);
+      }
+    } else if (event.type === 'repetitive-task' && event.linkedId) {
+      // Handle repetitive task completion directly via task store
+      try {
+        const { useTaskStore } = await import('../store/taskStore');
+        const taskStore = useTaskStore.getState();
+        taskStore.toggleTask(event.linkedId);
+        console.log('🔄 Repetitive task completion toggled:', event.title);
+      } catch (error) {
+        console.error('❌ Error toggling repetitive task completion:', error);
       }
     } else if (isRecurringEvent(eventId)) {
       setRecurringAction({ event, type: 'complete' });
@@ -332,83 +391,115 @@ export default function DailyTimelineView({
       {/* All-Day Events Section */}
       {allDayEvents.length > 0 && (
         <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-current opacity-60"></span>
-            All-Day Events ({allDayEvents.length})
-          </h3>
-          <div className="space-y-2">
-            {allDayEvents.map((event) => (
-              <div
-                key={event.id}
-                {...eventGestures}
-                onMouseDown={() => eventGestures.onMouseDown?.(event)}
-                className={`flex items-center gap-3 p-2.5 rounded-lg border transition-all duration-200 cursor-pointer hover:scale-[1.02] ${
-                  event.completed 
-                    ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 opacity-60' 
-                    : 'bg-white dark:bg-gray-800/80 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+          <button
+            onClick={() => setIsAllDayEventsExpanded(!isAllDayEventsExpanded)}
+            className="w-full flex items-center gap-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg p-2 -m-2 transition-colors duration-200"
+          >
+            {/* Expand/Collapse Circle Button */}
+            <div className={`w-4 h-4 rounded-full flex items-center justify-center transition-all duration-300 ${
+              isAllDayEventsExpanded 
+                ? 'bg-blue-500 dark:bg-blue-400' 
+                : 'bg-gray-400 dark:bg-gray-500'
+            }`}>
+              <svg
+                className={`w-2.5 h-2.5 text-white transition-transform duration-300 ${
+                  isAllDayEventsExpanded ? 'rotate-90' : 'rotate-0'
                 }`}
-                style={{
-                  borderLeftWidth: '4px',
-                  borderLeftColor: event.type === 'milestone' ? currentAccentColor : 
-                                   event.type === 'repetitive-task' ? currentAccentColor : 
-                                   event.color || currentAccentColor
-                }}
+                fill="currentColor"
+                viewBox="0 0 20 20"
               >
-                {/* Completion Checkbox */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEventCompletion(event);
-                  }}
-                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                    event.completed
-                      ? 'text-white'
-                      : 'border-gray-400 hover:border-gray-300'
+                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              All-Day Events ({allDayEvents.length})
+            </h3>
+          </button>
+          
+          {/* Collapsible Events List */}
+          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            isAllDayEventsExpanded ? 'max-h-[500px] opacity-100 mt-3' : 'max-h-0 opacity-0 mt-0'
+          }`}>
+            <div className="space-y-2">
+              {allDayEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className={`flex items-center gap-3 p-2.5 rounded-lg border transition-all duration-200 ${
+                    event.completed 
+                      ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 opacity-60' 
+                      : 'bg-white dark:bg-gray-800/80 border-gray-300 dark:border-gray-600'
                   }`}
-                  style={event.completed ? {
-                    backgroundColor: currentAccentColor,
-                    borderColor: currentAccentColor
-                  } : {}}
-                >
-                  {event.completed && (
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </button>
-
-                {/* Event Icon */}
-                <div className="text-xl">{event.icon}</div>
-
-                {/* Event Content */}
-                <div className="flex-1 min-w-0">
-                  <h3 className={`font-medium truncate ${
-                    event.completed ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-900 dark:text-white'
-                  }`}>
-                    {event.title}
-                  </h3>
-                  {event.description && (
-                    <p className={`text-sm truncate ${
-                      event.completed ? 'text-gray-500 dark:text-gray-600' : 'text-gray-600 dark:text-gray-300'
-                    }`}>
-                      {event.description}
-                    </p>
-                  )}
-                </div>
-
-                {/* Event Type Badge */}
-                <div 
-                  className="px-2 py-1 text-xs font-medium rounded-full"
                   style={{
-                    backgroundColor: `${currentAccentColor}20`,
-                    color: currentAccentColor
+                    borderLeftWidth: '4px',
+                    borderLeftColor: event.type === 'milestone' ? currentAccentColor : 
+                                     event.type === 'repetitive-task' ? currentAccentColor : 
+                                     event.color || currentAccentColor
                   }}
                 >
-                  {event.type === 'milestone' ? 'Milestone' : 
-                   event.type === 'repetitive-task' ? 'Task' : 'Event'}
+                  {/* Completion Checkbox */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      handleEventCompletion(event);
+                    }}
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                    }}
+                    onTouchStart={(e) => {
+                      e.stopPropagation();
+                    }}
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                      event.completed
+                        ? 'text-white'
+                        : 'border-gray-400 hover:border-gray-300'
+                    }`}
+                    style={event.completed ? {
+                      backgroundColor: currentAccentColor,
+                      borderColor: currentAccentColor
+                    } : {}}
+                  >
+                    {event.completed && (
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </button>
+
+                  {/* Event Icon */}
+                  <div className="text-xl">{event.icon}</div>
+
+                  {/* Event Content */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`font-medium truncate ${
+                      event.completed ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-900 dark:text-white'
+                    }`}>
+                      {event.title}
+                    </h3>
+                    {event.description && (
+                      <p className={`text-sm truncate ${
+                        event.completed ? 'text-gray-500 dark:text-gray-600' : 'text-gray-600 dark:text-gray-300'
+                      }`}>
+                        {event.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Event Type Badge */}
+                  <div 
+                    className="px-2 py-1 text-xs font-medium rounded-full"
+                    style={{
+                      backgroundColor: `${currentAccentColor}20`,
+                      color: currentAccentColor
+                    }}
+                  >
+                    {event.type === 'milestone' ? 'Milestone' : 
+                     event.type === 'repetitive-task' ? 'Task' : 'Event'}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}
