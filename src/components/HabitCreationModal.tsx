@@ -3,6 +3,7 @@ import { useHabitStore } from '../store/habitStore';
 import { useGoalStore } from '../store/goalStore';
 import { HabitFormData, Habit } from '../types/habit';
 import { GOAL_CATEGORIES } from '../types/goal';
+import { useSwipeBack } from '../hooks/useSwipeGestures';
 
 interface HabitCreationModalProps {
   isOpen: boolean;
@@ -44,6 +45,13 @@ const DAYS = [
 ];
 
 export default function HabitCreationModal({ isOpen, onClose, editingHabit, defaultGoalId }: HabitCreationModalProps) {
+  // Add swipe back to close modal
+  useSwipeBack(() => {
+    if (isOpen) {
+      onClose();
+    }
+  }, isOpen);
+
   const { addHabit, updateHabit, changeHabitFrequency } = useHabitStore();
   const { getActiveGoals } = useGoalStore();
   const goals = getActiveGoals();

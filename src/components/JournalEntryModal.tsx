@@ -7,6 +7,7 @@ import { useHabitStore } from '../store/habitStore'
 import { getHabitColor } from '../utils/habitColors'
 import { MOOD_OPTIONS, LINK_TYPES, type Mood, type JournalFormData } from '../types/journal'
 import LinkingDropdown from './LinkingDropdown'
+import { useSwipeBack } from '../hooks/useSwipeGestures'
 
 interface JournalEntryModalProps {
   isOpen: boolean
@@ -15,6 +16,13 @@ interface JournalEntryModalProps {
 }
 
 export default function JournalEntryModal({ isOpen, onClose, defaultGoalId }: JournalEntryModalProps) {
+  // Add swipe back to close modal
+  useSwipeBack(() => {
+    if (isOpen) {
+      onClose()
+    }
+  }, isOpen)
+
   const { addEntry, updateEntry, selectedEntry, isAutoSaving, setAutoSaving } = useJournalStore()
   const { tasks } = useTaskStore()
   const { getActiveGoals } = useGoalStore()

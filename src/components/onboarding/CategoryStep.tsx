@@ -9,7 +9,7 @@ export default function CategoryStep() {
   }
 
   return (
-    <div className="h-full bg-gradient-to-br from-purple-600 to-purple-500 text-white px-5 py-10 overflow-y-auto">
+    <div className="h-full bg-gradient-to-br from-purple-600 to-purple-500 text-white px-5 pt-20 pb-10 overflow-y-auto">
       {/* Background decorative elements */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/4 translate-x-1/4" />
       <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/3 -translate-x-1/3" />

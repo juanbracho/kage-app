@@ -188,8 +188,8 @@ export type GoalCategory =
   | 'career' 
   | 'learning' 
   | 'personal' 
-  | 'financial' 
-  | 'creative';
+  | 'finance' 
+  | 'creativity';
 
 export type GoalPriority = 'low' | 'medium' | 'high' | 'critical';
 
@@ -342,7 +342,7 @@ export const GOAL_CATEGORIES: GoalCategoryConfig[] = [
     color: '#10B981',
     gradientStart: '#10B981',
     gradientEnd: '#22C55E',
-    templateCount: 8
+    templateCount: 4
   },
   {
     id: 'career',
@@ -352,7 +352,7 @@ export const GOAL_CATEGORIES: GoalCategoryConfig[] = [
     color: '#3B82F6',
     gradientStart: '#3B82F6',
     gradientEnd: '#60A5FA',
-    templateCount: 12
+    templateCount: 4
   },
   {
     id: 'learning',
@@ -362,7 +362,7 @@ export const GOAL_CATEGORIES: GoalCategoryConfig[] = [
     color: '#F59E0B',
     gradientStart: '#F59E0B',
     gradientEnd: '#FBBF24',
-    templateCount: 10
+    templateCount: 4
   },
   {
     id: 'personal',
@@ -372,27 +372,27 @@ export const GOAL_CATEGORIES: GoalCategoryConfig[] = [
     color: '#8B5CF6',
     gradientStart: '#8B5CF6',
     gradientEnd: '#A855F7',
-    templateCount: 6
+    templateCount: 4
   },
   {
-    id: 'financial',
-    name: 'Financial',
+    id: 'finance',
+    name: 'Finance & Career',
     icon: '💰',
     description: 'Savings, investments, budgeting',
     color: '#10B981',
     gradientStart: '#10B981',
     gradientEnd: '#059669',
-    templateCount: 7
+    templateCount: 4
   },
   {
-    id: 'creative',
+    id: 'creativity',
     name: 'Creative & Hobbies',
     icon: '🎨',
     description: 'Art, music, writing, crafts',
     color: '#EC4899',
     gradientStart: '#EC4899',
     gradientEnd: '#F472B6',
-    templateCount: 9
+    templateCount: 4
   }
 ];
 

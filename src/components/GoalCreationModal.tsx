@@ -3,6 +3,7 @@ import { X, ArrowLeft } from 'lucide-react';
 import { useGoalStore } from '../store/goalStore';
 import { useTaskStore } from '../store/taskStore';
 import { useHabitStore } from '../store/habitStore';
+import { useSwipeBack } from '../hooks/useSwipeGestures';
 import { 
   GoalFormData, 
   GoalCategory, 
@@ -56,6 +57,13 @@ const PRIORITY_OPTIONS: { id: GoalPriority; name: string; icon: string; desc: st
 const generateId = () => Date.now().toString() + Math.random().toString(36).substring(2, 9);
 
 export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalCreationModalProps) {
+  // Add swipe back to close modal
+  useSwipeBack(() => {
+    if (isOpen) {
+      onClose();
+    }
+  }, isOpen);
+
   const { 
     templates, 
     addGoal, 

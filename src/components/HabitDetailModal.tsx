@@ -4,6 +4,7 @@ import { useHabitStore, formatDateToString } from '../store/habitStore';
 import { useGoalStore } from '../store/goalStore';
 import { getHabitColor } from '../utils/habitColors';
 import { X, Edit3, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSwipeBack } from '../hooks/useSwipeGestures';
 
 interface HabitDetailModalProps {
   habit: Habit | null;
@@ -13,6 +14,13 @@ interface HabitDetailModalProps {
 }
 
 export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: HabitDetailModalProps) {
+  // Add swipe back to close modal
+  useSwipeBack(() => {
+    if (isOpen) {
+      onClose();
+    }
+  }, isOpen);
+
   const { 
     getHabitStreak, 
     getCompletionRate, 

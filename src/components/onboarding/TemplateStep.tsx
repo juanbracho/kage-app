@@ -14,7 +14,7 @@ export default function TemplateStep() {
   }
 
   return (
-    <div className="h-full bg-gradient-to-br from-green-500 to-teal-400 text-white px-5 py-10 overflow-y-auto">
+    <div className="h-full bg-gradient-to-br from-green-500 to-teal-400 text-white px-5 pt-20 pb-10 overflow-y-auto">
       {/* Background decorative elements */}
       <div className="absolute top-0 right-0 w-56 h-56 bg-white/5 rounded-full -translate-y-1/4 translate-x-1/4" />
       <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full translate-y-1/3 -translate-x-1/3" />

@@ -1,6 +1,6 @@
 export default function AIStep() {
   return (
-    <div className="h-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white flex flex-col justify-center items-center text-center px-10 relative overflow-hidden">
+    <div className="h-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white flex flex-col justify-center items-center text-center px-10 pt-20 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/3 translate-x-1/3" />
       <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/4 -translate-x-1/4" />

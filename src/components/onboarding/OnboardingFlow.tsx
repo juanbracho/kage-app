@@ -138,14 +138,14 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       {/* Step Indicator */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+      <div className="absolute top-12 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
         {getStepIndicatorDots()}
       </div>
 
       {/* Skip Button */}
       <button
         onClick={handleSkip}
-        className="absolute top-4 right-5 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors z-10"
+        className="absolute top-12 right-5 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors z-10"
       >
         Skip
       </button>

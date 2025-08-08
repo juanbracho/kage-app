@@ -128,7 +128,7 @@ class TemplateLoaderService {
     }
 
     // Validate category
-    const validCategories: GoalCategory[] = ['health', 'career', 'learning', 'finance', 'relationships', 'personal', 'creative'];
+    const validCategories: GoalCategory[] = ['health', 'career', 'learning', 'finance', 'personal', 'creativity'];
     if (template.category && !validCategories.includes(template.category)) {
       errors.push(`${prefix}: Invalid category "${template.category}"`);
     }
