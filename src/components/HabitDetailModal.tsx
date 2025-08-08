@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Habit } from '../types/habit';
 import { useHabitStore, formatDateToString } from '../store/habitStore';
+import { useGoalStore } from '../store/goalStore';
+import { getHabitColor } from '../utils/habitColors';
 import { X, Edit3, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface HabitDetailModalProps {
@@ -21,6 +23,7 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
     deleteHabit,
     isHabitCompletedOnDate
   } = useHabitStore();
+  const { goals } = useGoalStore();
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -29,6 +32,8 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
 
   if (!isOpen || !habit) return null;
 
+  // Get effective color considering goal inheritance
+  const effectiveColor = getHabitColor(habit, goals);
   const currentStreak = getHabitStreak(habit.id);
 
   const handleDelete = () => {
@@ -176,7 +181,7 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
             <div className="flex items-center gap-4 flex-1">
               <div 
                 className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-2xl flex-shrink-0"
-                style={{ backgroundColor: habit.color }}
+                style={{ backgroundColor: effectiveColor }}
               >
                 {habit.icon}
               </div>
@@ -197,7 +202,7 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
           <div className="grid grid-cols-2 gap-8 mb-6">
             {/* Current Streak */}
             <div className="text-center">
-              <div className="text-4xl font-bold text-gray-900 dark:text-white mb-1" style={{ color: habit.color }}>
+              <div className="text-4xl font-bold text-gray-900 dark:text-white mb-1" style={{ color: effectiveColor }}>
                 {currentStreak}
               </div>
               <div className="text-sm font-medium text-gray-600 dark:text-gray-400">CURRENT STREAK</div>
@@ -205,7 +210,7 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
             
             {/* Frequency */}
             <div className="text-center">
-              <div className="text-lg font-bold mb-1" style={{ color: habit.color }}>
+              <div className="text-lg font-bold mb-1" style={{ color: effectiveColor }}>
                 {getFrequencyText()}
               </div>
               <div className="text-sm font-medium text-gray-600 dark:text-gray-400">FREQUENCY</div>
@@ -283,19 +288,19 @@ export default function HabitDetailModal({ habit, isOpen, onClose, onEdit }: Hab
                 if (day.isCompleted) {
                   // Completed day - full habit color
                   buttonClass += 'text-white border-2 border-opacity-100';
-                  buttonStyle.backgroundColor = habit.color;
-                  buttonStyle.borderColor = habit.color;
+                  buttonStyle.backgroundColor = effectiveColor;
+                  buttonStyle.borderColor = effectiveColor;
                 } else if (day.isToday) {
                   // Today - dashed border in habit color
                   buttonClass += 'bg-white dark:bg-gray-600 border-2 border-dashed text-gray-900 dark:text-white';
-                  buttonStyle.borderColor = habit.color;
+                  buttonStyle.borderColor = effectiveColor;
                 } else if (day.isFuture) {
                   // Future dates - disabled, lighter appearance
                   buttonClass += 'bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed';
                 } else if (day.isRequiredDay) {
                   // Required weekly day - light background of habit color
                   buttonClass += 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-500 hover:scale-105';
-                  buttonStyle.backgroundColor = getLighterColor(habit.color, 0.15);
+                  buttonStyle.backgroundColor = getLighterColor(effectiveColor, 0.15);
                 } else {
                   // Regular available day
                   buttonClass += 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-500 hover:scale-105';

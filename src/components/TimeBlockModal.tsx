@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useCalendarStore } from '../store/calendarStore';
 import { TimeBlockFormData, TimeBlock } from '../types/calendar';
+import { useSwipeBack } from '../hooks/useSwipeGestures';
 
 interface TimeBlockModalProps {
   isOpen: boolean;
@@ -46,6 +47,12 @@ const DURATION_PRESETS = [
 ];
 
 export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefilledDate, editingTimeBlock }: TimeBlockModalProps) {
+  // Add swipe back to close modal
+  useSwipeBack(() => {
+    if (isOpen) {
+      onClose()
+    }
+  }, isOpen)
   const { addTimeBlock, updateTimeBlock, checkTimeConflict } = useCalendarStore();
   const [showIconGrid, setShowIconGrid] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -307,6 +314,9 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="What will you work on?"
               inputMode="text"
+              spellCheck="true"
+              autoCorrect="on"
+              autoComplete="off"
               className="w-full p-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus-accent-border transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
             />
           </div>
@@ -320,6 +330,9 @@ export default function TimeBlockModal({ isOpen, onClose, prefilledTime, prefill
               placeholder="Add details about this time block..."
               rows={3}
               inputMode="text"
+              spellCheck="true"
+              autoCorrect="on"
+              autoComplete="off"
               className="w-full p-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus-accent-border transition-colors resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
             />
           </div>

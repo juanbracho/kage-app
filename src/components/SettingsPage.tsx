@@ -158,7 +158,11 @@ export default function SettingsPage() {
       if (success) {
         resetPasscodeState()
         setShowPasscodeSetup(false)
-        console.log('✅ Passcode setup successful')
+        console.log('✅ Passcode setup successful - Journal is now protected and locked')
+        // Show success feedback briefly
+        setTimeout(() => {
+          // Could add a toast notification here if needed
+        }, 100)
       } else {
         setPasscodeError('Failed to setup passcode')
       }

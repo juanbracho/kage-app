@@ -4,6 +4,7 @@ import { useJournalStore } from '../store/journalStore'
 import { useTaskStore } from '../store/taskStore'
 import { useGoalStore } from '../store/goalStore'
 import { useHabitStore } from '../store/habitStore'
+import { getHabitColor } from '../utils/habitColors'
 import { MOOD_OPTIONS, LINK_TYPES, type Mood, type JournalFormData } from '../types/journal'
 import LinkingDropdown from './LinkingDropdown'
 
@@ -65,7 +66,7 @@ export default function JournalEntryModal({ isOpen, onClose, defaultGoalId }: Jo
           id: habit.id,
           name: habit.name,
           icon: habit.icon,
-          color: habit.color,
+          color: getHabitColor(habit, goals),
           description: habit.description,
           progress: habit.streak
         }))
@@ -270,6 +271,9 @@ export default function JournalEntryModal({ isOpen, onClose, defaultGoalId }: Jo
                 onChange={(e) => handleContentChange(e.target.value)}
                 placeholder="What's on your mind? Reflect on your progress, share your thoughts, or write about your day..."
                 inputMode="text"
+                spellCheck="true"
+                autoCorrect="on"
+                autoComplete="off"
                 className="w-full min-h-[120px] p-4 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 focus-accent-border focus:ring-2 focus-accent-ring outline-none transition-all resize-y placeholder-gray-500 dark:placeholder-gray-400"
                 style={{ lineHeight: '1.5' }}
               />
@@ -511,6 +515,9 @@ export default function JournalEntryModal({ isOpen, onClose, defaultGoalId }: Jo
                 value={tagsInput}
                 onChange={(e) => handleTagsChange(e.target.value)}
                 placeholder="Add tags separated by commas..."
+                spellCheck="true"
+                autoCorrect="on"
+                autoComplete="off"
                 className="w-full p-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus-accent-border focus:ring-2 focus-accent-ring outline-none transition-all placeholder-gray-500 dark:placeholder-gray-400"
               />
               <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">

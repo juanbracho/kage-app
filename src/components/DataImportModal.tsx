@@ -384,7 +384,7 @@ export default function DataImportModal({ isOpen, onClose }: DataImportModalProp
             validateData(entry, 'journal entry', ['id', 'content']);
             
             await new Promise(resolve => setTimeout(resolve, 10));
-            journalStore.addEntry(entry);
+            journalStore.importEntry(entry);
             processedItems++;
             setProgress(prev => ({ ...prev, itemsProcessed: processedItems }));
           } catch (error) {

@@ -544,6 +544,9 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                   placeholder="What do you want to achieve?"
                   maxLength={100}
                   inputMode="text"
+                  spellCheck="true"
+                  autoCorrect="on"
+                  autoComplete="off"
                   className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors"
                 />
               </div>
@@ -558,6 +561,9 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                   maxLength={500}
                   rows={3}
                   inputMode="text"
+                  spellCheck="true"
+                  autoCorrect="on"
+                  autoComplete="off"
                   className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors resize-none"
                 />
               </div>
@@ -699,6 +705,9 @@ export default function GoalCreationModal({ isOpen, onClose, goalToEdit }: GoalC
                   maxLength={300}
                   rows={3}
                   inputMode="text"
+                  spellCheck="true"
+                  autoCorrect="on"
+                  autoComplete="off"
                   className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors resize-none"
                 />
               </div>

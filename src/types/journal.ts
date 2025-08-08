@@ -49,6 +49,7 @@ export interface JournalStore {
   
   // Actions
   addEntry: (entryData: JournalFormData) => void
+  importEntry: (entry: JournalEntry) => void
   updateEntry: (id: string, updates: Partial<JournalEntry>) => void
   deleteEntry: (id: string) => void
   setFilter: (filter: JournalFilter) => void

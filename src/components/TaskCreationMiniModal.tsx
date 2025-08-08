@@ -142,6 +142,9 @@ export default function TaskCreationMiniModal({
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="What needs to be done?"
+              spellCheck="true"
+              autoCorrect="on"
+              autoComplete="off"
               className="w-full p-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors"
               autoFocus
             />
@@ -157,6 +160,9 @@ export default function TaskCreationMiniModal({
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Additional details..."
               rows={2}
+              spellCheck="true"
+              autoCorrect="on"
+              autoComplete="off"
               className="w-full p-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors resize-none"
             />
           </div>
@@ -166,9 +172,9 @@ export default function TaskCreationMiniModal({
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Priority</label>
             <div className="grid grid-cols-4 gap-2">
               {[
-                { id: 'low', label: 'Low', color: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200' },
-                { id: 'medium', label: 'Medium', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' },
-                { id: 'high', label: 'High', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' },
+                { id: 'low', label: 'Low', color: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' },
+                { id: 'medium', label: 'Medium', color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' },
+                { id: 'high', label: 'High', color: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300' },
                 { id: 'urgent', label: 'Urgent', color: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' }
               ].map(priority => (
                 <button

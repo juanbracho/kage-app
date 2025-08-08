@@ -314,12 +314,17 @@ export const useHabitStore = create<HabitStore>()(
     const isFullHabit = 'createdAt' in habitData;
     const habitId = isFullHabit ? habitData.id : generateId();
     
+    const habitFormData = habitData as HabitFormData;
+    
     const newHabit: Habit = isFullHabit ? {
       ...habitData as Omit<Habit, 'completions'>,
       completions: []
     } : {
       id: habitId,
-      ...habitData as HabitFormData,
+      ...habitFormData,
+      // Set color inheritance defaults for new habits
+      useGoalColor: habitFormData.goalId ? (habitFormData.useGoalColor ?? true) : false,
+      customColor: habitFormData.customColor || habitFormData.color,
       streak: 0,
       completions: [],
       createdAt: new Date().toISOString(),

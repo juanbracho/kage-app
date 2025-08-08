@@ -17,6 +17,8 @@ export interface Habit {
     period: 'week' | 'month';
   };
   goalId?: string;
+  useGoalColor?: boolean; // Inherit color from linked goal (default: true when goalId exists)
+  customColor?: string;   // Override color when useGoalColor is false
   startDate?: string;
   scheduledTime?: string;
   reminderMinutes?: number;
@@ -63,6 +65,8 @@ export interface HabitFormData {
     period: 'week' | 'month';
   };
   goalId?: string;
+  useGoalColor?: boolean; // Inherit color from linked goal (default: true when goalId exists)
+  customColor?: string;   // Override color when useGoalColor is false
   startDate?: string;
   scheduledTime?: string;
   reminderMinutes?: number;

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Target, CheckSquare, Calendar, BookOpen, BarChart3, Hash, Settings, TrendingUp } from 'lucide-react'
+import { Capacitor } from '@capacitor/core'
 import { useSettingsStore } from './store/settingsStore'
 import { useOnboardingStore } from './store/onboardingStore'
 import { useUserStore } from './store/userStore'
+import { useSwipeBack } from './hooks/useSwipeGestures'
 import DashboardPage from './components/DashboardPage'
 import GoalsPage from './components/GoalsPage'
 import TasksPage from './components/TasksPage'
@@ -15,11 +17,10 @@ import OfflineIndicator from './components/OfflineIndicator'
 import ErrorBoundary from './components/ErrorBoundary'
 import OnboardingFlow from './components/onboarding/OnboardingFlow'
 import { logPWAEnvironment, logErrorWithPWAContext } from './utils/pwaDetection'
-// Removed navigation swipe import - no longer using page swipes
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const { settings, initializeSettings, isOnboardingCompleted } = useSettingsStore()
+  const { settings, initializeSettings, isOnboardingCompleted, checkAndUpdateLockState } = useSettingsStore()
   const { isOnboardingActive } = useOnboardingStore()
   const { initializeApp } = useUserStore()
 
@@ -33,6 +34,21 @@ function App() {
       logPWAEnvironment();
       
       initializeSettings();
+      
+      // Mobile-specific passcode initialization
+      if (Capacitor.isNativePlatform()) {
+        console.log('📱 Mobile platform detected - forcing passcode state check');
+        
+        // Add delay to ensure store rehydration completes
+        setTimeout(() => {
+          const lockState = checkAndUpdateLockState();
+          console.log('📱 Mobile passcode initialization complete:', {
+            passcodeEnabled: settings.passcode?.enabled,
+            lockState,
+            platform: Capacitor.getPlatform()
+          });
+        }, 200);
+      }
       
       // Initialize app with IndexedDB metadata tracking
       initializeApp();
@@ -140,6 +156,25 @@ function App() {
       document.documentElement.classList.remove('dark')
     }
   }, [settings.appearance.theme])
+
+  // Handle swipe back navigation
+  const handleSwipeBack = () => {
+    if (activeTab === 'dashboard') {
+      // On dashboard, close the app (Capacitor only)
+      if (Capacitor.isNativePlatform()) {
+        // Use Capacitor App plugin to minimize/close app
+        import('@capacitor/app').then(({ App }) => {
+          App.minimizeApp()
+        })
+      }
+    } else {
+      // On other pages, return to dashboard
+      setActiveTab('dashboard')
+    }
+  }
+
+  // Enable swipe back gestures
+  useSwipeBack(handleSwipeBack, true)
 
   const tabs = [
     { id: 'goals', label: 'Goals', icon: Target },

@@ -61,7 +61,9 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
     selectedDays: [],
     calendarIntegration: false,
     targetUnit: 'units',
-    goalId: defaultGoalId || ''
+    goalId: defaultGoalId || '',
+    useGoalColor: defaultGoalId ? true : false,
+    customColor: undefined
   });
 
   // const [goalLinkEnabled, setGoalLinkEnabled] = useState(true);
@@ -86,7 +88,9 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
           startDate: editingHabit.startDate || new Date().toISOString().split('T')[0],
           scheduledTime: editingHabit.scheduledTime || '09:00',
           reminderMinutes: editingHabit.reminderMinutes,
-          goalId: editingHabit.goalId || ''
+          goalId: editingHabit.goalId || '',
+          useGoalColor: editingHabit.useGoalColor,
+          customColor: editingHabit.customColor
         });
         setShowScheduling(editingHabit.calendarIntegration || false);
       } else {
@@ -107,7 +111,9 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
           targetUnit: 'units',
           startDate: new Date().toISOString().split('T')[0],
           scheduledTime: '09:00',
-          goalId: initialGoalId
+          goalId: initialGoalId,
+          useGoalColor: initialGoalId ? true : false,
+          customColor: undefined
         });
         setShowScheduling(false);
       }
@@ -177,10 +183,21 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
 
   const handleGoalChange = (goalId: string) => {
     const linkedGoal = goalId ? goals.find(g => g.id === goalId) : undefined;
+    console.log('Goal changed:', {
+      goalId,
+      linkedGoal: linkedGoal?.name,
+      goalColor: linkedGoal?.color,
+      currentFormColor: formData.color
+    });
+    
     setFormData({
       ...formData,
       goalId,
-      category: linkedGoal?.category || formData.category
+      category: linkedGoal?.category || formData.category,
+      // When goal is selected, enable color inheritance by default
+      useGoalColor: goalId ? true : false,
+      // Preserve current color as custom color option
+      customColor: formData.color
     });
   };
 
@@ -244,6 +261,9 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
               placeholder="What habit do you want to build?"
               maxLength={50}
               inputMode="text"
+              spellCheck="true"
+              autoCorrect="on"
+              autoComplete="off"
               className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors"
             />
           </div>
@@ -255,6 +275,9 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Why is this habit important to you?"
+              spellCheck="true"
+              autoCorrect="on"
+              autoComplete="off"
               maxLength={200}
               inputMode="text"
               className="w-full p-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-accent-border transition-colors min-h-20 resize-y"
@@ -263,12 +286,26 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
 
           {/* Color Selection */}
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Color *</label>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Color * 
+              {formData.goalId && formData.useGoalColor !== false && (
+                <span className="text-xs text-blue-500 ml-2">(Inherited from Goal)</span>
+              )}
+            </label>
             <div className="grid grid-cols-7 gap-3">
               {HABIT_COLORS.map(color => (
                 <button
                   key={color}
-                  onClick={() => setFormData({ ...formData, color })}
+                  onClick={() => {
+                    console.log('Color selected:', color, 'Current goalId:', formData.goalId);
+                    setFormData({ 
+                      ...formData, 
+                      color,
+                      // If goal is linked, set this as custom color and disable goal inheritance
+                      customColor: formData.goalId ? color : undefined,
+                      useGoalColor: formData.goalId ? false : undefined
+                    });
+                  }}
                   className={`w-12 h-12 rounded-xl border-3 transition-all hover:scale-110 ${
                     formData.color === color ? 'border-white shadow-lg shadow-accent' : 'border-transparent'
                   }`}
@@ -278,6 +315,36 @@ export default function HabitCreationModal({ isOpen, onClose, editingHabit, defa
                 </button>
               ))}
             </div>
+            
+            {/* Color Inheritance Toggle - Only show when goal is linked */}
+            {formData.goalId && (
+              <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Use Goal Color
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {formData.useGoalColor !== false ? 'Using goal color' : 'Using custom color'}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ 
+                      ...formData, 
+                      useGoalColor: formData.useGoalColor !== false ? false : true 
+                    })}
+                    className={`w-12 h-6 rounded-full transition-all duration-200 relative ${
+                      formData.useGoalColor !== false ? 'accent-bg-500' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  >
+                    <div className={`w-5 h-5 bg-white rounded-full shadow-lg transform transition-transform duration-200 absolute top-0.5 ${
+                      formData.useGoalColor !== false ? 'translate-x-6' : 'translate-x-0.5'
+                    }`} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Category Selection - Only show when no goal is selected */}

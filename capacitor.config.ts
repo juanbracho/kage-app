@@ -9,7 +9,7 @@ const config: CapacitorConfig = {
   },
   android: {
     allowMixedContent: true,
-    captureInput: true,
+    captureInput: false,
     webContentsDebuggingEnabled: true,
     buildOptions: {
       javaVersion: '21'

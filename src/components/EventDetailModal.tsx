@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CalendarEvent } from '../types/calendar';
 import { X, Clock, Calendar, Edit2, Check, Trash2, Loader2 } from 'lucide-react';
-;
+import { useSwipeBack } from '../hooks/useSwipeGestures';
 
 interface EventDetailModalProps {
   event: CalendarEvent | null;
@@ -20,6 +20,13 @@ export default function EventDetailModal({
   onEdit,
   onDelete
 }: EventDetailModalProps) {
+  // Add swipe back to close modal
+  useSwipeBack(() => {
+    if (isOpen) {
+      onClose()
+    }
+  }, isOpen)
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedEvent, setEditedEvent] = useState<CalendarEvent | null>(null);
   const [localEvent, setLocalEvent] = useState<CalendarEvent | null>(null);
@@ -170,6 +177,9 @@ export default function EventDetailModal({
                   type="text"
                   value={editedEvent?.title || ''}
                   onChange={(e) => setEditedEvent(prev => prev ? { ...prev, title: e.target.value } : null)}
+                  spellCheck="true"
+                  autoCorrect="on"
+                  autoComplete="off"
                   className="flex-1 text-lg font-medium bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white"
                 />
               ) : (
@@ -238,6 +248,9 @@ export default function EventDetailModal({
                     value={editedEvent?.description || ''}
                     onChange={(e) => setEditedEvent(prev => prev ? { ...prev, description: e.target.value } : null)}
                     rows={3}
+                    spellCheck="true"
+                    autoCorrect="on"
+                    autoComplete="off"
                     className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white resize-none"
                   />
                 ) : (

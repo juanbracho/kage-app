@@ -5,6 +5,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useSettingsStore } from '../store/settingsStore'
+import { getAutoLockTimeoutMs } from '../utils/passcode'
 
 export interface AutoLockEvents {
   onAutoLock?: () => void
@@ -43,6 +44,7 @@ export const useAutoLock = (events?: AutoLockEvents) => {
           
           // Show warning when 30 seconds remain
           if (timeRemaining <= 30000 && timeRemaining > 0 && !warningShownRef.current) {
+            console.log(`⏰ Auto-lock warning: ${Math.floor(timeRemaining / 1000)}s remaining`)
             events.onWarning(Math.floor(timeRemaining / 1000))
             warningShownRef.current = true
           } else if (timeRemaining > 30000) {
@@ -65,14 +67,3 @@ export const useAutoLock = (events?: AutoLockEvents) => {
   }, [settings.passcode.autoLockTimeout, settings.passcode.lastAccessTime])
 }
 
-// Helper to get timeout in milliseconds
-const getAutoLockTimeoutMs = (timeout: string): number => {
-  switch (timeout) {
-    case '1min': return 60 * 1000
-    case '5min': return 5 * 60 * 1000
-    case '15min': return 15 * 60 * 1000
-    case '30min': return 30 * 60 * 1000
-    case 'never': return -1
-    default: return 5 * 60 * 1000
-  }
-}

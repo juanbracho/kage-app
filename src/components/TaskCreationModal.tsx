@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { X, Clock, ShoppingCart, AlertTriangle, Plus, Trash2 } from 'lucide-react'
 import { useGoalStore } from '../store/goalStore'
 import { useCalendarStore } from '../store/calendarStore'
+import { useSwipeBack } from '../hooks/useSwipeGestures'
 
 interface TaskCreationModalProps {
   isOpen: boolean
@@ -67,6 +68,13 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
   }
 
   // Populate form when editing
+  // Add swipe back to close modal
+  useSwipeBack(() => {
+    if (isOpen) {
+      onClose()
+    }
+  }, isOpen)
+
   useEffect(() => {
     if (isOpen && editingTask) {
       setTaskType(editingTask.type || 'standard')
@@ -335,6 +343,9 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 inputMode="text"
+                spellCheck="true"
+                autoCorrect="on"
+                autoComplete="off"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus-accent-ring focus-accent-border outline-none transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="What needs to be done?"
               />
@@ -348,6 +359,9 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
                 inputMode="text"
+                spellCheck="true"
+                autoCorrect="on"
+                autoComplete="off"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus-accent-ring focus-accent-border outline-none transition-colors resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Add more details..."
               />
@@ -358,10 +372,10 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Priority</label>
               <div className="grid grid-cols-4 gap-2 overflow-x-auto">
                 {[
-                  { id: 'low', label: 'Low', color: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200' },
-                  { id: 'medium', label: 'Medium', color: 'bg-blue-100 text-blue-700' },
-                  { id: 'high', label: 'High', color: 'bg-amber-100 text-amber-700' },
-                  { id: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-700' }
+                  { id: 'low', label: 'Low', color: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' },
+                  { id: 'medium', label: 'Medium', color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' },
+                  { id: 'high', label: 'High', color: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300' },
+                  { id: 'urgent', label: 'Urgent', color: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' }
                 ].map(priority => (
                   <button
                     key={priority.id}
@@ -450,6 +464,9 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                           onChange={(e) => updateShoppingItem(index, 'name', e.target.value)}
                           placeholder="Item name"
                           inputMode="text"
+                          spellCheck="true"
+                          autoCorrect="on"
+                          autoComplete="off"
                           className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus-accent-ring focus-accent-border outline-none text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
                         {formData.shoppingItems.length > 1 && (
@@ -495,6 +512,9 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                           onChange={(e) => updateSubtask(index, e.target.value)}
                           placeholder={`Subtask ${index + 1}`}
                           inputMode="text"
+                          spellCheck="true"
+                          autoCorrect="on"
+                          autoComplete="off"
                           className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus-accent-ring focus-accent-border outline-none text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
                         <button
@@ -527,6 +547,9 @@ export default function TaskCreationModal({ isOpen, onClose, onSubmit, editingTa
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                 rows={2}
+                spellCheck="true"
+                autoCorrect="on"
+                autoComplete="off"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus-accent-ring focus-accent-border outline-none transition-colors resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Additional notes or reminders..."
               />

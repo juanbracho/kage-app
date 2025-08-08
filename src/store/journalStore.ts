@@ -56,6 +56,22 @@ export const useJournalStore = create<JournalStore>()(
         }))
       },
 
+      // Import entry preserving original dates (for data restore)
+      importEntry: (entry: JournalEntry) => {
+        // Ensure dates are Date objects (convert from string if needed)
+        const importedEntry: JournalEntry = {
+          ...entry,
+          createdAt: typeof entry.createdAt === 'string' ? new Date(entry.createdAt) : entry.createdAt,
+          updatedAt: typeof entry.updatedAt === 'string' ? new Date(entry.updatedAt) : entry.updatedAt,
+          characterCount: entry.content.length
+        }
+        
+        set(state => ({
+          entries: [importedEntry, ...state.entries],
+          lastSaved: new Date()
+        }))
+      },
+
       updateEntry: (id: string, updates: Partial<JournalEntry>) => {
         set(state => ({
           entries: state.entries.map(entry =>

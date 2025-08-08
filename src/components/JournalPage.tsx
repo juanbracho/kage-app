@@ -4,6 +4,7 @@ import { useJournalStore } from '../store/journalStore'
 import { useTaskStore } from '../store/taskStore'
 import { useSettingsStore } from '../store/settingsStore'
 import { useAutoLock } from '../hooks/useAutoLock'
+import useAppStateDetection from '../hooks/useAppStateDetection'
 import { MOOD_OPTIONS, type JournalFilter } from '../types/journal'
 import JournalEmpty from './JournalEmpty'
 import JournalEntryModal from './JournalEntryModal'
@@ -25,10 +26,19 @@ export default function JournalPage() {
   } = useJournalStore()
   
   const { tasks } = useTaskStore()
-  const { settings, validatePasscode, shouldAutoLock, updateLastAccess } = useSettingsStore()
+  const { 
+    settings, 
+    validatePasscode, 
+    shouldAutoLock, 
+    updateLastAccess, 
+    forceLock,
+    isJournalLocked,
+    lockJournal,
+    unlockJournal,
+    checkAndUpdateLockState
+  } = useSettingsStore()
 
   const [showSearch, setShowSearch] = useState(false)
-  const [isLocked, setIsLocked] = useState(false)
   const [passcodeInput, setPasscodeInput] = useState('')
   const [passcodeError, setPasscodeError] = useState('')
   const [passcodeLoading, setPasscodeLoading] = useState(false)
@@ -40,18 +50,21 @@ export default function JournalPage() {
   const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set())
   const filteredEntries = getFilteredEntries()
 
+  // Helper function to trigger lock
+  const triggerLock = () => {
+    lockJournal()
+    setPasscodeInput('')
+    setPasscodeError('')
+    setAutoLockWarning(null)
+    if (countdownInterval) {
+      clearInterval(countdownInterval)
+      setCountdownInterval(null)
+    }
+  }
+
   // Set up auto-lock functionality
   useAutoLock({
-    onAutoLock: () => {
-      setIsLocked(true)
-      setPasscodeInput('')
-      setPasscodeError('')
-      setAutoLockWarning(null)
-      if (countdownInterval) {
-        clearInterval(countdownInterval)
-        setCountdownInterval(null)
-      }
-    },
+    onAutoLock: triggerLock,
     onWarning: (timeRemaining) => {
       setAutoLockWarning(timeRemaining)
       
@@ -72,16 +85,50 @@ export default function JournalPage() {
     }
   })
 
-  // Check if journal should be locked on component mount
-  useEffect(() => {
-    if (settings.passcode.enabled) {
-      // Lock if: no previous access OR auto-lock timeout exceeded
-      const shouldLock = !settings.passcode.lastAccessTime || shouldAutoLock()
-      setIsLocked(shouldLock)
-    } else {
-      setIsLocked(false)
+  // Set up app state detection for immediate locking
+  useAppStateDetection({
+    onBackground: () => {
+      if (settings.passcode.enabled) {
+        console.log('📱 App backgrounded - force locking journal')
+        forceLock()
+      }
+    },
+    onForeground: () => {
+      if (settings.passcode.enabled) {
+        console.log('📱 App foregrounded - checking lock state')
+        checkAndUpdateLockState()
+      }
+    },
+    onWindowBlur: () => {
+      if (settings.passcode.enabled) {
+        console.log('🔵 Window blur - force locking journal')
+        forceLock()
+      }
     }
-  }, [settings.passcode.enabled, settings.passcode.lastAccessTime, shouldAutoLock])
+  })
+
+  // Check and update journal lock state on component mount and settings changes
+  useEffect(() => {
+    console.log('🔒 Journal lock check on mount/settings change')
+    
+    // Force lock state check with delay to ensure store rehydration
+    const checkLockState = () => {
+      const shouldLock = checkAndUpdateLockState()
+      console.log('🔒 Lock state check result:', shouldLock, { 
+        passcodeEnabled: settings.passcode.enabled,
+        hasLastAccess: !!settings.passcode.lastAccessTime,
+        currentLockState: isJournalLocked
+      })
+    }
+    
+    // Immediate check
+    checkLockState()
+    
+    // Additional check after small delay for mobile WebView
+    const timeoutId = setTimeout(checkLockState, 100)
+    
+    return () => clearTimeout(timeoutId)
+  }, [settings.passcode.enabled, settings.passcode.lastAccessTime, checkAndUpdateLockState, isJournalLocked])
 
   // Handle passcode validation
   const handlePasscodeSubmit = async () => {
@@ -96,9 +143,8 @@ export default function JournalPage() {
     try {
       const isValid = await validatePasscode(passcodeInput)
       if (isValid) {
-        setIsLocked(false)
+        unlockJournal()
         setPasscodeInput('')
-        updateLastAccess()
         console.log('✅ Journal unlocked successfully')
       } else {
         setPasscodeError('Incorrect passcode')
@@ -132,7 +178,7 @@ export default function JournalPage() {
   useEffect(() => {
     const handleFocus = () => {
       if (settings.passcode.enabled && shouldAutoLock()) {
-        setIsLocked(true)
+        lockJournal()
         setPasscodeInput('')
         setPasscodeError('')
       }
@@ -144,10 +190,10 @@ export default function JournalPage() {
 
   // Update last access time when interacting with journal (while unlocked)
   useEffect(() => {
-    if (settings.passcode.enabled && !isLocked) {
+    if (settings.passcode.enabled && !isJournalLocked) {
       updateLastAccess()
     }
-  }, [settings.passcode.enabled, isLocked, updateLastAccess])
+  }, [settings.passcode.enabled, isJournalLocked, updateLastAccess])
 
   // Cleanup countdown interval on unmount
   useEffect(() => {
@@ -318,7 +364,7 @@ export default function JournalPage() {
   }
 
   // Show passcode lock screen if journal is protected and locked
-  if (settings.passcode.enabled && isLocked) {
+  if (settings.passcode.enabled && isJournalLocked) {
     return (
       <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center p-4">
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full p-8">

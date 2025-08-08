@@ -46,9 +46,10 @@ export default function DailyTimelineView({
     navigateNext,
     setCurrentDate
   } = useCalendarStore();
-  const { tasks } = useTaskStore();
+  const { tasks, toggleTask } = useTaskStore();
   const { habits } = useHabitStore();
   const { getAccentColor } = useSettingsStore();
+  const { goals, toggleMilestoneCompletion, triggerMilestoneJournalPrompt } = useGoalStore();
   
   const currentAccentColor = getAccentColorValue(getAccentColor());
   
@@ -72,7 +73,6 @@ export default function DailyTimelineView({
   const [isAllDayEventsExpanded, setIsAllDayEventsExpanded] = useState(true);
 
   // Separate all-day events from timed events
-  const { goals } = useGoalStore();
   
   const { allDayEvents, timedEvents } = useMemo(() => {
     const events = getEventsForDate(selectedDate);
@@ -105,7 +105,6 @@ export default function DailyTimelineView({
     const seenTasks = new Set<string>();
     const repetitiveTaskEvents = tasks.filter(task => {
       if (!task.isRecurring && !task.originalTaskId) return false;
-      if (task.status === 'completed') return false;
       if (!task.dueDate) return false;
       
       const taskDateString = task.dueDate instanceof Date 
@@ -213,17 +212,16 @@ export default function DailyTimelineView({
     // Handle milestone completion differently
     if (event.type === 'milestone' && event.goalId && event.milestoneId) {
       try {
-        const { useGoalStore } = await import('../store/goalStore');
-        const goalStore = useGoalStore.getState();
-        goalStore.toggleMilestoneCompletion(event.goalId, event.milestoneId);
+        toggleMilestoneCompletion(event.goalId, event.milestoneId);
         console.log('🎯 Milestone completion toggled:', event.title);
         
         // Trigger journal prompt if milestone is being completed
         if (!event.completed) {
-          goalStore.triggerMilestoneJournalPrompt(event.goalId, event.milestoneId, 
-            goalStore.goals.find(g => g.id === event.goalId)!,
-            goalStore.goals.find(g => g.id === event.goalId)!.milestones.find(m => m.id === event.milestoneId)!
-          );
+          const goal = goals.find(g => g.id === event.goalId);
+          const milestone = goal?.milestones.find(m => m.id === event.milestoneId);
+          if (goal && milestone) {
+            triggerMilestoneJournalPrompt(event.goalId, event.milestoneId, goal, milestone);
+          }
         }
       } catch (error) {
         console.error('❌ Error toggling milestone completion:', error);
@@ -231,9 +229,7 @@ export default function DailyTimelineView({
     } else if (event.type === 'repetitive-task' && event.linkedId) {
       // Handle repetitive task completion directly via task store
       try {
-        const { useTaskStore } = await import('../store/taskStore');
-        const taskStore = useTaskStore.getState();
-        taskStore.toggleTask(event.linkedId);
+        toggleTask(event.linkedId);
         console.log('🔄 Repetitive task completion toggled:', event.title);
       } catch (error) {
         console.error('❌ Error toggling repetitive task completion:', error);

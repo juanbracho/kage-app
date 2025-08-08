@@ -153,13 +153,20 @@ Kage is a comprehensive personal productivity PWA that integrates habits, tasks,
 - [x] Task 12.14: Ensure real-time reactivity for all milestone and task operations
 - [x] Task 12.15: Implement consistent styling with accent colors and completion states
 
-#### **Journal Passcode Protection** 🔥 HIGH PRIORITY (PARTIALLY COMPLETE)
+#### **Journal Passcode Protection** 🔥 CRITICAL MOBILE ISSUE (WEB COMPLETE, MOBILE BROKEN)
 - [x] Task 12.16: Design passcode security architecture with encryption
-- [ ] Task 12.17: Create 4-digit numeric passcode setup UI in Settings
+- [x] Task 12.17: Create 4-digit numeric passcode setup UI in Settings
 - [x] Task 12.18: Implement secure passcode storage with encryption utilities
-- [ ] Task 12.19: Build passcode entry modal for journal access control  
+- [x] Task 12.19: Build passcode entry modal for journal access control  
 - [x] Task 12.20: Implement auto-lock system (inactivity/background detection - useAutoLock hook implemented)
-- [ ] Task 12.21: Add enable/disable passcode toggle and change passcode functionality
+- [x] Task 12.21: Add enable/disable passcode toggle and change passcode functionality
+
+#### **CRITICAL MOBILE PASSCODE ISSUES** 🚨 BLOCKING PRODUCTION
+- [ ] Task 12.22: **URGENT** - Debug mobile APK passcode failure (works on web, fails on mobile)
+- [ ] Task 12.23: **URGENT** - Investigate mobile WebView storage/timing issues
+- [ ] Task 12.24: **URGENT** - Verify Capacitor App plugin events actually fire on mobile
+- [ ] Task 12.25: **URGENT** - Establish mobile debugging workflow with console access
+- [ ] Task 12.26: **URGENT** - Fix mobile journal lock state persistence and initialization
 
 #### **Enhanced Recurring Tasks Display** ✅ COMPLETED
 - [x] Task 12.22: Modify recurring task generation to create limited future instances
@@ -208,28 +215,35 @@ Kage is a comprehensive personal productivity PWA that integrates habits, tasks,
 
 ---
 
-## 🚀 **NEXT SESSION PRIORITIES (Session 13)**
+## 🚨 **CRITICAL SESSION PRIORITIES (Session 14) - MOBILE DEBUGGING REQUIRED**
 
-### **IMMEDIATE FOCUS - Journal Passcode Protection Completion**
-1. **Task 12.17**: Create 4-digit numeric passcode setup UI in Settings *(4-6 hours)*
-2. **Task 12.19**: Build passcode entry modal for journal access control *(3-4 hours)*
-3. **Task 12.21**: Add enable/disable passcode toggle and change passcode functionality *(2-3 hours)*
+### **URGENT - BLOCKING PRODUCTION DEPLOYMENT**
+1. **Task 12.22**: Debug mobile APK passcode failure - establish mobile debugging workflow *(8-12 hours)*
+2. **Task 12.23**: Investigate mobile WebView vs web browser differences *(4-6 hours)*
+3. **Task 12.24**: Verify Capacitor App plugin integration and event firing *(3-4 hours)*
+4. **Task 12.25**: Mobile console logging and Android debugging setup *(2-3 hours)*
+5. **Task 12.26**: Fix mobile lock state initialization and persistence timing *(4-6 hours)*
 
-### **HIGH PRIORITY - Core Functionality Gaps**
-4. **Task 13.12-13.14**: Individual habit reminder system with notifications *(6-8 hours)*
-5. **Task 13.21**: Debug onboarding template creation issue *(2-3 hours)*
+### **ALTERNATIVE APPROACH (IF MOBILE DEBUG FAILS)**
+- **Plan B**: Implement simpler mobile-specific passcode mechanism *(6-8 hours)*
+- **Plan C**: Disable mobile passcode temporarily, document limitation *(1-2 hours)*
 
-### **MEDIUM PRIORITY - Foundation Building**
-6. **Task 13.15-13.16**: User account system foundation *(8-12 hours)*
-7. **Task 13.22-13.24**: Goal template system expansion *(6-8 hours)*
+### **BLOCKED UNTIL MOBILE PASSCODE RESOLVED**
+- **Task 13.12-13.14**: Individual habit reminder system *(BLOCKED)*
+- **Task 13.21**: Debug onboarding template creation issue *(BLOCKED)*
+- **Task 13.15-13.16**: User account system foundation *(BLOCKED)*
 
-### **TECHNICAL IMPROVEMENTS**
-8. **Task 13.5**: Investigate deeper Android native development for autocorrect *(6-10 hours)*
-9. **Task 13.18**: Cloud data synchronization for logged-in users *(10-15 hours)*
-10. **New**: Achievement system foundation *(6-8 hours)*
+### **SESSION 14 CRITICAL PATH**
+**Mobile passcode protection MUST be resolved before any other development. This is a core security feature that cannot be left broken in production. All other features are blocked until mobile works correctly.**
 
-### **SESSION 13 RECOMMENDATION**
-**Focus on completing Journal Passcode Protection (Tasks 1-3) to deliver a complete security feature before moving to habit reminders. This provides immediate user value and completes a partially-implemented system.**
+### **SUCCESS CRITERIA FOR SESSION 14**
+1. Mobile APK journal locks immediately when passcode enabled
+2. Mobile APK journal stays locked across page navigation
+3. Mobile APK journal locks when backgrounding/switching apps
+4. Mobile APK journal remains locked on app restart
+5. Mobile APK passcode entry unlocks journal properly
+
+**STATUS**: 🚫 **PRODUCTION DEPLOYMENT BLOCKED - MOBILE SECURITY BROKEN**
 
 ## Features Checklist
 

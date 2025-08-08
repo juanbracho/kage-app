@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Clock, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronUp, Target, Edit, Trash2, Repeat } from 'lucide-react';
+import { Plus, Clock, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronUp, Target, Edit, Trash2, Repeat, ArrowUpDown, Grid, Users } from 'lucide-react';
 import { useTaskStore } from '../store/taskStore';
 import { useGoalStore } from '../store/goalStore';
 import { TaskFilter } from '../types/task';
@@ -52,6 +52,8 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
   const [recurringTaskToDelete, setRecurringTaskToDelete] = useState<any>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
   const [isAppStartup, setIsAppStartup] = useState(true);
+  const [sortBy, setSortBy] = useState<'added' | 'priority'>('added');
+  const [groupBy, setGroupBy] = useState<'general' | 'goals'>('general');
 
   // Cleanup empty subtasks on component mount and mark as initialized
   useEffect(() => {
@@ -84,6 +86,54 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
   const filteredTasks = getFilteredTasks();
   const { today, overdue, upcoming, noDueDate } = getTasksBySection();
   const taskCounts = getTaskCounts();
+
+  // Sort function for tasks
+  const sortTasks = (tasks: any[]) => {
+    if (sortBy === 'priority') {
+      const priorityOrder = { 'urgent': 0, 'high': 1, 'medium': 2, 'low': 3 };
+      return [...tasks].sort((a, b) => {
+        const aPriority = priorityOrder[a.priority as keyof typeof priorityOrder] ?? 4;
+        const bPriority = priorityOrder[b.priority as keyof typeof priorityOrder] ?? 4;
+        return aPriority - bPriority;
+      });
+    }
+    // Default: sort by creation date (newest first)
+    return [...tasks].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  };
+
+  // Group tasks by goals when groupBy is 'goals'
+  const groupTasksByGoals = (tasks: any[]) => {
+    const grouped = new Map<string, { goal: any; tasks: any[] }>();
+    
+    tasks.forEach(task => {
+      if (task.goalId) {
+        const goal = goals.find(g => g.id === task.goalId);
+        if (goal) {
+          const key = task.goalId;
+          if (!grouped.has(key)) {
+            grouped.set(key, { goal, tasks: [] });
+          }
+          grouped.get(key)!.tasks.push(task);
+        }
+      }
+    });
+    
+    // Sort groups by goal name for consistency
+    return Array.from(grouped.values()).sort((a, b) => a.goal.name.localeCompare(b.goal.name));
+  };
+
+  // Get all tasks for goals grouping (combine all sections)
+  const allTasks = groupBy === 'goals' ? [...today, ...overdue, ...upcoming, ...noDueDate] : [];
+  const tasksByGoals = groupBy === 'goals' ? groupTasksByGoals(allTasks) : [];
+  const tasksWithoutGoal = groupBy === 'goals' ? allTasks.filter(task => !task.goalId) : [];
+
+  // Apply sorting to sections (only for non-repetitive filters)
+  const sortedSections = currentFilter !== 'repetitive' ? {
+    today: sortTasks(today),
+    overdue: sortTasks(overdue), 
+    upcoming: sortTasks(upcoming),
+    noDueDate: sortTasks(noDueDate)
+  } : { today, overdue, upcoming, noDueDate };
   
   const toggleExpanded = (taskId: string) => {
     setExpandedTasks(prev => {
@@ -239,7 +289,7 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
                 <div className="flex items-center gap-1">
                   <div className={`w-2 h-2 rounded-full ${
                     task.priority === 'urgent' ? 'bg-red-500' :
-                    task.priority === 'high' ? 'accent-bg-500' :
+                    task.priority === 'high' ? 'bg-orange-500' :
                     task.priority === 'medium' ? 'bg-yellow-500' :
                     'bg-green-500'
                   }`} />
@@ -332,6 +382,33 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
     );
   };
 
+  const renderControlButtons = () => {
+    if (currentFilter === 'repetitive') return null;
+    
+    return (
+      <div className="flex items-center gap-2 mb-6">
+        {currentFilter === 'all' && (
+          <button
+            onClick={() => setGroupBy(groupBy === 'general' ? 'goals' : 'general')}
+            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors border border-gray-300 dark:border-gray-600"
+          >
+            <Grid className="w-3.5 h-3.5" />
+            <span>Group by: {groupBy === 'general' ? 'General' : 'Goals'}</span>
+            <ChevronDown className="w-3 h-3" />
+          </button>
+        )}
+        <button
+          onClick={() => setSortBy(sortBy === 'added' ? 'priority' : 'added')}
+          className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors border border-gray-300 dark:border-gray-600"
+        >
+          <ArrowUpDown className="w-3.5 h-3.5" />
+          <span>Sort by: {sortBy === 'added' ? 'Added' : 'Priority'}</span>
+          <ChevronDown className="w-3 h-3" />
+        </button>
+      </div>
+    );
+  };
+
   const renderTaskSection = (title: string, tasks: any[], icon: React.ComponentType<any>) => {
     if (tasks.length === 0) return null;
     
@@ -348,6 +425,30 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
         </div>
         <div className="space-y-3">
           {tasks.map((task) => renderTaskCard(task))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderGoalSection = (goalData: { goal: any; tasks: any[] }) => {
+    const { goal, tasks } = goalData;
+    const sortedTasks = sortTasks(tasks);
+    
+    return (
+      <div className="mb-8" key={goal.id}>
+        <div className="flex items-center gap-2 mb-4">
+          <div 
+            className="w-4 h-4 rounded-full flex-shrink-0"
+            style={{ backgroundColor: goal.color }}
+          />
+          <span className="text-lg">{goal.icon}</span>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{goal.name}</h2>
+          <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-md text-xs font-semibold">
+            {tasks.length}
+          </span>
+        </div>
+        <div className="space-y-3">
+          {sortedTasks.map((task) => renderTaskCard(task))}
         </div>
       </div>
     );
@@ -503,7 +604,7 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
                 <div className="flex items-center gap-1">
                   <div className={`w-2 h-2 rounded-full ${
                     task.priority === 'urgent' ? 'bg-red-500' :
-                    task.priority === 'high' ? 'accent-bg-500' :
+                    task.priority === 'high' ? 'bg-orange-500' :
                     task.priority === 'medium' ? 'bg-yellow-500' :
                     'bg-green-500'
                   }`} />
@@ -639,14 +740,37 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
         ))}
       </div>
 
+      {/* Control Buttons */}
+      {renderControlButtons()}
+
       {/* Task Content */}
       <div>
-        {currentFilter === 'all' && (
+        {currentFilter === 'all' && groupBy === 'general' && (
           <div>
-            {renderTaskSection('Overdue', overdue, AlertTriangle)}
-            {renderTaskSection('Today', today, Calendar)}
-            {renderTaskSection('Upcoming', upcoming, Clock)}
-            {renderTaskSection('No Due Date', noDueDate, Target)}
+            {renderTaskSection('Overdue', sortedSections.overdue, AlertTriangle)}
+            {renderTaskSection('Today', sortedSections.today, Calendar)}
+            {renderTaskSection('Upcoming', sortedSections.upcoming, Clock)}
+            {renderTaskSection('No Due Date', sortedSections.noDueDate, Target)}
+          </div>
+        )}
+
+        {currentFilter === 'all' && groupBy === 'goals' && (
+          <div>
+            {tasksByGoals.map(goalData => renderGoalSection(goalData))}
+            {tasksWithoutGoal.length > 0 && (
+              <div className="mb-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <Users className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  <h2 className="text-lg font-semibold text-gray-800 dark:text-white">No Goal</h2>
+                  <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-md text-xs font-semibold">
+                    {tasksWithoutGoal.length}
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {sortTasks(tasksWithoutGoal).map((task) => renderTaskCard(task))}
+                </div>
+              </div>
+            )}
           </div>
         )}
         
@@ -672,7 +796,7 @@ export default function TasksPage({ onNavigate }: TasksPageProps) {
                 <p>No tasks found for this filter.</p>
               </div>
             ) : (
-              filteredTasks.map((task) => renderTaskCard(task))
+              sortTasks(filteredTasks).map((task) => renderTaskCard(task))
             )}
           </div>
         )}

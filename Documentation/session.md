@@ -1,5 +1,59 @@
 # Kage App Development Sessions
 
+## Session 31 | 2025-08-08
+
+**Focus**: UX Improvements & Habit-Goal Color Inheritance System
+
+### 🎯 Major Features Completed
+- **Onboarding Status Bar Fix**: Added safe area padding to prevent overlap with native status bar
+- **Swipe Back Gestures**: Comprehensive gesture system for modal closing and navigation
+- **Journal Date Preservation**: Fixed backup/import to maintain original entry timestamps  
+- **Priority Task Colors**: Corrected color scheme (low=green, medium=yellow, high=orange, urgent=red)
+- **Task Sorting & Grouping**: Added Group by (General/Goals) and Sort by (Added/Priority) controls
+- **Calendar Milestone Completion**: Fixed milestone click behavior for proper completion toggling
+- **Habit-Goal Color Inheritance**: Complete system for color inheritance from linked goals
+
+### 🔧 Technical Implementations
+
+#### Habit-Goal Color Inheritance System
+- Created `habitColors.ts` utility with comprehensive color resolution logic
+- Updated `HabitRow.tsx`, `HabitDetailModal.tsx`, and `JournalEntryModal.tsx` to use inherited colors
+- Enhanced `HabitCreationModal.tsx` with:
+  - Visual inheritance indicators
+  - Toggle between goal color and custom color
+  - Proper form state management for color inheritance fields
+- Added debugging support and null-safe color fallbacks
+
+#### Swipe Gesture System
+- `useSwipeGestures.ts` hook for general swipe detection
+- `useSwipeBack.ts` hook for edge-based back gestures
+- App-level navigation: non-dashboard pages → dashboard, dashboard → app close
+- Modal swipe-to-close for key modals (TaskCreation, TimeBlock, EventDetail)
+
+#### Task Management Enhancements
+- Group by functionality: General tasks vs Goal-linked tasks
+- Sort by options: Added order vs Priority level
+- Visual goal integration with inherited colors in task grouping
+
+### 🐛 Issues Resolved
+- **Status Bar Overlap**: Fixed onboarding flow positioning with safe area insets
+- **Journal Import Dates**: Created separate `importEntry()` method preserving original timestamps
+- **Priority Colors**: Standardized across TaskCreationModal, TasksPage, and TaskCreationMiniModal
+- **Calendar Reactivity**: Fixed milestone completion using proper store subscriptions
+- **Habit Color Display**: Resolved undefined color issues with comprehensive fallback system
+
+### ✅ Development Standards Maintained
+- All changes tested in local development server
+- Console debugging implemented for color inheritance troubleshooting
+- Proper TypeScript type safety maintained
+- Consistent UI/UX patterns across components
+- Mobile-first responsive design principles
+
+### 🎉 Ready for APK v1.0.20
+All major UX improvements completed and tested. System ready for production build.
+
+---
+
 ## Session 30 | 2025-07-31
 
 **Focus**: Continuing APK Development - Java Environment Setup
@@ -1509,3 +1563,41 @@ The issue is in the lock state logic - currently checks `!lastAccessTime || shou
 - Current Date: August 6, 2025
 - Next Due: August 26, 2025 (20 days out - should be in Monthly, not Upcoming)
 - Following Due: September 9, 2025 (34 days out - should be in September section)
+
+---
+
+## Session 18 | 2025-08-08
+
+**Focus**: Passcode Implementation Resolution & APK v1.4.7 Success
+
+### 🔐 Passcode Security Implementation - COMPLETED ✅
+
+#### Issue Resolution Summary
+- **Previous Issue**: Journal not immediately locked when passcode enabled
+- **Root Cause**: Timer-based lock logic allowing grace period access
+- **Solution Applied**: Fixed initial lock state to require immediate authentication
+- **Result**: APK v1.4.7 generated with fully functional passcode protection
+
+#### Final Implementation Status
+- ✅ **Settings UI**: Passcode setup/change/disable functionality complete
+- ✅ **Encryption/Validation**: Secure passcode hashing and verification  
+- ✅ **Auto-lock Timer**: Configurable timeout with visual countdown
+- ✅ **Initial Lock State**: Journal locked immediately on passcode enable
+- ✅ **App Restart Behavior**: Journal properly locked on app launch
+- ✅ **Cache Restart Fix**: APK functionality restored after device cache restart
+
+#### APK Build Success
+- **Version**: v1.4.7
+- **Size**: Standard debug build
+- **Status**: Fully functional after cache restart
+- **Security**: Complete passcode protection active
+
+### 🎯 Implementation Completed
+**PASSCODE SECURITY SYSTEM**: ✅ **PRODUCTION READY**
+- Immediate lock protection upon passcode setup
+- Proper app restart security behavior  
+- No grace period vulnerabilities
+- User cache restart resolved APK functionality
+- All security requirements satisfied
+
+---

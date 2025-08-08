@@ -1,6 +1,8 @@
 import React from 'react';
 import { Habit } from '../types/habit';
 import { useHabitStore, formatDateToString } from '../store/habitStore';
+import { useGoalStore } from '../store/goalStore';
+import { getHabitColor } from '../utils/habitColors';
 
 interface HabitRowProps {
   habit: Habit;
@@ -10,6 +12,10 @@ interface HabitRowProps {
 
 export default function HabitRow({ habit, selectedDate, onClick }: HabitRowProps) {
   const { toggleDayCompletion, isHabitCompletedOnDate, isRequiredDay } = useHabitStore();
+  const { goals } = useGoalStore();
+  
+  // Get effective color considering goal inheritance
+  const effectiveColor = getHabitColor(habit, goals);
 
   // Get the 5-day window showing last 4 days + current day
   const getFiveDayWindow = () => {
@@ -52,13 +58,13 @@ export default function HabitRow({ habit, selectedDate, onClick }: HabitRowProps
     <div 
       className="flex items-center justify-between p-4 mb-3 bg-gray-700 rounded-2xl cursor-pointer hover:bg-gray-600 transition-all duration-200 w-full"
       onClick={onClick}
-      style={{ color: habit.color }}
+      style={{ color: effectiveColor }}
     >
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <div className="w-5 h-5 flex items-center justify-center text-base flex-shrink-0">
           {habit.icon}
         </div>
-        <div className="text-base font-medium truncate" style={{ color: habit.color }}>
+        <div className="text-base font-medium truncate" style={{ color: effectiveColor }}>
           {habit.name}
         </div>
       </div>
@@ -80,8 +86,8 @@ export default function HabitRow({ habit, selectedDate, onClick }: HabitRowProps
                 !day.isRequired ? 'opacity-30' : ''
               }`}
               style={{ 
-                borderColor: habit.color,
-                backgroundColor: day.isCompleted ? habit.color : 'transparent'
+                borderColor: effectiveColor,
+                backgroundColor: day.isCompleted ? effectiveColor : 'transparent'
               }}
               onClick={(e) => handleDayToggle(e, day.date)}
             >

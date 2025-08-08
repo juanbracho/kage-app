@@ -27,6 +27,7 @@ const ACCENT_COLOR_NAMES: Record<AccentColor, string> = {
 interface SettingsStore {
   settings: AppSettings
   isLoading: boolean
+  isJournalLocked: boolean
   
   // Actions
   updateNotificationSettings: (settings: Partial<NotificationSettings>) => void
@@ -51,6 +52,13 @@ interface SettingsStore {
   setAutoLockTimeout: (timeout: AutoLockTimeout) => void
   updateLastAccess: () => void
   shouldAutoLock: () => boolean
+  forceLock: () => void
+  
+  // Global Journal Lock State
+  isJournalLocked: boolean
+  lockJournal: () => void
+  unlockJournal: () => void
+  checkAndUpdateLockState: () => boolean
   
   // Onboarding
   completeOnboarding: () => void
@@ -107,6 +115,7 @@ export const useSettingsStore = create<SettingsStore>()(
     (set, get) => ({
       settings: defaultSettings,
       isLoading: false,
+      isJournalLocked: false,
 
       updateNotificationSettings: (newSettings: Partial<NotificationSettings>) => {
         set(state => ({
@@ -334,10 +343,12 @@ export const useSettingsStore = create<SettingsStore>()(
             enabled: true,
             hash,
             salt,
-            lastAccessTime: undefined // Don't set lastAccessTime on setup - journal should be locked
+            lastAccessTime: undefined // Don't set lastAccessTime on setup - journal should be locked immediately
           });
           
-          console.log('✅ Passcode setup successful');
+          // Immediately lock the journal
+          set({ isJournalLocked: true });
+          console.log('✅ Passcode setup successful - journal locked immediately');
           return true;
         } catch (error) {
           console.error('❌ Passcode setup failed:', error);
@@ -415,6 +426,63 @@ export const useSettingsStore = create<SettingsStore>()(
 
         const timeSinceLastAccess = Date.now() - settings.passcode.lastAccessTime;
         return timeSinceLastAccess >= timeoutMs;
+      },
+
+      forceLock: () => {
+        get().updatePasscodeSettings({ lastAccessTime: undefined });
+        set({ isJournalLocked: true });
+        console.log('🔒 Journal force locked - lastAccessTime cleared');
+      },
+
+      // Global Journal Lock State Management
+      lockJournal: () => {
+        set({ isJournalLocked: true });
+        console.log('🔒 Journal locked globally');
+      },
+
+      unlockJournal: () => {
+        set({ isJournalLocked: false });
+        get().updateLastAccess();
+        console.log('🔓 Journal unlocked globally');
+      },
+
+      checkAndUpdateLockState: (): boolean => {
+        const { settings } = get();
+        
+        console.log('🔐 checkAndUpdateLockState called:', {
+          passcodeEnabled: settings.passcode.enabled,
+          hasHash: !!settings.passcode.hash,
+          hasSalt: !!settings.passcode.salt,
+          lastAccessTime: settings.passcode.lastAccessTime,
+          currentLockState: get().isJournalLocked,
+          autoLockTimeout: settings.passcode.autoLockTimeout
+        });
+        
+        // If passcode not enabled, never lock
+        if (!settings.passcode.enabled) {
+          set({ isJournalLocked: false });
+          console.log('🔒 Passcode not enabled - journal unlocked');
+          return false;
+        }
+
+        // If no lastAccessTime (first setup or force locked), should be locked
+        if (!settings.passcode.lastAccessTime) {
+          set({ isJournalLocked: true });
+          console.log('🔒 Journal should be locked - no lastAccessTime');
+          return true;
+        }
+
+        // Check if auto-lock timeout exceeded
+        if (get().shouldAutoLock()) {
+          set({ isJournalLocked: true });
+          console.log('🔒 Journal should be locked - timeout exceeded');
+          return true;
+        }
+
+        // Should remain unlocked
+        set({ isJournalLocked: false });
+        console.log('🔓 Journal should remain unlocked');
+        return false;
       },
 
       resetToDefaults: () => {
@@ -597,10 +665,22 @@ export const useSettingsStore = create<SettingsStore>()(
     {
       name: 'settings-store',
       version: 1,
+      partialize: (state) => ({
+        settings: state.settings,
+        isJournalLocked: state.isJournalLocked
+      }),
       onRehydrateStorage: () => (state) => {
         if (state) {
           // Apply settings immediately after rehydration
           state.initializeSettings()
+          
+          // Check and update lock state after rehydration
+          // This ensures proper lock state on mobile app startup
+          if (state.settings.passcode.enabled) {
+            console.log('🔐 Settings rehydrated - checking journal lock state')
+            const shouldLock = state.checkAndUpdateLockState()
+            console.log('🔐 Lock state after rehydration:', shouldLock)
+          }
         }
       },
     }

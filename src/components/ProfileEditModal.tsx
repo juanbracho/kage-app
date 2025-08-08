@@ -110,6 +110,9 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
                   type="text"
                   required
                   value={formData.name}
+                  spellCheck="true"
+                  autoCorrect="on"
+                  autoComplete="name"
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus-accent-ring focus-accent-border outline-none transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   placeholder="Enter your full name"
@@ -126,6 +129,8 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
                 type="email"
                 required
                 value={formData.email}
+                inputMode="email"
+                autoComplete="email"
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus-accent-ring focus-accent-border outline-none transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 placeholder="Enter your email address"

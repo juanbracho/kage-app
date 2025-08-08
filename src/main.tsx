@@ -3,6 +3,21 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
+// Import Capacitor for mobile functionality
+import { Capacitor } from '@capacitor/core'
+
+// Initialize mobile plugins if running on native platform
+if (Capacitor.isNativePlatform()) {
+  console.log('📱 Running on native platform - initializing mobile plugins')
+  
+  // Import App plugin for app state detection
+  import('@capacitor/app').then(({ App }) => {
+    console.log('📱 App plugin loaded successfully')
+  }).catch(error => {
+    console.error('❌ Failed to load App plugin:', error)
+  })
+}
+
 // Register service worker for PWA functionality
 // if ('serviceWorker' in navigator) {
 //   window.addEventListener('load', () => {
