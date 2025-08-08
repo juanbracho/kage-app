@@ -1,7 +1,7 @@
 {
   "name": "kage-app",
   "private": true,
-  "version": "1.4.7",
+  "version": "1.0.21",
   "type": "module",
   "scripts": {
     "dev": "vite",
